@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "306637600231",
+    "project_id": "wireup-fa74b",
+    "storage_bucket": "wireup-fa74b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306637600231:android:f0462ce5df33ebe53f7942",
+        "android_client_info": {
+          "package_name": "com.example.wireup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwB2V_pYFx__d_effIC2IPB1odetGMl1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
