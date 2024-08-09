@@ -35,10 +35,12 @@ import com.example.wireup.ui.Components.BottomNavigationBar
 import com.example.wireup.ui.theme.WireUpTheme
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             WireUpTheme {
                 SetupTransparentSystemUi(

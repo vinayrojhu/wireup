@@ -18,7 +18,7 @@ import com.example.wireup.ui.Screen.FriendsScreen
 import com.example.wireup.ui.Screen.HomeScreen
 import com.example.wireup.ui.Screen.NodeScreen
 import com.example.wireup.ui.Screen.PodcastScreen
-import com.example.wireup.ui.Screen.ProfileScreen
+import com.example.wireup.ui.Screen.profile.ProfileScreen
 import com.example.wireup.ui.Screen.SavedScreen
 import com.example.wireup.ui.Screen.SearchScreen
 import com.example.wireup.ui.Screen.SettingsScreen
@@ -78,7 +78,7 @@ fun AppNavHost(
 
 
         composable(NavigationItem.Node.route) {
-            NodeScreen( navController = navController)
+            NodeScreen(navController = navController)
         }
         composable(NavigationItem.Friends.route) {
             FriendsScreen( navController = navController)

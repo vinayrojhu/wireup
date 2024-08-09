@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wireup.model.MUser
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -32,38 +31,46 @@ class LoginScreenViewModel: ViewModel() {
         }
     }
 
-    fun createUserWithEmailAndPassword(email: String, password: String, home: () -> Unit) = viewModelScope.launch {
-        try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            val displayName = result.user?.email?.split('@')?.get(0)
-            createUser(displayName)
-            home()
-        } catch (ex: Exception) {
-            Log.d("FB", "createUserWithEmailAndPassword: ${ex.message}")
+//    fun createUserWithEmailAndPassword(email: String, password: String, name: String, home: () -> Unit) = viewModelScope.launch {
+//        try {
+//            val result = auth.createUserWithEmailAndPassword(email, password).await()
+//            createUser(name)
+//            home()
+//        } catch (ex: Exception) {
+//            Log.d("FB", "createUserWithEmailAndPassword: ${ex.message}")
+//        }
+//    }
+fun createUserWithEmailAndPassword(email: String, password: String, name: String, home: () -> Unit) {
+    auth.createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val userId = auth.currentUser?.uid
+                val user = hashMapOf(
+                    "name" to name,
+                    "email" to email,
+                    "userID" to userId           //if error
+                )
+                FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
+                home()
+            } else {
+                // Handle error
+            }
         }
-    }
+}
 
-    private fun createUser(displayName: String?) {
-        val userId = auth.currentUser?.uid
-
-        val user = MUser(userId = userId.toString(),
-            displayName = displayName.toString(),
-            avatarUrl = "",
-            quote = "Life is great",
-            profession = "Android Developer",
-            id = null).toMap()
-
-
-        FirebaseFirestore.getInstance().collection("users")
-            .add(user)
-
-
-
-
-
-
-
-    }
+//    private fun createUser(displayName: String?) {
+//        val userId = auth.currentUser?.uid
+//
+//        val user = MUser(userId = userId.toString(),
+//            displayName = displayName.toString(),
+//            id = null).toMap()
+//
+//
+//        FirebaseFirestore.getInstance().collection("users")
+//            .document(userId.toString())
+//            .set(user)
+//
+//    }
 
 
 }

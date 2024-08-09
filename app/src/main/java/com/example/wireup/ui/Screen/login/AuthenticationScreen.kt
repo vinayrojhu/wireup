@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,14 +57,14 @@ fun AuthenticationScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Spacer(modifier = Modifier.height(8.dp))
-            if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){ email, password ->
+            if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){ email, password, _ ->
                 viewModel.signInWithEmailAndPassword(email, password){
                     navController.navigate(NavigationItem.Home.route)
                 }
             }
             else {
-                UserForm(loading = false, isCreateAccount = true){email, password ->
-                    viewModel.createUserWithEmailAndPassword(email, password) {
+                UserForm(loading = false, isCreateAccount = true){email, password, name ->
+                    viewModel.createUserWithEmailAndPassword(email, password, name) {
                         navController.navigate(NavigationItem.Home.route)
                     }
                 }
@@ -99,15 +100,16 @@ fun AuthenticationScreen(
 fun UserForm(
     loading: Boolean = false,
     isCreateAccount: Boolean = false,
-    onDone: (String, String) -> Unit = { email, pwd ->}
+    onDone: (String, String, String) -> Unit = { email, pwd, name ->}
 ) {
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
+    val name = rememberSaveable { mutableStateOf("") }
     val passwordVisibility = rememberSaveable { mutableStateOf(false) }
     val passwordFocusRequest = FocusRequester.Default
     val keyboardController = LocalSoftwareKeyboardController.current
-    val valid = remember(email.value, password.value) {
-        email.value.trim().isNotEmpty() && password.value.trim().isNotEmpty()
+    val valid = remember(email.value, password.value, name.value) {
+        email.value.trim().isNotEmpty() && password.value.trim().isNotEmpty() && (name.value.trim().isNotEmpty() || !isCreateAccount)
 
     }
     val modifier = Modifier
@@ -119,6 +121,14 @@ fun UserForm(
         horizontalAlignment = Alignment.CenterHorizontally) {
         if (isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
             modifier = Modifier.padding(4.dp)) else Text("")
+        if (isCreateAccount) {
+            OutlinedTextField(
+                value = name.value,
+                onValueChange = { name.value = it },
+                label = { Text("Name") },
+                modifier = Modifier.padding(4.dp)
+            )
+        }
         EmailInput(
             emailState = email, enabled = !loading,
             onAction = KeyboardActions {
@@ -133,7 +143,7 @@ fun UserForm(
             passwordVisibility = passwordVisibility,
             onAction = KeyboardActions {
                 if (!valid) return@KeyboardActions
-                onDone(email.value.trim(), password.value.trim())
+                onDone(email.value.trim(), password.value.trim(), name.value.trim())
             })
 
         SubmitButton(
@@ -141,7 +151,7 @@ fun UserForm(
             loading = loading,
             validInputs = valid
         ){
-            onDone(email.value.trim(), password.value.trim())
+            onDone(email.value.trim(), password.value.trim(), name.value.trim())
             keyboardController?.hide()
         }
 

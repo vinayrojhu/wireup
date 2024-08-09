@@ -107,4 +107,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-drawablepainter:0.35.0-alpha")
 
     implementation("androidx.compose.material3:material3:1.2.1")
+
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.android.gms:play-services-auth:20.4.0")
 }

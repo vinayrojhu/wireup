@@ -1,4 +1,4 @@
-package com.example.wireup.ui.Screen
+package com.example.wireup.ui.Screen.profile
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
@@ -67,7 +67,14 @@ import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
+import com.example.wireup.ui.Screen.AudioScreen
+import com.example.wireup.ui.Screen.VideoScreen
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.core.UserData
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +86,8 @@ fun ProfileScreen(navController: NavHostController) {
 //        "Audio Podcast" to painterResource(id = R.drawable.podcastfinal),
 //        "Nodes" to painterResource(id = R.drawable.node_iconn),
 //    )
-    val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+    
+    val userId = FirebaseAuth.getInstance().currentUser?.displayName.toString()
     val username = "The Indic Wire"
     val userFollowers = "88230 Followers"
     Scaffold(
