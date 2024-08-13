@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
+import com.example.wireup.model.NewsData
 import com.example.wireup.ui.Components.NewsBox
-import com.example.wireup.ui.Components.NewsData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

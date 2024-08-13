@@ -45,10 +45,12 @@ fun createUserWithEmailAndPassword(email: String, password: String, name: String
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val userId = auth.currentUser?.uid
+                val profile_image = ""
                 val user = hashMapOf(
                     "name" to name,
                     "email" to email,
-                    "userID" to userId           //if error
+                    "userID" to userId,
+                    "profile_image" to profile_image
                 )
                 FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
                 home()

@@ -36,17 +36,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.wireup.R
+import com.example.wireup.model.FFData
 
-data class NewsItem(
-    val heading: String,
-    val description: String,
-    val image: Painter
-)
-
-data class FFData(
-    val item1: NewsItem,
-    val item2: NewsItem
-)
+//data class NewsItem(
+//    val heading: String,
+//    val description: String,
+//    val image: Painter
+//)
+//
+//data class FFData(
+//    val item1: NewsItem,
+//    val item2: NewsItem
+//)
 
 //data class MyData(
 //    val items: List<NewsItem>
