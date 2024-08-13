@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.wireup.R
+import com.example.wireup.model.NewsData
 
 @Composable
 fun NewsBox(data: NewsData) {
@@ -134,14 +135,14 @@ fun NewsBox(data: NewsData) {
     }
 }
 
-data class NewsData(
-    val category: String,
-    val trending: Boolean,
-    val imageurl: String,
-    val date: String,
-    val title: String,
-    val subtitle: String
-)
+//data class NewsData(
+//    val category: String,
+//    val trending: Boolean,
+//    val imageurl: String,
+//    val date: String,
+//    val title: String,
+//    val subtitle: String
+//)
 
 // how to use
 //

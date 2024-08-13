@@ -22,20 +22,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.wireup.R
-import com.example.wireup.ui.Components.FFData
+import com.example.wireup.model.FFData
+import com.example.wireup.model.FFNewsItem
 import com.example.wireup.ui.Components.FFnewsBox
-import com.example.wireup.ui.Components.NewsItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlipFlopScreen(navController: NavHostController) {
         val FlipPostdata = FFData(
-        item1 = NewsItem(
+        item1 = FFNewsItem(
             heading = "Heading 1",
             description = "Description 1",
             image = painterResource(id = R.drawable.study_in_australia)
         ),
-        item2 = NewsItem(
+        item2 = FFNewsItem(
             heading = "Heading 2",
             description = "Description 2",
             image = painterResource(id = R.drawable.criminal_laws)

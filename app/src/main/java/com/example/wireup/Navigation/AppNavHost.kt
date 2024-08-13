@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.AboutScreen
 import com.example.wireup.ui.Screen.AccountScreen
 import com.example.wireup.ui.Screen.EditProfileScreen
@@ -24,6 +25,7 @@ import com.example.wireup.ui.Screen.SearchScreen
 import com.example.wireup.ui.Screen.SettingsScreen
 import com.example.wireup.ui.Screen.SplashScreen
 import com.example.wireup.ui.Screen.login.AuthenticationScreen
+import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -67,10 +69,15 @@ fun AppNavHost(
             PodcastScreen( navController = navController)
         }
         composable(NavigationItem.Profile.route) {
-            ProfileScreen( navController = navController)
+            ProfileScreen( navController = navController, viewModel = UserViewModel(
+                FirestoreRepository()
+            ))
         }
         composable(NavigationItem.Search.route) {
             SearchScreen( navController = navController)
+        }
+        composable(NavigationItem.Edit.route) {
+            EditProfileScreen( navController = navController)
         }
 
 
@@ -82,9 +89,6 @@ fun AppNavHost(
         }
         composable(NavigationItem.Friends.route) {
             FriendsScreen( navController = navController)
-        }
-        composable(NavigationItem.Edit.route) {
-            EditProfileScreen( navController = navController)
         }
         composable(NavigationItem.Saved.route) {
             SavedScreen( navController = navController)

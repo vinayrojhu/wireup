@@ -69,24 +69,6 @@ data class Tweet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NodeScreen(navController: NavHostController) {
-    val username = FirebaseAuth.getInstance().currentUser?.email.toString()
-    val userimage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg"
-    var isVisible by remember { mutableStateOf(false) }
-    var retweets = 34
-    var likes = 56
-    var bookmarks = 5
-    var isRetweeted by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isLiked by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isBookmarked by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isFollowed by rememberSaveable {
-        mutableStateOf(false)
-    }
     Column {
         TopAppBar(title = {
             Text(

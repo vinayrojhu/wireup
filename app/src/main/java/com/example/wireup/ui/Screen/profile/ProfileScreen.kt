@@ -1,6 +1,7 @@
 package com.example.wireup.ui.Screen.profile
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +19,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
@@ -34,6 +39,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,7 +53,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,19 +63,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
+import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.AudioScreen
+import com.example.wireup.ui.Screen.Tweet
 import com.example.wireup.ui.Screen.VideoScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -75,25 +91,37 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.core.UserData
 import com.google.firebase.firestore.toObject
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-//    val tabs = listOf(
-//        "Video Podcast" to painterResource(id = R.drawable.podcast_profile_icon),
-//        "Audio Podcast" to painterResource(id = R.drawable.podcastfinal),
-//        "Nodes" to painterResource(id = R.drawable.node_iconn),
-//    )
-    
-    val userId = FirebaseAuth.getInstance().currentUser?.displayName.toString()
-    val username = "The Indic Wire"
+
+    val userData by viewModel.getUserData().observeAsState()
+    val userId = userData?.email?.split("@")?.get(0)
+ //   val userId = FirebaseAuth.getInstance().currentUser?.email?.split("@")?.get(0)
+    val username = userData?.name.toString()
     val userFollowers = "88230 Followers"
+ //   val userImage = userData?.profileImage.toString()
+ //   val userImage = FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl
+
+    val userImage = remember { mutableStateOf<Uri?>(null) }
+
+    LaunchedEffect(Unit) {
+        FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+            userImage.value = uri
+        }
+    }
+
+
+
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(userId, fontSize = 18.sp) },
+                title = { Text(userId.toString(), fontSize = 18.sp) },
                 actions = {
                     var isRailExpanded by remember { mutableStateOf(false) }
                     var offsetX by remember { mutableStateOf(0.dp) }
@@ -186,13 +214,17 @@ fun ProfileScreen(navController: NavHostController) {
 
                         }
                         Spacer(modifier = Modifier.width(15.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.indic_logo), // Replace with actual resource ID
-                            contentDescription = "Profile Picture",
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(CircleShape)
-                        )
+
+                            Image(
+                                painter = rememberImagePainter(userImage.value), // Replace with actual resource ID
+                                contentDescription = "Profile Picture",
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .width(100.dp)
+                                    .clip(CircleShape)
+                            )
+
+
                         Spacer(modifier = Modifier.width(18.dp))
                         Column {
                             NavigationRailItem(
@@ -289,9 +321,47 @@ fun ProfileScreen(navController: NavHostController) {
                 selectedTabIndex = it
             }
             when (selectedTabIndex) {
-                0 -> VideoScreen()
+                0 -> UserNode()
                 1 -> AudioScreen()
             }
+        }
+    }
+}
+
+
+
+@Composable
+fun UserNode(){
+    LazyColumn(
+        modifier = Modifier
+            .height(500.dp) // Set the desired height here
+            .drawBehind {
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(70f, 0f),
+                    end = Offset(70f, this.size.height)
+                )
+            }
+    ) {
+        val urls = listOf(
+            "https://3.bp.blogspot.com/-VVp3WvJvl84/X0Vu6EjYqDI/AAAAAAAAPjU/ZOMKiUlgfg8ok8DY8Hc-ocOvGdB0z86AgCLcBGAsYHQ/s1600/jetpack%2Bcompose%2Bicon_RGB.png",
+            "https://vectorportal.com/storage/bD8Fzwwh5EDWD8YJkJfCCQCwQ8pxMUBIQaCbmKaZ.jpg",
+            "https://vectorportal.com/storage/anime-avatar.jpg",
+            "https://vectorportal.com/storage/aKJ32lYqZ7wSaC2f0NIMZEUh4hhjlVETzKZ3FjyR.jpg",
+            "https://vectorportal.com/storage/UxFA72dcdu4df3y1hyEpAUYbpqSecbrhnjck3x77.jpg",
+            "https://vectorportal.com/storage/Eg0cerMrth5t1FDREtUJQr8RmvmXXvA9XEsL7tcH.jpg",
+            "https://cdn.pixabay.com/photo/2023/05/28/03/34/flowers-8022731_1280.jpg",
+            "https://cdn.pixabay.com/photo/2023/07/14/10/50/flower-8126748_1280.jpg",
+        )
+        items(5) {
+            TweetItem(tweet = Tweet(
+                description = "Incorporate and convert Java code into #Kotlin using #Android Studio, and learn Kotlin language conventions along the way. You’ll also learn how to write Kotlin code to make it callable from Java code.",
+                userId = FirebaseAuth.getInstance().currentUser?.email.toString(),
+                comments = listOf("very nice"),
+                likeCount = 203,
+                retweetCount = 50,
+                bookmarkCount = 135,
+                imageUrl = urls), onCommentClick = { }) {}
         }
     }
 }
