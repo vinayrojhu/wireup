@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,9 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -119,8 +123,10 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 modifier = Modifier
                                     .height(270.dp)
                                     .width(100.dp)
-                                    .clip(RoundedCornerShape(topStart = 10.dp ,
-                                        bottomStart = 10.dp)),
+                                    .clip(
+                                        RoundedCornerShape(topStart = 10.dp ,
+                                        bottomStart = 10.dp)
+                                    ),
                                 containerColor = Color.Black,
                                 contentColor = Color.White,
                                 header = {

@@ -45,7 +45,7 @@ fun NewsBox(data: NewsData , navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(440.dp)
+            .height(450.dp)
             .padding(10.dp),
         colors = CardColors(containerColor = Color.White,
             contentColor = Color.Unspecified,

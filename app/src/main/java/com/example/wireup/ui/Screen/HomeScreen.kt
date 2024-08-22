@@ -64,8 +64,6 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.NewsData
 import com.example.wireup.ui.Components.NewsBox
-import com.example.wireup.ui.Components.NewsBox2
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +73,7 @@ fun HomeScreen( navController: NavHostController) {
         category ="Philosophy" ,
         trending = true ,
         imageurl = "https://i.abcnewsfe.com/a/3cb8ba6c-ccdb-48de-99cc-e684e5358708/abcnl__NEW_streamingnow_1664457649883_hpMain_16x9.jpg?w=608" ,
-        date = "July 10, 2024",
+        date = "2/10/2024",
         title = "8 Steps To Help You Stop Overthinking Everything",
         subtitle = "Learn how to manage your thoughts and reduce anxiety."
     )
@@ -158,53 +156,47 @@ fun HomeScreen( navController: NavHostController) {
 //            }}
 //
 //        ) {
-//            Box(modifier = Modifier.fillMaxHeight()) {
+//            Box(modifier = Modifier.fillMaxHeight()){
 //                when (tabIndex.value) {
 //                    0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                       NewsBox2(NewsBoxData)
-//                       NewsBox2(NewsBoxData)
-//                       NewsBox2(NewsBoxData)
-//                       NewsBox2(NewsBoxData)
-//
+//                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
 //                    }
-//
 //                    1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                      NewsBox2(NewsBoxData)
-//
+//                        NewsBox(NewsBoxData, navController = navController)
 //                    }
-//
 //                    2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox2(NewsBoxData)
-//                        NewsBox2(NewsBoxData)
-//
+//                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
 //                    }
 //                }
 //            }
-//        }
-
-
 
             Box(modifier = Modifier.fillMaxHeight()){
                 when (tabIndex.value) {
                     0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        NewsBox(NewsBoxData , navController)
-                        NewsBox(NewsBoxData, navController)
-                        NewsBox2(data = NewsBoxData)
-//                        NewsBox(NewsBoxData)
-//                        NewsBox(NewsBoxData)
-
+                        NewsBox(NewsBoxData, navController = navController)
+                        NewsBox(NewsBoxData, navController = navController)
+                        NewsBox(NewsBoxData, navController = navController)
+                        NewsBox(NewsBoxData, navController = navController)
                     }
                     1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData)
-
+                        NewsBox(NewsBoxData, navController = navController)
                     }
                     2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData)
-//                        NewsBox(NewsBoxData)
-//                        ReadMore(NewsBoxData)
+                        NewsBox(NewsBoxData, navController = navController)
+                        NewsBox(NewsBoxData, navController = navController)
                     }
                 }
             }
+        }
+
+
+
+
+
 
 
 
@@ -287,7 +279,6 @@ fun HomeScreen( navController: NavHostController) {
 //            }
 //        }
 //      }
-    }
-}
 
+}
 
