@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -84,19 +85,20 @@ fun EditProfileScreen(navController: NavHostController) {
         )
 
         Divider()
-        Surface (modifier = Modifier
+
+        Surface(modifier = Modifier
             .padding(start = 10.dp, top = 16.dp, end = 10.dp)
             .fillMaxWidth(),
             elevation = 3.dp,
-            shape = RoundedCornerShape(5.dp)){
-            Column(modifier = Modifier.padding(8.dp),
+            shape = RoundedCornerShape(5.dp)
+        ) {
+            Column(modifier = Modifier.padding(top = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center){
                 UploadImage(viewModel)
             }
-
-
         }
+
 
 
 
@@ -112,34 +114,39 @@ fun EditProfileScreen(navController: NavHostController) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text("Change UserName") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = { Text("Change Email") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = {
-                    val userData = MUser(name = name, email = email)
-                    viewModel.updateUserData(userData).observe(lifecycleOwner, Observer { isSuccess ->
-                        if (isSuccess) {
-                            Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
-                        }
-                    })
-                }) {
-                    Text("Update Details")
+
+                Row(modifier = Modifier.padding(start=15.dp , top = 15.dp)) {
+
+                    Button(onClick = {
+                        val userData = MUser(name = name, email = email)
+                        viewModel.updateUserData(userData).observe(lifecycleOwner, Observer { isSuccess ->
+                            if (isSuccess) {
+                                Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    }) {
+                        Text("Update Details")
+                    }
+
                 }
+
             }
 
 
         }
-
 
 
 

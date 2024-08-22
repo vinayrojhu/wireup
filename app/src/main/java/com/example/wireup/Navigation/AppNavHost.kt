@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.wireup.model.NewsData
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.AboutScreen
 import com.example.wireup.ui.Screen.AccountScreen
@@ -19,6 +20,7 @@ import com.example.wireup.ui.Screen.FriendsScreen
 import com.example.wireup.ui.Screen.HomeScreen
 import com.example.wireup.ui.Screen.NodeScreen
 import com.example.wireup.ui.Screen.PodcastScreen
+import com.example.wireup.ui.Screen.ReadMore
 import com.example.wireup.ui.Screen.profile.ProfileScreen
 import com.example.wireup.ui.Screen.SavedScreen
 import com.example.wireup.ui.Screen.SearchScreen
@@ -103,6 +105,9 @@ fun AppNavHost(
             AccountScreen( navController = navController)
         }
 
+        composable(NavigationItem.ReadMore.route){
+            ReadMore(navController = navController)
+        }
     }
 }
 

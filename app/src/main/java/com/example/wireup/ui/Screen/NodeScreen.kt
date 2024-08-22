@@ -38,7 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -138,15 +141,16 @@ fun MainNode(){
     var isFollowed by rememberSaveable {
         mutableStateOf(false)
     }
-    Row(
-        Modifier.fillMaxWidth(),
+    Row(modifier=Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp , top = 2.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircularImage(imageUrl = userimage, imageSize = 45.dp)
+        CircularImage(imageUrl = userimage, imageSize = 38.dp)
         Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)) {
-            Text(username, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+            Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
         }
         Spacer(modifier = Modifier.width(8.dp))
         Button(
@@ -158,12 +162,12 @@ fun MainNode(){
                 if (isFollowed) {
                     MaterialTheme.colorScheme.background
                 } else {
-                    MaterialTheme.colorScheme.onBackground
+                    MaterialTheme.colorScheme.background
                 },
                 contentColor = if (isFollowed) {
                     MaterialTheme.colorScheme.onBackground
                 } else {
-                    MaterialTheme.colorScheme.background
+                    MaterialTheme.colorScheme.onBackground
                 },
                 disabledContentColor = Color.Gray,
                 disabledContainerColor = Color.LightGray
@@ -171,23 +175,27 @@ fun MainNode(){
         ) {
             Text(if (isFollowed) "Following" else "Follow")
         }}
-    Spacer(modifier = Modifier.height(8.dp))
-    Column(Modifier.fillMaxWidth()) {
+//    Spacer(modifier = Modifier
+//        .height(1.dp))
+    Column(Modifier
+        .fillMaxWidth()
+        .padding(start =50.dp)) {
         Text("Jetpack compose for UI development\n" +
                 "Kotlin for programming\n" +
                 "MVVM architecture\n" +
                 "Coil library for dynamic Image loading\n" +
                 "Retrofit for REST API data consuming\n" +
                 "Jetpack compose Navigation\n" +
-                "Lazy list, Card, Other composable functions", fontSize = 18.sp)
+                "Lazy list, Card, Other composable functions", fontSize = 15.sp , fontWeight = FontWeight.W400)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             DateUtil.getDateTime(System.currentTimeMillis()),
             color = Color.Gray,
-            fontSize = 14.sp
+            fontSize = 11.sp ,
+            fontWeight = FontWeight.W400
         )
         Spacer(modifier = Modifier.height(8.dp))
-        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
+//        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
         TweetActionRow(
             isLiked, isRetweeted, isBookmarked,
             likes,
@@ -214,7 +222,7 @@ fun MainNode(){
             }) {
             isVisible = !isVisible
         }
-        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
+//        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
     }
 
     AnimatedVisibility(
@@ -227,9 +235,9 @@ fun MainNode(){
                 .height(420.dp) // Set the desired height here
                 .drawBehind {
                     drawLine(
-                        color = Color.Gray,
-                        start = Offset(70f, 0f),
-                        end = Offset(70f, this.size.height)
+                        color = Color.LightGray,
+                        start = Offset(150f, 0f),
+                        end = Offset(150f, this.size.height)
                     )
                 }
         ) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -85,27 +86,27 @@ fun TweetItem(
     Row(
         Modifier
             .fillMaxWidth(1f)
-            .padding(8.dp)
+            .padding(start = 35.dp , end = 8.dp)
             .clickable {
                 onItemClick()
             }
     ) {
-        CircularImage(imageUrl = user.profileImage, imageSize = 45.dp)
+        CircularImage(imageUrl = user.profileImage, imageSize = 30.dp)
         Spacer(Modifier.width(8.dp))
         Column(Modifier.fillMaxWidth(1f)) {
             Row(Modifier.fillMaxWidth(1f), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(user.name, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                Text(user.name, fontWeight = FontWeight.W600, fontSize = 13.sp )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = getDateTime(tweet.timeStamp),
                     textAlign = TextAlign.End,
                     color = Color.Gray,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.W400
                 )
             }
             Spacer(Modifier.height(8.dp))
-            Text(tweet.description, fontSize = 16.sp, fontWeight = FontWeight.Light)
+            Text(tweet.description, fontSize = 13.sp, fontWeight = FontWeight.W400)
             Spacer(Modifier.height(8.dp))
             TweetActionRow(isLiked, isRetweeted, isBookmarked,
                 likes,
@@ -217,6 +218,7 @@ fun TweetActionRow(
         }) {
             Icon(
                 Icons.Default.Share,
+                modifier = Modifier.size(18.dp) ,
                 contentDescription = "Share"
             )
         }

@@ -30,6 +30,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
@@ -39,13 +40,21 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.sharp.Person
+import androidx.compose.material.icons.twotone.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemColors
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Tab
@@ -93,6 +102,7 @@ import com.google.firebase.firestore.core.UserData
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,30 +155,58 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         ) {
                             NavigationRail(
                                 modifier = Modifier
-                                    .height(300.dp)
-                                    .width(140.dp),
+                                    .height(270.dp)
+                                    .width(100.dp)
+                                    .clip(RoundedCornerShape(topStart = 10.dp ,
+                                        bottomStart = 10.dp)),
+                                containerColor = Color.Black,
+                                contentColor = Color.White,
                                 header = {
-                                    Text("Menu")
+//                                    Text("Menu")
+//                                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
                                 }
                             ) {
                                 NavigationRailItem(
                                     icon = { Icon(imageVector = Icons.Filled.Info, contentDescription = "About") },
                                     label = { Text("About") },
                                     selected = false,
-                                    onClick = {navController.navigate(NavigationItem.About.route)}
+                                    onClick = {navController.navigate(NavigationItem.About.route)},
+                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
+                                                                      selectedIconColor=Color.White,
+                                                                      selectedTextColor= Color.White,
+                                                                      selectedIndicatorColor = Color.White,
+                                                                      unselectedIconColor=Color.White,
+                                                                      unselectedTextColor=Color.White,
+                                                                      disabledIconColor=Color.White)
                                 )
 
                                 NavigationRailItem(
                                     icon = { Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings") },
                                     label = { Text("Settings") },
                                     selected = false,
-                                    onClick = {navController.navigate(NavigationItem.Settings.route)}
+                                    onClick = {navController.navigate(NavigationItem.Settings.route)} ,
+                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
+                                        selectedIconColor=Color.White,
+                                        selectedTextColor= Color.White,
+                                        selectedIndicatorColor = Color.White,
+                                        unselectedIconColor=Color.White,
+                                        unselectedTextColor=Color.White,
+                                        disabledIconColor=Color.White)
+
                                 )
                                 NavigationRailItem(
                                     icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "Account") },
                                     label = { Text("Account") },
                                     selected = false,
-                                    onClick = {navController.navigate(NavigationItem.Account.route)}
+                                    onClick = {navController.navigate(NavigationItem.Account.route)} ,
+                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
+                                        selectedIconColor=Color.White,
+                                        selectedTextColor= Color.White,
+                                        selectedIndicatorColor = Color.White,
+                                        unselectedIconColor=Color.White,
+                                        unselectedTextColor=Color.White,
+                                        disabledIconColor=Color.White)
+
                                 )
                                 NavigationRailItem(
                                     icon = { Icon(imageVector = Icons.Filled.ExitToApp, contentDescription = "Exit") },
@@ -176,7 +214,15 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     selected = false,
                                     onClick = {FirebaseAuth.getInstance().signOut().run {
                                         navController.navigate(NavigationItem.Authentication.route)
-                                    }}
+                                    }} ,
+                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
+                                        selectedIconColor=Color.White,
+                                        selectedTextColor= Color.White,
+                                        selectedIndicatorColor = Color.White,
+                                        unselectedIconColor=Color.White,
+                                        unselectedTextColor=Color.White,
+                                        disabledIconColor=Color.White)
+
                                 )
                             }
                         }
@@ -196,23 +242,8 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             Divider()
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-                        Column {
-                            NavigationRailItem(
-                                icon = { Icon(Icons.Filled.Person, contentDescription = "Friends") },
-                                label = { Text("Friends") },
-                                selected = false,
-                                onClick = { navController.navigate(NavigationItem.Friends.route)}
-                            )
-                            Spacer(modifier = Modifier.width(7.dp))
-                            NavigationRailItem(
-                                icon = { Icon(Icons.Filled.Edit, contentDescription = "Edit") },
-                                label = { Text("Edit Profile") },
-                                selected = false,
-                                onClick = { navController.navigate(NavigationItem.Edit.route) }
-                            )
+                    Column {
 
-                        }
                         Spacer(modifier = Modifier.width(15.dp))
 
                             Image(
@@ -222,38 +253,69 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     .height(100.dp)
                                     .width(100.dp)
                                     .clip(CircleShape)
+                                    .align(alignment = Alignment.CenterHorizontally)
                             )
 
 
-                        Spacer(modifier = Modifier.width(18.dp))
-                        Column {
-                            NavigationRailItem(
-                                icon = { Icon(Icons.Filled.Share, contentDescription = "share") },
-                                label = { Text("Share") },
-                                selected = false,
-                                onClick = { /* Handle account click */ }
-                            )
-                            Spacer(modifier = Modifier.width(7.dp))
+                        Column(modifier = Modifier
+                            .align(alignment = Alignment.CenterHorizontally)
+                            .padding(top = 10.dp, bottom = 10.dp)) {
+                            Row(modifier = Modifier
+                                .align(alignment = Alignment.CenterHorizontally)) {
+                                Text(
+                                    text = username,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+
+                            Text(
+                                    text = userFollowers,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
+                                )
+
+                        }
+
+                        Row {
+
                             NavigationRailItem(
                                 icon = { Icon(painter = painterResource(id = R.drawable.save_wire),
-                                    contentDescription = "Saved") },
+                                    contentDescription = "Saved" )
+                                       },
                                 label = { Text("Saved") },
                                 selected = false,
                                 onClick = {navController.navigate(NavigationItem.Saved.route)}
                             )
+
+                            NavigationRailItem(
+                                icon = { Icon(Icons.Outlined.Person, contentDescription = "Friends") },
+                                label = { Text("Friends") },
+                                selected = false,
+                                onClick = { navController.navigate(NavigationItem.Friends.route)}
+                            )
+//                            Spacer(modifier = Modifier.width(7.dp))
+
+
+                            NavigationRailItem(
+                                icon = { Icon(Icons.Outlined.Edit, contentDescription = "Edit") },
+                                label = { Text("Edit Profile") },
+                                selected = false,
+                                onClick = { navController.navigate(NavigationItem.Edit.route) }
+                            )
+
+
+                            NavigationRailItem(
+                                icon = { Icon(Icons.Outlined.Share, contentDescription = "share") },
+                                label = { Text("Share") },
+                                selected = false,
+                                onClick = { /* Handle account click */ }
+                            )
+//                            Spacer(modifier = Modifier.width(7.dp))
                         }
 
                     }
 
-                    Text(
-                        text = username,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                    Text(
-                        text = userFollowers,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
+
                 }
 
 //            NavigationRail(
@@ -338,8 +400,8 @@ fun UserNode(){
             .drawBehind {
                 drawLine(
                     color = Color.Gray,
-                    start = Offset(70f, 0f),
-                    end = Offset(70f, this.size.height)
+                    start = Offset(150f, 0f),
+                    end = Offset(150f, this.size.height)
                 )
             }
     ) {
