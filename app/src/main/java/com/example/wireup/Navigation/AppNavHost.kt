@@ -87,7 +87,9 @@ fun AppNavHost(
 
 
         composable(NavigationItem.Node.route) {
-            NodeScreen(navController = navController)
+            NodeScreen(navController = navController, viewModel = UserViewModel(
+                FirestoreRepository()
+            ))
         }
         composable(NavigationItem.Friends.route) {
             FriendsScreen( navController = navController)
