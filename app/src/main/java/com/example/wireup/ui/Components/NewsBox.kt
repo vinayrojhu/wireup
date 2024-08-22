@@ -29,19 +29,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.NewsData
+import com.example.wireup.ui.Screen.ReadMore
+
 
 @Composable
-fun NewsBox(data: NewsData) {
+fun NewsBox(data: NewsData , navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .height(440.dp)
+            .padding(10.dp),
         colors = CardColors(containerColor = Color.White,
             contentColor = Color.Unspecified,
             disabledContainerColor = Color.Transparent,
@@ -56,14 +61,14 @@ fun NewsBox(data: NewsData) {
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .height(200.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .padding(start = 8.dp, top = 8.dp, end = 8.dp)
+
         )
         Box(modifier = Modifier
-            .offset(8.dp, 5.dp)
+            .offset(10.dp, 5.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(Color.LightGray)
+            .background(Color.DarkGray)
             .padding(2.dp)
             .clickable(onClick = { /* handle click */ })){
 
@@ -95,9 +100,16 @@ fun NewsBox(data: NewsData) {
                 text = data.subtitle,
                 style = MaterialTheme.typography.bodyLarge
             )
+            Text(
+                text = data.subtitle,
+                style = MaterialTheme.typography.bodyLarge
+            )
 
             // Trending indicator
-            Box(modifier = Modifier.align(Alignment.Start)) {
+            Box(modifier = Modifier
+                .align(Alignment.Start)
+                .padding(top = 10.dp)
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -111,23 +123,28 @@ fun NewsBox(data: NewsData) {
 
                     Spacer(modifier = Modifier.width(170.dp))
 
-                    Text(
-                        text = "Read",
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .clickable {  },
-                        textAlign = TextAlign.End,
-                        color = Color.Black,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Icon(
-                        painter = painterResource(id = R.drawable.icons8_arrow_96),
-                        contentDescription = "read more",
-                        modifier = Modifier
-                            .padding(start = 5.dp)
-                            .clickable {  }
-                    )
+                    Row(modifier = Modifier.clickable(
+                        enabled = true,
+                        onClick = {navController.navigate(NavigationItem.ReadMore.route)}
+                    )) {
+                        Text(
+                            text = "Read",
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically),
+                            textAlign = TextAlign.End,
+                            color = Color.Black,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Icon(
+                            painter = painterResource(id = R.drawable.icons8_arrow_96),
+                            contentDescription = "read more",
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+
                 }
             }
 
@@ -158,3 +175,4 @@ fun NewsBox(data: NewsData) {
 //    )
 //    NewsBox(NewsBoxData)
 //}
+

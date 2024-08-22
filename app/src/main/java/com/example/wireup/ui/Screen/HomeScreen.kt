@@ -64,6 +64,8 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.NewsData
 import com.example.wireup.ui.Components.NewsBox
+import com.example.wireup.ui.Components.NewsBox2
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +75,7 @@ fun HomeScreen( navController: NavHostController) {
         category ="Philosophy" ,
         trending = true ,
         imageurl = "https://i.abcnewsfe.com/a/3cb8ba6c-ccdb-48de-99cc-e684e5358708/abcnl__NEW_streamingnow_1664457649883_hpMain_16x9.jpg?w=608" ,
-        date = "2/10/2024",
+        date = "July 10, 2024",
         title = "8 Steps To Help You Stop Overthinking Everything",
         subtitle = "Learn how to manage your thoughts and reduce anxiety."
     )
@@ -108,95 +110,101 @@ fun HomeScreen( navController: NavHostController) {
         })
         Divider()
 
-        NavigationRail(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(align = Alignment.BottomCenter)
-                .background(color = Color.Transparent),
-            header = {
-                Row(
-                modifier = Modifier
-                    .height(25.dp)
-                    .align(Alignment.End)
-                    .fillMaxWidth()
-                    .wrapContentSize(align = Alignment.BottomCenter)
-                    .background(color = Color.Transparent)
-                //     horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-            ) {
-                NavigationRailItem(
-                    selected = tabIndex.value == 0,
-                    onClick = { tabIndex.value = 0 },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home"
-                        )
-                    }
-                )
-                NavigationRailItem(
-                    selected = tabIndex.value == 1,
-                    onClick = { tabIndex.value = 1 },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Shopping Cart"
-                        )
-                    }
-                )
-                NavigationRailItem(
-                    selected = tabIndex.value == 2,
-                    onClick = { tabIndex.value = 2 },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.AccountBox,
-                            contentDescription = "Account"
-                        )
-                    }
-                )
-            }}
-
-        ) {
-            Box(modifier = Modifier.fillMaxHeight()){
-                when (tabIndex.value) {
-                    0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        NewsBox(NewsBoxData)
-                        NewsBox(NewsBoxData)
-                        NewsBox(NewsBoxData)
-                        NewsBox(NewsBoxData)
-                    }
-                    1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        NewsBox(NewsBoxData)
-                    }
-                    2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        NewsBox(NewsBoxData)
-                        NewsBox(NewsBoxData)
-                    }
-                }
-            }
-
-//            Box(modifier = Modifier.fillMaxHeight()){
+//        NavigationRail(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .wrapContentSize(align = Alignment.BottomCenter)
+//                .background(color = Color.Transparent),
+//            header = {
+//                Row(
+//                modifier = Modifier
+//                    .height(25.dp)
+//                    .align(Alignment.End)
+//                    .fillMaxWidth()
+//                    .wrapContentSize(align = Alignment.BottomCenter)
+//                    .background(color = Color.Transparent)
+//                //     horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+//            ) {
+//                NavigationRailItem(
+//                    selected = tabIndex.value == 0,
+//                    onClick = { tabIndex.value = 0 },
+//                    icon = {
+//                        Icon(
+//                            imageVector = Icons.Default.Home,
+//                            contentDescription = "Home"
+//                        )
+//                    }
+//                )
+//                NavigationRailItem(
+//                    selected = tabIndex.value == 1,
+//                    onClick = { tabIndex.value = 1 },
+//                    icon = {
+//                        Icon(
+//                            imageVector = Icons.Default.ShoppingCart,
+//                            contentDescription = "Shopping Cart"
+//                        )
+//                    }
+//                )
+//                NavigationRailItem(
+//                    selected = tabIndex.value == 2,
+//                    onClick = { tabIndex.value = 2 },
+//                    icon = {
+//                        Icon(
+//                            imageVector = Icons.Default.AccountBox,
+//                            contentDescription = "Account"
+//                        )
+//                    }
+//                )
+//            }}
+//
+//        ) {
+//            Box(modifier = Modifier.fillMaxHeight()) {
 //                when (tabIndex.value) {
 //                    0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData)
-//                        NewsBox(NewsBoxData)
-//                        NewsBox(NewsBoxData)
-//                        NewsBox(NewsBoxData)
+//                       NewsBox2(NewsBoxData)
+//                       NewsBox2(NewsBoxData)
+//                       NewsBox2(NewsBoxData)
+//                       NewsBox2(NewsBoxData)
+//
 //                    }
+//
 //                    1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData)
+//                      NewsBox2(NewsBoxData)
+//
 //                    }
+//
 //                    2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData)
-//                        NewsBox(NewsBoxData)
+//                        NewsBox2(NewsBoxData)
+//                        NewsBox2(NewsBoxData)
+//
 //                    }
 //                }
 //            }
-        }
+//        }
 
 
 
+            Box(modifier = Modifier.fillMaxHeight()){
+                when (tabIndex.value) {
+                    0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        NewsBox(NewsBoxData , navController)
+                        NewsBox(NewsBoxData, navController)
+                        NewsBox2(data = NewsBoxData)
+//                        NewsBox(NewsBoxData)
+//                        NewsBox(NewsBoxData)
 
+                    }
+                    1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+//                        NewsBox(NewsBoxData)
 
+                    }
+                    2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+//                        NewsBox(NewsBoxData)
+//                        NewsBox(NewsBoxData)
+//                        ReadMore(NewsBoxData)
+                    }
+                }
+            }
 
 
 

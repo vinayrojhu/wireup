@@ -118,5 +118,7 @@ dependencies {
 
     implementation ("androidx.palette:palette:1.0.0")
 
+    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
+
 
 }

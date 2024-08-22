@@ -1,5 +1,6 @@
 package com.example.wireup.ui.Components
 
+import android.widget.Space
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -15,8 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.FFData
 
@@ -65,7 +71,7 @@ fun FFnewsBox(data: FFData) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(225.dp)
+                    .height(200.dp)
                     .padding(5.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color.LightGray),
@@ -74,16 +80,16 @@ fun FFnewsBox(data: FFData) {
                 Image(
                     painter = data.item2.image,
                     contentDescription = "Image in the box",
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
+
                 )
             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp)
+                    .height(150.dp)
                     .padding(5.dp)
-                    .clip(RoundedCornerShape(10.dp))
                     .background(Color.White)
 
             ) {
@@ -98,14 +104,17 @@ fun FFnewsBox(data: FFData) {
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
-                            text = data.item2.heading,
+//                            text = data.item2.heading,
+                            text="Copying Congress Manifesto in 2024 Budget: Rahul Gandhi Accuses Government" ,
                             color = Color.Black,
                             fontSize = 18.sp,
+                            maxLines = 2 ,
                             fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = data.item2.description,
+//                            text = data.item2.description,
+                            text = "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto. ",
                             color = Color.Black,
                             fontSize = 14.sp,
                             maxLines = 3,
@@ -128,6 +137,7 @@ fun FFnewsBox(data: FFData) {
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                     )
+
                     Icon(
                         painter = painterResource(id = R.drawable.icons8_arrow_96),
                         contentDescription = "read more",
@@ -136,10 +146,16 @@ fun FFnewsBox(data: FFData) {
                             .weight(1f)
                             .padding(start = 5.dp)
                     )
+
                 }
             }
         }
     }
+
+
+
+
+
     Surface(modifier = Modifier
         .padding(5.dp)
         .clip(RoundedCornerShape(10.dp)),
@@ -155,7 +171,7 @@ fun FFnewsBox(data: FFData) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(225.dp)
+                        .height(200.dp)
                         .padding(5.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.LightGray),
@@ -164,8 +180,9 @@ fun FFnewsBox(data: FFData) {
                     Image(
                         painter = data.item1.image,
                         contentDescription = "Image in the box",
-                        contentScale = ContentScale.FillBounds,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
+
                     )
                 }
 
@@ -174,15 +191,14 @@ fun FFnewsBox(data: FFData) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(90.dp)
+                        .height(150.dp)
                         .padding(5.dp)
-                        .clip(RoundedCornerShape(10.dp))
                         .background(Color.White)
 
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(0.8f)
+                            .fillMaxWidth(1f)
                             .fillMaxHeight(1f)
                             .background(Color.White)
                             .padding(5.dp)
@@ -191,14 +207,17 @@ fun FFnewsBox(data: FFData) {
                             modifier = Modifier.fillMaxSize()
                         ) {
                             Text(
-                                text = data.item1.heading,
+//                                text = data.item1.heading,
+                                text = "Congress Criticizes Union Budget 2024 as Inadequate for Economic Growth",
                                 color = Color.Black,
                                 fontSize = 18.sp,
+                                maxLines = 2 ,
                                 fontWeight = FontWeight.Bold,
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = data.item1.description,
+//                                text = data.item1.description,
+                                text="The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month.",
                                 color = Color.Black,
                                 fontSize = 14.sp,
                                 maxLines = 3,
@@ -207,6 +226,9 @@ fun FFnewsBox(data: FFData) {
                         }
 
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
 
                     Row(
                         modifier = Modifier
@@ -229,9 +251,12 @@ fun FFnewsBox(data: FFData) {
                                 .weight(1f)
                                 .padding(start = 5.dp)
                         )
+
                     }
                 }
             }
+
+
 
             // Conditionally render the alternate content when the heading, image, and description are hidden
             if (!showContent) {
@@ -239,7 +264,9 @@ fun FFnewsBox(data: FFData) {
             }
             // Toggle button to showand hide the heading, image, and description
             ToggleContentButton(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clip(RoundedCornerShape(7.dp)),
                 showContent = showContent,
                 onToggle = { setShowContent(!showContent) }
             )
@@ -256,7 +283,7 @@ fun ToggleContentButton(
     modifier: Modifier = Modifier,
     showContent: Boolean,
     onToggle: () -> Unit
-) {
+){
     // Animate the height of the toggle button
     val height by animateDpAsState(
         if (showContent) 40.dp else 40.dp,
@@ -267,8 +294,9 @@ fun ToggleContentButton(
         modifier = modifier
             .height(height)
             .fillMaxWidth()
-            .background(if (showContent) Color.Green else Color.Red)
+            .background(if (showContent) Color(0xFF4CAF50) else Color(0xFFEF4444))
             .clickable(onClick = onToggle)
+
     ) {
         Text(
             text = "Flip News",
