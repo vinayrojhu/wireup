@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wireup.R
+import com.example.wireup.model.MUser
 import com.example.wireup.model.WUser
 import com.example.wireup.ui.Screen.Tweet
 import com.example.wireup.util.DateUtil.getDateTime
@@ -64,24 +65,24 @@ fun TweetItem(
         mutableIntStateOf(tweet.bookmarkCount)
     }
     // yo demouser woh h jo comment krega
-    val demoUser = WUser(
-        id = FirebaseAuth.getInstance().currentUser?.email.toString(),
-        name = "Vinay",
-        profileImage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg",
-        bio = "Android developer | Nature Lover",
-        links = listOf("www.indicwire.com"),
-        followerIds = listOf("12341", "12342", "12343", "12344", "12345", "12346", "12347"),
-        followingIds = listOf("12342", "12345", "12344", "12346", "12347"),
-        postIds = listOf(
-            "123451",
-            "123452",
-            "123453",
-            "123454",
-            "123455",
-        ),
-        storyIds = listOf("1234561", "1234562", "1234563", "1234564", "1234565"),
-    )
-    val user = demoUser
+//    val demoUser = WUser(
+//        id = FirebaseAuth.getInstance().currentUser?.email.toString(),
+//        name = "Vinay",
+//        profileImage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg",
+//        bio = "Android developer | Nature Lover",
+//        links = listOf("www.indicwire.com"),
+//        followerIds = listOf("12341", "12342", "12343", "12344", "12345", "12346", "12347"),
+//        followingIds = listOf("12342", "12345", "12344", "12346", "12347"),
+//        postIds = listOf(
+//            "123451",
+//            "123452",
+//            "123453",
+//            "123454",
+//            "123455",
+//        ),
+//        storyIds = listOf("1234561", "1234562", "1234563", "1234564", "1234565"),
+//    )
+    val user = MUser(id = "23323", name = "vinay", email = "sdfsd@fss.in", profileImage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg")
     Row(
         Modifier
             .fillMaxWidth(1f)

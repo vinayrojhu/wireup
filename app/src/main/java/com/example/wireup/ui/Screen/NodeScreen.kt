@@ -7,28 +7,34 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,18 +47,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.ui.Components.CircularImage
-import com.example.wireup.ui.Components.NumberText
 import com.example.wireup.ui.Components.TweetActionRow
 import com.example.wireup.ui.Components.TweetItem
+import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.util.DateUtil
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.UUID
-import kotlin.random.Random
 
 data class Tweet(
     val id: String = UUID.randomUUID().toString(),
@@ -62,13 +65,18 @@ data class Tweet(
     val likeCount: Int = 0,
     val retweetCount: Int = 0,
     val bookmarkCount: Int = 0,
-    val imageUrl: List<String> = emptyList(),
+    val imageUrl: String ,
     val timeStamp: Long = System.currentTimeMillis()
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NodeScreen(navController: NavHostController) {
+fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
+    val tweets by viewModel.tweets.observeAsState(initial = emptyList())
+    val isLoading by remember { mutableStateOf(false) }
+    val tweetText = remember { mutableStateOf("") }
+    val imageUrl = remember { mutableStateOf("") }
+    val showDialog = remember { mutableStateOf(false) }
     Column {
         TopAppBar(title = {
             Text(
@@ -87,28 +95,88 @@ fun NodeScreen(navController: NavHostController) {
         }
         )
         Divider()
-            Column(
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 3.dp, end = 3.dp)
+//                    .verticalScroll(rememberScrollState())
+//            ) {
+//
+//                MainNode()
+//
+//            }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            // Other composables...
+
+            Button(
+                onClick = { showDialog.value = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 3.dp, end = 3.dp)
-                    .verticalScroll(rememberScrollState())
+                    .height(48.dp)
+                    .padding(horizontal = 16.dp),
+                elevation = ButtonDefaults.buttonElevation(8.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                val div = 5
-                repeat(div) { index ->
-                    MainNode()
-
-                    if (index < div-1) {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            thickness = 2.dp,
-                            color = Color.Gray
-                        )
-                    }
-                }
-
-
+                Text("Create Tweet")
             }
+
+            if (showDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { showDialog.value = false },
+                    title = { Text("Create Tweet") },
+                    text = {
+                        Column {
+                            TextField(
+                                value = tweetText.value,
+                                onValueChange = { tweetText.value = it },
+                                label = { Text("Tweet text") }
+                            )
+
+                            TextField(
+                                value = imageUrl.value,
+                                onValueChange = { imageUrl.value = it },
+                                label = { Text("Image URL") }
+                            )
+                        }
+                    },
+                    buttons = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Button(
+                                onClick = {
+                                    viewModel.addTweet(tweetText.value, imageUrl.value)
+                                    showDialog.value = false
+                                    tweetText.value = ""
+                                    imageUrl.value = ""
+                                }
+                            ) {
+                                Text("Done")
+                            }
+                        }
+                    }
+                )
+            }
+        }
+
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+        } else {
+            tweets.forEach { tweet ->
+                TweetItem(tweet, onCommentClick = { }, onItemClick = { })
+            }
+        }
 
 
 
@@ -252,9 +320,83 @@ fun MainNode(){
                     likeCount = 203,
                     retweetCount = 50,
                     bookmarkCount = 135,
-                    imageUrl = urls), onCommentClick = { }) {}
+                    imageUrl = "https://vectorportal.com/storage/anime-avatar.jpg"),
+                    onCommentClick = { }) {}
             }
         }
     }
 
 }
+
+
+//
+//@Composable
+//fun PdfScreen(
+//    viewModel: UserViewModel = viewModel(),
+//    modifier: Modifier = Modifier
+//) {
+//    val tweetText = remember { mutableStateOf("") }
+//    val imageUrl = remember { mutableStateOf("") }
+//    val showDialog = remember { mutableStateOf(false) }
+//
+//    Column(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .padding(horizontal = 16.dp)
+//    ) {
+//        // Other composables...
+//
+//        Button(
+//            onClick = { showDialog.value = true },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(48.dp)
+//                .padding(horizontal = 16.dp),
+//            elevation = ButtonDefaults.elevation(8.dp),
+//            shape = RoundedCornerShape(16.dp)
+//        ) {
+//            Text("Create Tweet")
+//        }
+//
+//        if (showDialog.value) {
+//            AlertDialog(
+//                onDismissRequest = { showDialog.value = false },
+//                title = { Text("Create Tweet") },
+//                text = {
+//                    Column {
+//                        TextField(
+//                            value = tweetText.value,
+//                            onValueChange = { tweetText.value = it },
+//                            label = { Text("Tweet text") }
+//                        )
+//
+//                        TextField(
+//                            value = imageUrl.value,
+//                            onValueChange = { imageUrl.value = it },
+//                            label = { Text("Image URL") }
+//                        )
+//                    }
+//                },
+//                buttons = {
+//                    Row(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 16.dp),
+//                        horizontalArrangement = Arrangement.End
+//                    ) {
+//                        Button(
+//                            onClick = {
+//                                viewModel.addTweet(tweetText.value, imageUrl.value)
+//                                showDialog.value = false
+//                                tweetText.value = ""
+//                                imageUrl.value = ""
+//                            }
+//                        ) {
+//                            Text("Done")
+//                        }
+//                    }
+//                }
+//            )
+//        }
+//    }
+//}

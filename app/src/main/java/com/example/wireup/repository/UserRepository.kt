@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.wireup.model.MUser
+import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
@@ -69,6 +70,43 @@ class FirestoreRepository {
                 liveData.value = ""
             }
 
+        return liveData
+    }
+
+    fun addTweet(tweet: Tweet): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        val tweetRef = firestore.collection("tweets").document()
+        tweetRef.set(tweet)
+            .addOnSuccessListener {
+                liveData.value = true
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error adding tweet", exception)
+                liveData.value = false
+            }
+        return liveData
+    }
+
+    fun fetchTweetsFromFirestore(): LiveData<List<Tweet>> {
+        val liveData = MutableLiveData<List<Tweet>>()
+        firestore.collection("tweets").get()
+            .addOnSuccessListener { querySnapshot ->
+                val tweets = querySnapshot.documents.map { document ->
+                    Tweet(
+                        id = document.id,
+                        userId = document.getString("userId") ?: "",
+                        imageUrl = document.getString("shares") ?: "",
+                        description = document.getString("text") ?: "",
+                        likeCount = document.getLong("likes")?.toInt() ?: 0,
+                        bookmarkCount = document.getLong("saves")?.toInt() ?: 0
+                    )
+                }
+                liveData.value = tweets
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting tweets", exception)
+                liveData.value = emptyList()
+            }
         return liveData
     }
 
