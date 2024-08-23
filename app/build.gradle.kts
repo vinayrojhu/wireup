@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -109,16 +110,20 @@ dependencies {
 
     implementation("androidx.compose.material3:material3:1.2.1")
 
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation ("com.google.android.gms:play-services-auth:20.4.0")
+    implementation(libs.google.firebase.firestore.ktx)
+    implementation(libs.google.firebase.auth.ktx)
+    implementation (libs.play.services.auth)
 
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
-    implementation ("com.google.firebase:firebase-storage:20.0.0")
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+    implementation (libs.firebase.storage)
 
-    implementation ("androidx.palette:palette:1.0.0")
+    implementation (libs.androidx.palette)
 
-    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation (libs.google.exoplayer)
+
+
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
+
 
 
 }

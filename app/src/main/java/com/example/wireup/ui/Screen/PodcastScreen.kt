@@ -7,12 +7,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +23,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -54,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
 
@@ -113,8 +119,22 @@ fun PodcastScreen(navController: NavHostController) {
                     selectedTabIndex = it
                 }
                 when (selectedTabIndex) {
-                    0 -> VideoScreen()
-                    1 -> AudioScreen()
+                    0 -> LazyColumn(
+                        modifier = Modifier
+                            .padding(16.dp)
+                    ) {
+                        items(videopodcasts) { Vpodcast ->
+                            VideoPostBox(Vpodcast, navController)
+                        }
+                    }
+                    1 -> LazyColumn(
+                        modifier = Modifier
+                            .padding(16.dp)
+                    ) {
+                        items(audiopodcasts) { Apodcast ->
+                            PodcastItem(Apodcast, navController)
+                        }
+                    }
                 }
 
 
@@ -132,40 +152,57 @@ fun PodcastScreen(navController: NavHostController) {
 
 //video
 @Composable
-fun VideoPostBox(Vpodcast: VideoPodcast) {
+fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 8.dp),
+            .padding(top = 8.dp, bottom = 8.dp)
+            .clickable(
+                onClick = {
+                    navController.navigate(NavigationItem.VideoPodcastOpened.route)
+                }
+            ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer)
+            containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth() ,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+
+        Box(){
+            Image(
+                painter = rememberAsyncImagePainter(Vpodcast.imageUrl),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(190.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            )
+            Icon(Icons.Filled.PlayArrow, contentDescription = "Friends"
+                , modifier = Modifier.align(Alignment.Center).size(50.dp) ,
+                tint = Color.White)
+        }
 
 //            Spacer(modifier = Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(top = 14.dp , start = 14.dp)) {
+            Column(modifier = Modifier.padding(top = 14.dp , start = 5.dp , end = 5.dp)) {
                 Text(
-                    text = Vpodcast.title,
+//                    text = Vpodcast.title,
+                    text = "The Motivation Expert : Why You're FAILING To Achieve Your Goals (& What To Do About It!)",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start ,
+                    maxLines = 3
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = Vpodcast.author,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Start
-                )
-                Spacer(modifier = Modifier.height(19.dp))
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(
+//                    text = Vpodcast.author,
+//                    fontSize = 14.sp,
+//                    textAlign = TextAlign.Start
+//                )
+
                 Row(modifier = Modifier ,
                     verticalAlignment = Alignment.CenterVertically ,
-                    horizontalArrangement = Arrangement.SpaceBetween){
+                    horizontalArrangement = Arrangement.spacedBy(200.dp)){
                     Text(
                         text = "3 july, 2024",
                         fontSize = 14.sp,
@@ -181,35 +218,15 @@ fun VideoPostBox(Vpodcast: VideoPodcast) {
                     }
                 }
 
-
-            }
-
-
-                        Image(
-                            painter = rememberAsyncImagePainter(Vpodcast.imageUrl),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .width(130.dp)
-                                .height(130.dp)
-                                .clickable(
-                                    onClick={
-
-                                    }
-                                )
-                        )
-
-
-
         }
     }
 }
 
 //@Preview(showBackground = true)
-@Composable
-fun PreviewVideoPostBox() {
-    VideoScreen()
-}
+//@Composable
+//fun PreviewVideoPostBox() {
+//    VideoScreen()
+//}
 
 val videopodcasts = listOf(
     VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
@@ -235,18 +252,18 @@ val videopodcasts = listOf(
 
 
 
-
-@Composable
-fun VideoScreen(){
-    LazyColumn(
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
-        items(videopodcasts) { Vpodcast ->
-            VideoPostBox(Vpodcast)
-        }
-    }
-}
+//
+//@Composable
+//fun VideoScreen(){
+//    LazyColumn(
+//        modifier = Modifier
+//            .padding(16.dp)
+//    ) {
+//        items(videopodcasts) { Vpodcast ->
+//            VideoPostBox(Vpodcast)
+//        }
+//    }
+//}
 
 
 
@@ -264,11 +281,16 @@ fun VideoScreen(){
 //Audio
 
 @Composable
-fun PodcastItem(Apodcast: AudioPodcast) {
+fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable(
+                onClick = {
+                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
+                }
+            ),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -363,15 +385,15 @@ val audiopodcasts = listOf(
     )
 )
 
-@Composable
-fun AudioScreen(){
-    val pairedPosts = audiopodcasts.chunked(2)
-    LazyColumn(
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
-        items(audiopodcasts) { Apodcast ->
-            PodcastItem(Apodcast)
-        }
-    }
-}
+//@Composable
+//fun AudioScreen(){
+//    val pairedPosts = audiopodcasts.chunked(2)
+//    LazyColumn(
+//        modifier = Modifier
+//            .padding(16.dp)
+//    ) {
+//        items(audiopodcasts) { Apodcast ->
+//            PodcastItem(Apodcast)
+//        }
+//    }
+//}

@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,12 +59,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.NewsData
 import com.example.wireup.ui.Components.NewsBox
+import com.example.wireup.ui.Components.NewsBox2
+import com.example.wireup.ui.Components.NewsBox3
+import com.example.wireup.ui.Components.ScrollingNewsBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,7 +111,9 @@ fun HomeScreen( navController: NavHostController) {
                 }
             }
         })
-        Divider()
+//        Divider()
+
+
 
 //        NavigationRail(
 //            modifier = Modifier
@@ -174,24 +181,53 @@ fun HomeScreen( navController: NavHostController) {
 //                }
 //            }
 
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(text = "Saturday, March 24th" , fontWeight = FontWeight.W300 , fontSize = 12.sp)
+                Text(text = "Welcome Back , " , fontSize = 28.sp , fontWeight =FontWeight.W600)
+                Text(text = "Ankush", fontSize = 28.sp , fontWeight =FontWeight.W600)
+            }
+
             Box(modifier = Modifier.fillMaxHeight()){
                 when (tabIndex.value) {
-                    0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    0 -> Column() {
+                        Row(modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .padding(bottom = 20.dp)) {
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                            ScrollingNewsBox(NewsBoxData, navController =navController )
+                        }
+                        NewsBox2(NewsBoxData , navController =navController)
+                        NewsBox2(NewsBoxData, navController =navController)
+                        NewsBox2(NewsBoxData, navController =navController)
+
+                        NewsBox3(NewsBoxData , navController =navController)
+                        NewsBox3(NewsBoxData , navController =navController)
+                        NewsBox3(NewsBoxData , navController =navController)
+
                         NewsBox(NewsBoxData, navController = navController)
                         NewsBox(NewsBoxData, navController = navController)
-                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
+                    }
+                    1 -> Column {
                         NewsBox(NewsBoxData, navController = navController)
                     }
-                    1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        NewsBox(NewsBoxData, navController = navController)
-                    }
-                    2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    2 -> Column {
                         NewsBox(NewsBoxData, navController = navController)
                         NewsBox(NewsBoxData, navController = navController)
                     }
                 }
             }
         }
+
+    }
+
 
 
 

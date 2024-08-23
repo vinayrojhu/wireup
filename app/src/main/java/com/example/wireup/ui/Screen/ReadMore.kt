@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -43,87 +45,91 @@ fun ReadMore( navController: NavHostController) {
         title = "8 Steps To Help You Stop Overthinking Everything",
         subtitle = "Learn how to manage your thoughts and reduce anxiety."
     )
-    Column {
-        TopAppBar(title = {
-            androidx.compose.material3.Text(
-                "NewsBox", fontSize = 18.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-        }
-        )
-    }
+ Column (modifier = Modifier
+     .fillMaxSize()
+      ){
+     TopAppBar(title = {
+         Text(
+             "Back", fontSize = 18.sp
+         )
+     }, navigationIcon = {
+         IconButton(onClick = {
+             navController.popBackStack()
+         }) {
+             Icon(
+                 imageVector = Icons.Default.ArrowBack,
+                 contentDescription = "Back",
+                 modifier = Modifier.padding(8.dp)
+             )
+         }
+     }
+     )
 
-    Surface(modifier = Modifier
-        .fillMaxWidth()
-        .padding(5.dp)) {
-        Column(modifier = Modifier.padding(13.dp)) {
+     Column(modifier = Modifier
+         .fillMaxWidth()
+         .padding(bottom = 5.dp , start = 5.dp , end = 5.dp , top = 0.dp)
+         .verticalScroll(rememberScrollState())) {
+         Column(modifier = Modifier.padding(bottom = 10.dp , start = 10.dp , end = 10.dp , top = 0.dp)) {
 
-            Text(
-                text = data.title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 30.sp ,
-                fontFamily = FontFamily.SansSerif
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = data.subtitle,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+             Text(
+                 text = data.title,
+                 fontWeight = FontWeight.Bold,
+                 fontSize = 30.sp ,
+                 fontFamily = FontFamily.SansSerif
+             )
+             Spacer(modifier = Modifier.height(10.dp))
+             Text(
+                 text = data.subtitle,
+                 fontSize = 18.sp
+             )
+             Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                text = data.date,
-                textAlign = TextAlign.Start,
-                fontSize = 11.sp,
-                fontWeight = FontWeight(300)
-            )
+             Text(
+                 text = data.date,
+                 textAlign = TextAlign.Start,
+                 fontSize = 11.sp,
+                 fontWeight = FontWeight(300)
+             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+             Spacer(modifier = Modifier.height(10.dp))
 
-            Image(
-                painter = rememberImagePainter(data.imageurl),
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(190.dp)
+             Image(
+                 painter = rememberImagePainter(data.imageurl),
+                 contentDescription = null,
+                 contentScale = ContentScale.FillBounds,
+                 modifier = Modifier
+                     .fillMaxWidth(1f)
+                     .height(190.dp)
 //                    .height(200.dp)
-            )
-            Text(text = "Photo Source : Vinay Rojh " , fontSize = 10.sp , fontWeight = FontWeight.W200 , modifier = Modifier.padding(start = 5.dp))
+             )
+             Text(text = "Photo Source : Vinay Rojh " , fontSize = 10.sp , fontWeight = FontWeight.W200 , modifier = Modifier.padding(start = 5.dp))
 
-            Spacer(modifier = Modifier.height(10.dp))
+             Spacer(modifier = Modifier.height(10.dp))
 
-            Text(text="Overthinking can be exhausting and counterproductive. Here are eight steps to help you break the cycle:\n" +
-                    "\n" +
-                    "1. Recognize the Problem: Acknowledge that you’re overthinking. Awareness is the first step toward change.\n" +
-                    "\n" +
-                    "2. Focus on What You Can Control: Identify the aspects of the situation that you can influence, and let go of what’s beyond your control.\n" +
-                    "\n" +
-                    "3. Set Time Limits: Give yourself a set amount of time to think about a problem. After that, move on to something else.\n" +
-                    "\n" +
-                    "4. Practice Mindfulness: Engage in mindfulness or meditation to stay present and prevent your mind from wandering into overthinking.\n" +
-                    "\n" +
-                    "5. Challenge Negative Thoughts: Question the validity of your thoughts. Are they based on facts or assumptions? Replace negative thoughts with positive ones.\n" +
-                    "\n" +
-                    "6. Distract Yourself: Engage in an activity that requires your full attention, like exercising, reading, or spending time with loved ones.\n" +
-                    "\n" +
-                    "7. Write It Down: Sometimes, writing down your thoughts can help you process them more objectively and relieve the mental burden.\n" +
-                    "\n" +
-                    "8. Seek Support: Talk to someone you trust about what’s on your mind. They can offer perspective and help you see things more clearly.\n" +
-                    "\n" +
-                    "By consistently applying these strategies, you can reduce the habit of overthinking and develop a healthier mindset." ,
-                fontSize = 15.sp)
+             Text(text="Overthinking can be exhausting and counterproductive. Here are eight steps to help you break the cycle:\n" +
+                     "\n" +
+                     "1. Recognize the Problem: Acknowledge that you’re overthinking. Awareness is the first step toward change.\n" +
+                     "\n" +
+                     "2. Focus on What You Can Control: Identify the aspects of the situation that you can influence, and let go of what’s beyond your control.\n" +
+                     "\n" +
+                     "3. Set Time Limits: Give yourself a set amount of time to think about a problem. After that, move on to something else.\n" +
+                     "\n" +
+                     "4. Practice Mindfulness: Engage in mindfulness or meditation to stay present and prevent your mind from wandering into overthinking.\n" +
+                     "\n" +
+                     "5. Challenge Negative Thoughts: Question the validity of your thoughts. Are they based on facts or assumptions? Replace negative thoughts with positive ones.\n" +
+                     "\n" +
+                     "6. Distract Yourself: Engage in an activity that requires your full attention, like exercising, reading, or spending time with loved ones.\n" +
+                     "\n" +
+                     "7. Write It Down: Sometimes, writing down your thoughts can help you process them more objectively and relieve the mental burden.\n" +
+                     "\n" +
+                     "8. Seek Support: Talk to someone you trust about what’s on your mind. They can offer perspective and help you see things more clearly.\n" +
+                     "\n" +
+                     "By consistently applying these strategies, you can reduce the habit of overthinking and develop a healthier mindset." ,
+                 fontSize = 15.sp)
 
-        }
+         }
 
+     }
+
+ }
     }
-}
