@@ -24,6 +24,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,7 +77,7 @@ fun EditProfileScreen(navController: NavHostController) {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.Filled.Close,
                     contentDescription = "Back",
                     modifier = Modifier.padding(8.dp)
                 )

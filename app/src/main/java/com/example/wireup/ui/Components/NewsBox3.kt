@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
@@ -29,8 +30,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -41,14 +40,14 @@ import com.example.wireup.model.NewsData
 
 
 @Composable
-fun NewsBox2(data: NewsData , navController: NavHostController) {
+fun NewsBox3(data: NewsData, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 10.dp , bottom = 10.dp, end = 5.dp)
-            .clickable(enabled = true,
-                onClick = {navController.navigate(NavigationItem.ReadMore.route)}
-            ),
+            .padding(15.dp)
+            .clickable(
+                enabled = true,
+                onClick = { navController.navigate(NavigationItem.ReadMore.route) }),
         colors = CardColors(containerColor = Color.Transparent,
             contentColor = Color.Unspecified,
             disabledContainerColor = Color.Transparent,
@@ -56,58 +55,49 @@ fun NewsBox2(data: NewsData , navController: NavHostController) {
 //        border = BorderStroke(width = 1.dp,
 //            brush = Brush.linearGradient(colors = listOf(Color.LightGray, Color.LightGray)))
     ) {
-        Row {
+        // Image
+        Image(
+            painter = rememberImagePainter(data.imageurl),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(190.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
 
 
-            Column(modifier = Modifier
-                .padding(start = 15.dp, top = 8.dp, end = 16.dp, bottom = 6.dp)
-                .width(190.dp))
-              {
-                // Title
-                Text(
-                    text = data.title,
-                    fontWeight = FontWeight.Bold ,
-                    fontSize = 16.sp
-                )
+        Column(modifier = Modifier.padding(8.dp)) {
 
-                Spacer(modifier = Modifier.height(1.dp))
-
-                // Subtitle
-                Text(
-                    text = data.subtitle,
-                    fontSize = 14.sp
-                )
-                  Text(
-                      text = data.date,
-                      textAlign = TextAlign.Start,
-                      fontSize = 11.sp ,
-                      fontWeight = FontWeight(300)
-                  )
-              }
-
-
-            // Image
-            Image(
-                painter = rememberImagePainter(data.imageurl),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .align(Alignment.CenterVertically)
+            // Title
+            Text(
+                text = data.title,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.W500
             )
 
 
+            // Trending indicator
+            Box(modifier = Modifier
+                .align(Alignment.Start)
+                .padding(top = 10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Time ago
+                    Text(
+                        text = data.date,
+                        textAlign = TextAlign.Start,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.W300,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
 
-
+                }
+            }
 
         }
+        Divider()
     }
-
 }
-
-
-
-
-

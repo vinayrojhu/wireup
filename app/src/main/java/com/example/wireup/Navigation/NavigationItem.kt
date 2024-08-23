@@ -16,7 +16,9 @@ enum class Screen {
     SETTINGS,
     SEARCH,
 
-    READMORE
+    READMORE ,
+    VIDEOPODCASTOPENED ,
+    AUDIOPODCASTOPENED
 
 }
 
@@ -37,4 +39,6 @@ sealed class NavigationItem(val route: String) {
     object Search : NavigationItem(Screen.SEARCH.name)
 
     object ReadMore : NavigationItem(Screen.READMORE.name)
+    object VideoPodcastOpened : NavigationItem(Screen.VIDEOPODCASTOPENED.name)
+    object AudioPodcastOpened : NavigationItem(Screen.AUDIOPODCASTOPENED.name)
 }

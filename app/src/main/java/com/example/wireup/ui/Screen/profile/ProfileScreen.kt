@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
@@ -58,8 +59,9 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
 import com.example.wireup.ui.Components.TweetItem
-import com.example.wireup.ui.Screen.AudioScreen
+import com.example.wireup.ui.Screen.PodcastItem
 import com.example.wireup.ui.Screen.Tweet
+import com.example.wireup.ui.Screen.audiopodcasts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
@@ -118,8 +120,10 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     .height(270.dp)
                                     .width(100.dp)
                                     .clip(
-                                        RoundedCornerShape(topStart = 10.dp ,
-                                        bottomStart = 10.dp)
+                                        RoundedCornerShape(
+                                            topStart = 10.dp,
+                                            bottomStart = 10.dp
+                                        )
                                     ),
                                 containerColor = Color.Black,
                                 contentColor = Color.White,
@@ -218,25 +222,26 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     .align(alignment = Alignment.CenterHorizontally)
                             )
 
+                            Column(modifier = Modifier
+                                .align(alignment = Alignment.CenterHorizontally)
+                                .padding(top = 10.dp, bottom = 10.dp)) {
+                                Row(modifier = Modifier
+                                    .align(alignment = Alignment.CenterHorizontally)) {
+                                    Text(
+                                        text = username,
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
 
-                        Column(modifier = Modifier
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .padding(top = 10.dp, bottom = 10.dp)) {
-                            Row(modifier = Modifier
-                                .align(alignment = Alignment.CenterHorizontally)) {
                                 Text(
-                                    text = username,
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
-
-                            Text(
                                     text = userFollowers,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
 
-                        }
+                            }
+
+
 
                         Row {
 
@@ -346,7 +351,14 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             }
             when (selectedTabIndex) {
                 0 -> UserNode()
-                1 -> AudioScreen()
+                1 -> LazyColumn(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    items(audiopodcasts) { Apodcast ->
+                        PodcastItem(Apodcast,navController)
+                    }
+                }
             }
         }
     }

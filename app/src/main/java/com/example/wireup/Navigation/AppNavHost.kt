@@ -19,6 +19,8 @@ import com.example.wireup.ui.Screen.FlipFlopScreen
 import com.example.wireup.ui.Screen.FriendsScreen
 import com.example.wireup.ui.Screen.HomeScreen
 import com.example.wireup.ui.Screen.NodeScreen
+import com.example.wireup.ui.Screen.OpenAudioPodcast
+import com.example.wireup.ui.Screen.OpenVideoPodcast
 import com.example.wireup.ui.Screen.PodcastScreen
 import com.example.wireup.ui.Screen.ReadMore
 import com.example.wireup.ui.Screen.profile.ProfileScreen
@@ -26,6 +28,7 @@ import com.example.wireup.ui.Screen.SavedScreen
 import com.example.wireup.ui.Screen.SearchScreen
 import com.example.wireup.ui.Screen.SettingsScreen
 import com.example.wireup.ui.Screen.SplashScreen
+import com.example.wireup.ui.Screen.VideoPodcast
 import com.example.wireup.ui.Screen.login.AuthenticationScreen
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -110,6 +113,14 @@ fun AppNavHost(
         composable(NavigationItem.ReadMore.route){
             ReadMore(navController = navController)
         }
+        composable(NavigationItem.VideoPodcastOpened.route){
+            OpenVideoPodcast(navController = navController)
+        }
+        composable(NavigationItem.AudioPodcastOpened.route){
+            OpenAudioPodcast(navController = navController)
+        }
+
+
     }
 }
 
