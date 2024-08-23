@@ -38,6 +38,7 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.NewsData
 import com.example.wireup.ui.Screen.ReadMore
+import com.example.wireup.util.DateUtil
 
 
 @Composable
@@ -115,10 +116,10 @@ fun NewsBox(data: NewsData , navController: NavHostController) {
                 ) {
                     // Time ago
                     Text(
-                        text = data.date,
-                        textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        DateUtil.getDate2(System.currentTimeMillis()),
+                        color = Color.Black,
+                        fontSize = 12.sp ,
+                        fontWeight = FontWeight.W300
                     )
 
                     Spacer(modifier = Modifier.width(170.dp))

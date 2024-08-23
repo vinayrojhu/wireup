@@ -37,6 +37,7 @@ import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.NewsData
+import com.example.wireup.util.DateUtil
 
 
 @Composable
@@ -87,11 +88,10 @@ fun NewsBox3(data: NewsData, navController: NavHostController) {
                 ) {
                     // Time ago
                     Text(
-                        text = data.date,
-                        textAlign = TextAlign.Start,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.W300,
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        DateUtil.getDate2(System.currentTimeMillis()),
+                        color = Color.Black,
+                        fontSize = 12.sp ,
+                        fontWeight = FontWeight.W300
                     )
 
                 }

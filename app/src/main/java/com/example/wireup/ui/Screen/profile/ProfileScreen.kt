@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
     val userData by viewModel.getUserData().observeAsState()
     val userId = userData?.email?.split("@")?.get(0)
- //   val userId = FirebaseAuth.getInstance().currentUser?.email?.split("@")?.get(0)
     val username = userData?.name.toString()
     val userFollowers = "88230 Followers"
  //   val userImage = userData?.profileImage.toString()
@@ -219,7 +219,8 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     .height(100.dp)
                                     .width(100.dp)
                                     .clip(CircleShape)
-                                    .align(alignment = Alignment.CenterHorizontally)
+                                    .align(alignment = Alignment.CenterHorizontally),
+                                contentScale = ContentScale.Crop
                             )
 
                             Column(modifier = Modifier

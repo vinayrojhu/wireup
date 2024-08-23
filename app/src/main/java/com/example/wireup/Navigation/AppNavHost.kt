@@ -65,7 +65,9 @@ fun AppNavHost(
             AuthenticationScreen(navController = navController)
         }
         composable(NavigationItem.Home.route) {
-            HomeScreen( navController = navController)
+            HomeScreen( navController = navController, viewModel = UserViewModel(
+                FirestoreRepository()
+            ))
         }
         composable(NavigationItem.FlipFlop.route) {
             FlipFlopScreen( navController = navController)

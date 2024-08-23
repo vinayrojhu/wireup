@@ -87,6 +87,7 @@ fun CircularImage(
                     brush = brush
                 )
                 .align(Alignment.CenterHorizontally),
+            contentScale = ContentScale.Crop
         )
         if (isNameVisible && name.isNullOrEmpty().not()) {
             Text(

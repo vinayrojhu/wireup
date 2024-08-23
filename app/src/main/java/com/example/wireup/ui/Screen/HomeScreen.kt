@@ -49,6 +49,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,6 +62,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
@@ -69,11 +71,15 @@ import com.example.wireup.ui.Components.NewsBox
 import com.example.wireup.ui.Components.NewsBox2
 import com.example.wireup.ui.Components.NewsBox3
 import com.example.wireup.ui.Components.ScrollingNewsBox
+import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.util.DateUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen( navController: NavHostController) {
+fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = viewModel()) {
     val tabIndex = remember { mutableStateOf(0) }
+    val userData by viewModel.getUserData().observeAsState()
+    val username = userData?.name.toString()
     val NewsBoxData = NewsData(
         category ="Philosophy" ,
         trending = true ,
@@ -111,81 +117,20 @@ fun HomeScreen( navController: NavHostController) {
                 }
             }
         })
-//        Divider()
+        Divider()
 
-
-
-//        NavigationRail(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .wrapContentSize(align = Alignment.BottomCenter)
-//                .background(color = Color.Transparent),
-//            header = {
-//                Row(
-//                modifier = Modifier
-//                    .height(25.dp)
-//                    .align(Alignment.End)
-//                    .fillMaxWidth()
-//                    .wrapContentSize(align = Alignment.BottomCenter)
-//                    .background(color = Color.Transparent)
-//                //     horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-//            ) {
-//                NavigationRailItem(
-//                    selected = tabIndex.value == 0,
-//                    onClick = { tabIndex.value = 0 },
-//                    icon = {
-//                        Icon(
-//                            imageVector = Icons.Default.Home,
-//                            contentDescription = "Home"
-//                        )
-//                    }
-//                )
-//                NavigationRailItem(
-//                    selected = tabIndex.value == 1,
-//                    onClick = { tabIndex.value = 1 },
-//                    icon = {
-//                        Icon(
-//                            imageVector = Icons.Default.ShoppingCart,
-//                            contentDescription = "Shopping Cart"
-//                        )
-//                    }
-//                )
-//                NavigationRailItem(
-//                    selected = tabIndex.value == 2,
-//                    onClick = { tabIndex.value = 2 },
-//                    icon = {
-//                        Icon(
-//                            imageVector = Icons.Default.AccountBox,
-//                            contentDescription = "Account"
-//                        )
-//                    }
-//                )
-//            }}
-//
-//        ) {
-//            Box(modifier = Modifier.fillMaxHeight()){
-//                when (tabIndex.value) {
-//                    0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData, navController = navController)
-//                        NewsBox(NewsBoxData, navController = navController)
-//                        NewsBox(NewsBoxData, navController = navController)
-//                        NewsBox(NewsBoxData, navController = navController)
-//                    }
-//                    1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData, navController = navController)
-//                    }
-//                    2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                        NewsBox(NewsBoxData, navController = navController)
-//                        NewsBox(NewsBoxData, navController = navController)
-//                    }
-//                }
-//            }
 
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text(text = "Saturday, March 24th" , fontWeight = FontWeight.W300 , fontSize = 12.sp)
+//                Text(text = "Saturday, March 24th" , fontWeight = FontWeight.W300 , fontSize = 12.sp)
+                Text(
+                    DateUtil.getDate(System.currentTimeMillis()),
+                    color = Color.Black,
+                    fontSize = 12.sp ,
+                    fontWeight = FontWeight.W300
+                )
                 Text(text = "Welcome Back , " , fontSize = 28.sp , fontWeight =FontWeight.W600)
-                Text(text = "Ankush", fontSize = 28.sp , fontWeight =FontWeight.W600)
+                Text(text = username, fontSize = 28.sp , fontWeight =FontWeight.W600)
             }
 
             Box(modifier = Modifier.fillMaxHeight()){

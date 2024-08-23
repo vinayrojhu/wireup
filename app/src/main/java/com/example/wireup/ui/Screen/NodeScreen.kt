@@ -133,18 +133,6 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
             ) {
                 // Other composables...
 
-//            Button(
-//                onClick = { showDialog.value = true },
-//                modifier = Modifier
-//                    .width(48.dp)
-//                    .height(48.dp)
-//                    .padding(horizontal = 16.dp).align(Alignment.End),
-//                elevation = ButtonDefaults.buttonElevation(8.dp),
-//                shape = RoundedCornerShape(16.dp)
-//            ) {
-//                Icon(imageVector = Icons.Outlined.Add, contentDescription = "add node")
-//            }
-
                 if (showDialog.value) {
                     AlertDialog(
                         onDismissRequest = { showDialog.value = false },
@@ -235,7 +223,7 @@ fun MainNode(tweet: Tweet, user: MUser? ){
     val userimage = remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
-        FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+        FirebaseStorage.getInstance().reference.child("users/${user?.id}/profile_image").downloadUrl.addOnSuccessListener { uri ->
             userimage.value = uri
         }
     }
