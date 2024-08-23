@@ -1,10 +1,12 @@
 package com.example.wireup.ui.Components
 
+import android.net.Uri
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +32,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 
 @Composable
 fun CircularImage(
     modifier: Modifier = Modifier,
-    imageUrl: String,
+    imageUri: MutableState<Uri?>,
     imageSize: Dp = 75.dp,
     isBorderVisible: Boolean = false,
     isNameVisible: Boolean = false,
@@ -71,9 +75,8 @@ fun CircularImage(
             1f
         }
         AsyncImage(
-            imageUrl,
+            model = imageUri.value,
             contentDescription = null,
-            contentScale = contentScale,
             modifier = modifier
                 .alpha(alpha)
                 .size(imageSize)
@@ -97,3 +100,4 @@ fun CircularImage(
         }
     }
 }
+

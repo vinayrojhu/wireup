@@ -95,10 +95,11 @@ class FirestoreRepository {
                     Tweet(
                         id = document.id,
                         userId = document.getString("userId") ?: "",
-                        imageUrl = document.getString("shares") ?: "",
-                        description = document.getString("text") ?: "",
-                        likeCount = document.getLong("likes")?.toInt() ?: 0,
-                        bookmarkCount = document.getLong("saves")?.toInt() ?: 0
+                        imageUrl = document.getString("imageUrl"),
+                        description = document.getString("description") ?: "",
+                        likeCount = document.getLong("likeCount")?.toInt() ?: 0,
+                        bookmarkCount = document.getLong("bookmarkCount")?.toInt() ?: 0,
+                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0
                     )
                 }
                 liveData.value = tweets
@@ -109,5 +110,26 @@ class FirestoreRepository {
             }
         return liveData
     }
+
+    fun fetchUsersFromFirestore(): LiveData<List<MUser>> {
+        val liveData = MutableLiveData<List<MUser>>()
+        firestore.collection("users").get()
+            .addOnSuccessListener { querySnapshot ->
+                val users = querySnapshot.documents.map { document ->
+                    MUser(
+                        id = document.id,
+                        name = document.getString("name") ?: "",
+                        profileImage = document.getString("profile_image") ?: ""
+                    )
+                }
+                liveData.value = users
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting users", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
+    }
+
 
 }

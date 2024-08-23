@@ -1,5 +1,7 @@
 package com.example.wireup.ui.Components
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,9 +21,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,12 +38,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.example.wireup.R
 import com.example.wireup.model.MUser
-import com.example.wireup.model.WUser
 import com.example.wireup.ui.Screen.Tweet
 import com.example.wireup.util.DateUtil.getDateTime
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 
 @Composable
 fun TweetItem(
@@ -84,6 +89,13 @@ fun TweetItem(
 //        storyIds = listOf("1234561", "1234562", "1234563", "1234564", "1234565"),
 //    )
     val user = MUser(id = "23323", name = "vinay", email = "sdfsd@fss.in", profileImage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg")
+    val userimage = remember { mutableStateOf<Uri?>(null) }
+
+    LaunchedEffect(Unit) {
+        FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+            userimage.value = uri
+        }
+    }
     Row(
         Modifier
             .fillMaxWidth(1f)
@@ -92,7 +104,7 @@ fun TweetItem(
                 onItemClick()
             }
     ) {
-        CircularImage(imageUrl = user.profileImage, imageSize = 30.dp)
+        CircularImage(imageUri =  userimage, imageSize = 30.dp)
         Spacer(Modifier.width(8.dp))
         Column(Modifier.fillMaxWidth(1f)) {
             Row(Modifier.fillMaxWidth(1f), horizontalArrangement = Arrangement.SpaceBetween) {

@@ -1,6 +1,7 @@
 package com.example.wireup.ui.Screen.profile
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,12 +9,17 @@ import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 
 class UserViewModel(private val firestoreRepository: FirestoreRepository) : ViewModel() {
 
     private val _tweets = MutableLiveData<List<Tweet>>()
     val tweets: LiveData<List<Tweet>> = _tweets
+
+    private val _users = MutableLiveData<List<MUser>>()
+    val users: LiveData<List<MUser>> = _users
 
     fun getUserData(): LiveData<MUser> {
         val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -42,14 +48,15 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         return liveData
     }
 
-    fun addTweet(tweetText: String, imageUrl: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        val tweet = Tweet(userId = userId, description = tweetText, imageUrl = imageUrl )
-        firestoreRepository.addTweet(tweet)
-    }
+//    fun addTweet(tweetText: String, imageUrl: String) {
+//        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+//        val tweet = Tweet(userId = userId, description = tweetText, NodeimageUrl = imageUrl )
+//        firestoreRepository.addTweet(tweet)
+//    }
 
     init {
         fetchTweetsFromFirestore()
+        fetchUsersFromFirestore()
     }
 
     private fun fetchTweetsFromFirestore() {
@@ -57,6 +64,55 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
             _tweets.value = tweets
         }
     }
+
+    private fun fetchUsersFromFirestore() {
+        firestoreRepository.fetchUsersFromFirestore().observeForever { users ->
+            _users.value = users
+        }
+    }
+
+    fun addTweet(tweetText: String, imageUri: Uri? = null) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        if (imageUri != null) {
+            uploadImageToStorage(imageUri).observeForever { nodeimageUrl ->
+                if (nodeimageUrl.isNotEmpty()) {
+                    val tweet = Tweet(userId = userId, description = tweetText, imageUrl = nodeimageUrl)
+                    firestoreRepository.addTweet(tweet).observeForever { isSuccess ->
+                        if (isSuccess) {
+                            fetchTweetsFromFirestore() // Update tweets state
+                        }
+                    }
+                } else {
+                    Log.d("ViewModel", "Error uploading image")
+                }
+            }
+        } else {
+            val tweet = Tweet(userId = userId, description = tweetText, imageUrl = null)
+            firestoreRepository.addTweet(tweet).observeForever { isSuccess ->
+                if (isSuccess) {
+                    fetchTweetsFromFirestore() // Update tweets state
+                }
+            }
+        }
+    }
+
+    private fun uploadImageToStorage(imageUri: Uri): LiveData<String> {
+        val liveData = MutableLiveData<String>()
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+        imageRef.putFile(imageUri)
+            .addOnSuccessListener { taskSnapshot ->
+                taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
+                    liveData.value = uri.toString()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("ViewModel", "Error uploading image", exception)
+                liveData.value = ""
+            }
+        return liveData
+    }
+
 
 }
 

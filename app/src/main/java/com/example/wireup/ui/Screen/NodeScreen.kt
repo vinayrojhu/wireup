@@ -1,9 +1,17 @@
 package com.example.wireup.ui.Screen
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,12 +28,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -44,20 +57,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
+import com.example.wireup.model.MUser
 import com.example.wireup.ui.Components.CircularImage
 import com.example.wireup.ui.Components.TweetActionRow
 import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.util.DateUtil
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
 data class Tweet(
@@ -68,7 +82,7 @@ data class Tweet(
     val likeCount: Int = 0,
     val retweetCount: Int = 0,
     val bookmarkCount: Int = 0,
-    val imageUrl: String ,
+    val imageUrl: String? = null,
     val timeStamp: Long = System.currentTimeMillis()
 )
 
@@ -76,127 +90,161 @@ data class Tweet(
 @Composable
 fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
     val tweets by viewModel.tweets.observeAsState(initial = emptyList())
+    val users by viewModel.users.observeAsState(initial = emptyList())
+
     val isLoading by remember { mutableStateOf(false) }
     val tweetText = remember { mutableStateOf("") }
+    val imageUri = remember { mutableStateOf<Uri?>(null) }      //
     val imageUrl = remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
-    Column {
-        TopAppBar(title = {
-            Text(
-                "Nodes", fontSize = 18.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val uri = data?.data
+            imageUri.value = uri
         }
-        )
-        Divider()
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(start = 3.dp, end = 3.dp)
-//                    .verticalScroll(rememberScrollState())
-//            ) {
-//
-//                MainNode()
-//
-//            }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            // Other composables...
+    }
 
-            Button(
-                onClick = { showDialog.value = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(horizontal = 16.dp),
-                elevation = ButtonDefaults.buttonElevation(8.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text("Create Tweet")
+    Box{
+        Column {
+            TopAppBar(title = {
+                Text(
+                    "Nodes", fontSize = 18.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
             }
+            )
+            Divider()
 
-            if (showDialog.value) {
-                AlertDialog(
-                    onDismissRequest = { showDialog.value = false },
-                    title = { Text("Create Tweet") },
-                    text = {
-                        Column {
-                            TextField(
-                                value = tweetText.value,
-                                onValueChange = { tweetText.value = it },
-                                label = { Text("Tweet text") }
-                            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Other composables...
 
-                            TextField(
-                                value = imageUrl.value,
-                                onValueChange = { imageUrl.value = it },
-                                label = { Text("Image URL") }
-                            )
-                        }
-                    },
-                    buttons = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Button(
-                                onClick = {
-                                    viewModel.addTweet(tweetText.value, imageUrl.value)
-                                    showDialog.value = false
-                                    tweetText.value = ""
-                                    imageUrl.value = ""
+//            Button(
+//                onClick = { showDialog.value = true },
+//                modifier = Modifier
+//                    .width(48.dp)
+//                    .height(48.dp)
+//                    .padding(horizontal = 16.dp).align(Alignment.End),
+//                elevation = ButtonDefaults.buttonElevation(8.dp),
+//                shape = RoundedCornerShape(16.dp)
+//            ) {
+//                Icon(imageVector = Icons.Outlined.Add, contentDescription = "add node")
+//            }
+
+                if (showDialog.value) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog.value = false },
+                        title = { Text("Create Node") },
+                        text = {
+                            Column {
+                                TextField(
+                                    value = tweetText.value,
+                                    onValueChange = { tweetText.value = it },
+                                    label = { Text("Node text") }
+                                )
+
+
+                                if (imageUri.value == null) {
+                                    Button(
+                                        onClick = {
+                                            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                                            launcher.launch(intent)
+                                        }
+                                    ) {
+                                        Text("Upload Image")
+                                    }
+                                } else {
+                                    Image(
+                                        painter = rememberImagePainter(imageUri.value),
+                                        contentDescription = "Uploaded Image"
+                                    )
                                 }
+
+                            }
+                        },
+                        buttons = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.End
                             ) {
-                                Text("Done")
+                                Button(
+                                    onClick = {
+                                        viewModel.addTweet(tweetText.value, imageUri.value)
+                                        showDialog.value = false
+                                        tweetText.value = ""
+                                        imageUrl.value = ""
+                                    }
+                                ) {
+                                    Text("Done")
+                                }
                             }
                         }
+                    )
+                }
+
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    tweets.forEach { tweet ->
+                        val user = users.find { it.id == tweet.userId }
+                        MainNode(tweet, user)
                     }
-                )
+                }
+
             }
         }
-
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-        } else {
-            tweets.forEach { tweet ->
-                TweetItem(tweet, onCommentClick = { }, onItemClick = { })
-            }
+        FloatingActionButton(
+            onClick = { showDialog.value = true },
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomEnd),
+            elevation = FloatingActionButtonDefaults.elevation(1.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Icon(Icons.Filled.Add, "Add button")
         }
-
-
-
-
-
-
     }
+
+
+
 }
 
+
 @Composable
-fun MainNode(){
-    val username = FirebaseAuth.getInstance().currentUser?.email.toString()
-    val userimage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg"
+fun MainNode(tweet: Tweet, user: MUser? ){
+    val userimage = remember { mutableStateOf<Uri?>(null) }
+
+    LaunchedEffect(Unit) {
+        FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+            userimage.value = uri
+        }
+    }
+    val nodeimage = tweet.imageUrl
+    val username = user?.name ?: ""
     var isVisible by remember { mutableStateOf(false) }
-    var retweets = 34
-    var likes = 56
-    var bookmarks = 5
+    var retweets = tweet.retweetCount
+    var likes = tweet.likeCount
+    var bookmarks = tweet.bookmarkCount
     var isRetweeted by rememberSaveable {
         mutableStateOf(false)
     }
@@ -209,13 +257,14 @@ fun MainNode(){
     var isFollowed by rememberSaveable {
         mutableStateOf(false)
     }
-    Row(modifier=Modifier
-            .fillMaxWidth()
-            .padding(start = 4.dp , top = 2.dp),
+    Row(modifier= Modifier
+        .fillMaxWidth()
+        .padding(start = 4.dp, top = 2.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircularImage(imageUrl = userimage, imageSize = 38.dp)
+        CircularImage(
+            imageUri = userimage, imageSize = 38.dp)
         Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)) {
             Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
@@ -245,17 +294,23 @@ fun MainNode(){
         }}
 //    Spacer(modifier = Modifier
 //        .height(1.dp))
-    Column(Modifier
-        .fillMaxWidth()
-        .padding(start =50.dp)) {
-        Text("Jetpack compose for UI development\n" +
-                "Kotlin for programming\n" +
-                "MVVM architecture\n" +
-                "Coil library for dynamic Image loading\n" +
-                "Retrofit for REST API data consuming\n" +
-                "Jetpack compose Navigation\n" +
-                "Lazy list, Card, Other composable functions", fontSize = 15.sp , fontWeight = FontWeight.W400)
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(start = 50.dp)) {
+        Text(tweet.description, fontSize = 15.sp , fontWeight = FontWeight.W400)
         Spacer(modifier = Modifier.height(8.dp))
+
+        if (nodeimage == null){
+
+        }else{
+            Image(
+                painter = rememberImagePainter(nodeimage),
+                contentDescription = "Tweet Image",
+                modifier = Modifier.size(300.dp)
+            )
+        }
+
         Text(
             DateUtil.getDateTime(System.currentTimeMillis()),
             color = Color.Gray,
@@ -310,16 +365,6 @@ fun MainNode(){
                 }
         ) {
             // ... rest of your code
-            val urls = listOf(
-                "https://3.bp.blogspot.com/-VVp3WvJvl84/X0Vu6EjYqDI/AAAAAAAAPjU/ZOMKiUlgfg8ok8DY8Hc-ocOvGdB0z86AgCLcBGAsYHQ/s1600/jetpack%2Bcompose%2Bicon_RGB.png",
-                "https://vectorportal.com/storage/bD8Fzwwh5EDWD8YJkJfCCQCwQ8pxMUBIQaCbmKaZ.jpg",
-                "https://vectorportal.com/storage/anime-avatar.jpg",
-                "https://vectorportal.com/storage/aKJ32lYqZ7wSaC2f0NIMZEUh4hhjlVETzKZ3FjyR.jpg",
-                "https://vectorportal.com/storage/UxFA72dcdu4df3y1hyEpAUYbpqSecbrhnjck3x77.jpg",
-                "https://vectorportal.com/storage/Eg0cerMrth5t1FDREtUJQr8RmvmXXvA9XEsL7tcH.jpg",
-                "https://cdn.pixabay.com/photo/2023/05/28/03/34/flowers-8022731_1280.jpg",
-                "https://cdn.pixabay.com/photo/2023/07/14/10/50/flower-8126748_1280.jpg",
-            )
             items(5) {
                 TweetItem(tweet = Tweet(
                     description = "Incorporate and convert Java code into #Kotlin using #Android Studio, and learn Kotlin language conventions along the way. You’ll also learn how to write Kotlin code to make it callable from Java code.",
@@ -337,74 +382,3 @@ fun MainNode(){
 }
 
 
-//
-//@Composable
-//fun PdfScreen(
-//    viewModel: UserViewModel = viewModel(),
-//    modifier: Modifier = Modifier
-//) {
-//    val tweetText = remember { mutableStateOf("") }
-//    val imageUrl = remember { mutableStateOf("") }
-//    val showDialog = remember { mutableStateOf(false) }
-//
-//    Column(
-//        modifier = modifier
-//            .fillMaxSize()
-//            .padding(horizontal = 16.dp)
-//    ) {
-//        // Other composables...
-//
-//        Button(
-//            onClick = { showDialog.value = true },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(48.dp)
-//                .padding(horizontal = 16.dp),
-//            elevation = ButtonDefaults.elevation(8.dp),
-//            shape = RoundedCornerShape(16.dp)
-//        ) {
-//            Text("Create Tweet")
-//        }
-//
-//        if (showDialog.value) {
-//            AlertDialog(
-//                onDismissRequest = { showDialog.value = false },
-//                title = { Text("Create Tweet") },
-//                text = {
-//                    Column {
-//                        TextField(
-//                            value = tweetText.value,
-//                            onValueChange = { tweetText.value = it },
-//                            label = { Text("Tweet text") }
-//                        )
-//
-//                        TextField(
-//                            value = imageUrl.value,
-//                            onValueChange = { imageUrl.value = it },
-//                            label = { Text("Image URL") }
-//                        )
-//                    }
-//                },
-//                buttons = {
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(horizontal = 16.dp),
-//                        horizontalArrangement = Arrangement.End
-//                    ) {
-//                        Button(
-//                            onClick = {
-//                                viewModel.addTweet(tweetText.value, imageUrl.value)
-//                                showDialog.value = false
-//                                tweetText.value = ""
-//                                imageUrl.value = ""
-//                            }
-//                        ) {
-//                            Text("Done")
-//                        }
-//                    }
-//                }
-//            )
-//        }
-//    }
-//}
