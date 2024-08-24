@@ -195,7 +195,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                 } else {
                     tweets.forEach { tweet ->
                         val user = users.find { it.id == tweet.userId }
-                        MainNode(tweet, user)
+                        MainNode(tweet, user, navController)
                     }
                 }
 
@@ -219,7 +219,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
 
 
 @Composable
-fun MainNode(tweet: Tweet, user: MUser? ){
+fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val userimage = remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
@@ -229,6 +229,7 @@ fun MainNode(tweet: Tweet, user: MUser? ){
     }
     val nodeimage = tweet.imageUrl
     val username = user?.name ?: ""
+    val userUuid = FirebaseAuth.getInstance().currentUser?.uid
     var isVisible by remember { mutableStateOf(false) }
     var retweets = tweet.retweetCount
     var likes = tweet.likeCount
@@ -252,7 +253,10 @@ fun MainNode(tweet: Tweet, user: MUser? ){
         verticalAlignment = Alignment.CenterVertically
     ) {
         CircularImage(
-            imageUri = userimage, imageSize = 38.dp)
+            imageUri = userimage, imageSize = 38.dp,
+            navController = navController,
+            userUuid = userUuid.toString()
+        )
         Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)) {
             Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
@@ -362,7 +366,8 @@ fun MainNode(tweet: Tweet, user: MUser? ){
                     retweetCount = 50,
                     bookmarkCount = 135,
                     imageUrl = "https://vectorportal.com/storage/anime-avatar.jpg"),
-                    onCommentClick = { }) {}
+                    onCommentClick = { },
+                    navController = navController) {}
             }
         }
     }

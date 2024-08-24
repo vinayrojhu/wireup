@@ -8,6 +8,7 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,13 +32,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import com.example.wireup.Navigation.NavigationItem
 
 @Composable
 fun CircularImage(
     modifier: Modifier = Modifier,
     imageUri: MutableState<Uri?>,
+    userUuid: String,
     imageSize: Dp = 75.dp,
     isBorderVisible: Boolean = false,
     isNameVisible: Boolean = false,
@@ -45,6 +49,7 @@ fun CircularImage(
     isAnimated: Boolean = false,
     contentScale: ContentScale = ContentScale.Crop,
     width: Dp = 3.dp,
+    navController: NavHostController
 ) {
     val borderWidth by remember(key1 = isBorderVisible) {
         mutableStateOf(if (isBorderVisible) width else 0.dp)
@@ -55,7 +60,8 @@ fun CircularImage(
         Brush.linearGradient(listOf(Color.Transparent, Color.Transparent))
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable { navController.navigate(NavigationItem.ProfileViewMode.route + "/${userUuid}") }) {
         val alpha = if (isAnimated) {
             val infiniteTransition = rememberInfiniteTransition(label = "image")
             val alpha by infiniteTransition.animateFloat(

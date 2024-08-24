@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.wireup.model.NewsData
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.AboutScreen
 import com.example.wireup.ui.Screen.AccountScreen
@@ -28,9 +27,9 @@ import com.example.wireup.ui.Screen.SavedScreen
 import com.example.wireup.ui.Screen.SearchScreen
 import com.example.wireup.ui.Screen.SettingsScreen
 import com.example.wireup.ui.Screen.SplashScreen
-import com.example.wireup.ui.Screen.VideoPodcast
 import com.example.wireup.ui.Screen.login.AuthenticationScreen
 import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.ProfileScreenViewMode
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -120,6 +119,10 @@ fun AppNavHost(
         }
         composable(NavigationItem.AudioPodcastOpened.route){
             OpenAudioPodcast(navController = navController)
+        }
+
+        composable(NavigationItem.ProfileViewMode.route + "/{userId}") { entry ->
+            ProfileScreenViewMode(navController, entry.arguments?.getString("userId")!!)
         }
 
 

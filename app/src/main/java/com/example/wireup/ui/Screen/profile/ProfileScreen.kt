@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
@@ -75,9 +76,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     val userData by viewModel.getUserData().observeAsState()
     val userId = userData?.email?.split("@")?.get(0)
     val username = userData?.name.toString()
-    val userFollowers = "88230 Followers"
- //   val userImage = userData?.profileImage.toString()
- //   val userImage = FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl
 
     val userImage = remember { mutableStateOf<Uri?>(null) }
 
@@ -86,6 +84,13 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             userImage.value = uri
         }
     }
+
+    val followers by viewModel.followers.observeAsState(initial = emptyList())
+
+    val userFollowers = "Followers: ${followers.size ?: 0}"
+
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
 
 
 
@@ -117,7 +122,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         ) {
                             NavigationRail(
                                 modifier = Modifier
-                                    .height(270.dp)
+                                    .height(300.dp)
                                     .width(100.dp)
                                     .clip(
                                         RoundedCornerShape(
@@ -125,7 +130,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                             bottomStart = 10.dp
                                         )
                                     ),
-                                containerColor = Color.Black,
+                                containerColor = Color.DarkGray,
                                 contentColor = Color.White,
                                 header = {
 //                                    Text("Menu")
@@ -181,6 +186,20 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     onClick = {FirebaseAuth.getInstance().signOut().run {
                                         navController.navigate(NavigationItem.Authentication.route)
                                     }} ,
+                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
+                                        selectedIconColor=Color.White,
+                                        selectedTextColor= Color.White,
+                                        selectedIndicatorColor = Color.White,
+                                        unselectedIconColor=Color.White,
+                                        unselectedTextColor=Color.White,
+                                        disabledIconColor=Color.White)
+
+                                )
+                                NavigationRailItem(
+                                    icon = { Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit") },
+                                    label = { Text("Edit") },
+                                    selected = false,
+                                    onClick = {navController.navigate(NavigationItem.Edit.route)} ,
                                     colors = NavigationRailItemColors(disabledTextColor = Color.White ,
                                         selectedIconColor=Color.White,
                                         selectedTextColor= Color.White,
@@ -261,15 +280,16 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 selected = false,
                                 onClick = { navController.navigate(NavigationItem.Friends.route)}
                             )
-//                            Spacer(modifier = Modifier.width(7.dp))
 
+                            if (currentUserId != userData?.id){
+                                NavigationRailItem(
+                                    icon = { Icon(Icons.Outlined.Add, contentDescription = "Follow") },
+                                    label = { Text("Follow") },
+                                    selected = false,
+                                    onClick = { viewModel.followUser(currentUserId) }
+                                )
+                            }
 
-                            NavigationRailItem(
-                                icon = { Icon(Icons.Outlined.Edit, contentDescription = "Edit") },
-                                label = { Text("Edit Profile") },
-                                selected = false,
-                                onClick = { navController.navigate(NavigationItem.Edit.route) }
-                            )
 
 
                             NavigationRailItem(
@@ -278,7 +298,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 selected = false,
                                 onClick = { /* Handle account click */ }
                             )
-//                            Spacer(modifier = Modifier.width(7.dp))
                         }
 
                     }
@@ -351,7 +370,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                 selectedTabIndex = it
             }
             when (selectedTabIndex) {
-                0 -> UserNode()
+                0 -> UserNode(navController)
                 1 -> LazyColumn(
                     modifier = Modifier
                         .padding(16.dp)
@@ -368,7 +387,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
 
 @Composable
-fun UserNode(){
+fun UserNode(navController: NavHostController){
     LazyColumn(
         modifier = Modifier
             .height(500.dp) // Set the desired height here
@@ -389,7 +408,7 @@ fun UserNode(){
                 likeCount = 203,
                 retweetCount = 50,
                 bookmarkCount = 135,
-                imageUrl = "https://cdn.pixabay.com/photo/2023/07/14/10/50/flower-8126748_1280.jpg"), onCommentClick = { }) {}
+                imageUrl = "https://cdn.pixabay.com/photo/2023/07/14/10/50/flower-8126748_1280.jpg"), onCommentClick = { }, navController = navController) {}
         }
     }
 }

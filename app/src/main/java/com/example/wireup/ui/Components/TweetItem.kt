@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.wireup.R
 import com.example.wireup.model.MUser
@@ -50,6 +51,7 @@ import com.google.firebase.storage.FirebaseStorage
 fun TweetItem(
     tweet: Tweet,
     onCommentClick: () -> Unit,
+    navController: NavHostController,
     onItemClick: () -> Unit,
 ) {
     var isLiked by rememberSaveable {
@@ -104,7 +106,9 @@ fun TweetItem(
                 onItemClick()
             }
     ) {
-        CircularImage(imageUri =  userimage, imageSize = 30.dp)
+        CircularImage(imageUri =  userimage, imageSize = 30.dp,
+            navController = navController ,
+            userUuid = FirebaseAuth.getInstance().currentUser?.uid.toString())
         Spacer(Modifier.width(8.dp))
         Column(Modifier.fillMaxWidth(1f)) {
             Row(Modifier.fillMaxWidth(1f), horizontalArrangement = Arrangement.SpaceBetween) {

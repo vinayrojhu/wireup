@@ -21,8 +21,14 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     private val _users = MutableLiveData<List<MUser>>()
     val users: LiveData<List<MUser>> = _users
 
+    private val _followers = MutableLiveData<List<String>>()
+    val followers: LiveData<List<String>> = _followers
+
     fun getUserData(): LiveData<MUser> {
         val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        return firestoreRepository.getUserData(uuid)
+    }
+    fun getUserData2(uuid: String): LiveData<MUser> {
         return firestoreRepository.getUserData(uuid)
     }
 
@@ -111,6 +117,30 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
                 liveData.value = ""
             }
         return liveData
+    }
+
+    fun followUser(userId: String) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        firestoreRepository.followUser(currentUserId, userId).observeForever { isSuccess ->
+            if (isSuccess) {
+                val currentFollowers = _followers.value
+                if (currentFollowers != null) {
+                    if (currentFollowers.contains(userId)) {
+                        // User is already following, so remove them from the followers list
+                        _followers.value = currentFollowers.minus(userId)
+                        // Update the button text and icon to "Follow"
+                    } else {
+                        // User is not following, so add them to the followers list
+                        _followers.value = currentFollowers.plus(userId)
+                        // Update the button text and icon to "Unfollow"
+                    }
+                }
+            }
+        }
+    }
+
+    fun getFollowers(userId: String): LiveData<List<String>> {
+        return firestoreRepository.getFollowers(userId)
     }
 
 

@@ -131,5 +131,66 @@ class FirestoreRepository {
         return liveData
     }
 
+    fun followUser(currentUserId: String, userId: String): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        val userRef = firestore.collection("users").document(userId)
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(MUser::class.java)
+                    if (user != null) {
+                        if (!user.followers.contains(currentUserId)) {
+                            user.followers.add(currentUserId)
+                            userRef.set(user)
+                                .addOnSuccessListener {
+                                    liveData.value = true
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.d("FirestoreRepository", "Error following user", exception)
+                                    liveData.value = false
+                                }
+                        } else {
+                            liveData.value = true // already following
+                        }
+                    } else {
+                        Log.d("FirestoreRepository", "User not found")
+                        liveData.value = false
+                    }
+                } else {
+                    Log.d("FirestoreRepository", "User not found")
+                    liveData.value = false
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting user", exception)
+                liveData.value = false
+            }
+        return liveData
+    }
 
+    fun getFollowers(userId: String): LiveData<List<String>> {
+        val liveData = MutableLiveData<List<String>>()
+        val userRef = firestore.collection("users").document(userId)
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(MUser::class.java)
+                    if (user != null) {
+                        liveData.value = user.followers ?: emptyList()
+                    } else {
+                        liveData.value = emptyList()
+                    }
+                } else {
+                    liveData.value = emptyList()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting followers", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
+    }
 }
+
+
+
