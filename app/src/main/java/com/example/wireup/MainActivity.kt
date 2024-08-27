@@ -136,9 +136,12 @@ class MainActivity : ComponentActivity() {
 //                                                    "${NavigationItem.Profile.route}/$MY_USER_ID"
                                                     NavigationItem.Profile.route
                                                 )
+
                                             } else {
                                                 navController.navigate(it.route)
                                             }
+
+
                                         }
 
                                     )

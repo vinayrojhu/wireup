@@ -125,7 +125,12 @@ dependencies {
     implementation (libs.google.exoplayer)
 
 
-    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
+    implementation (libs.core)
+
+    implementation (libs.accompanist.pager.v0280)
+
+
+
 
     implementation ("com.google.android.gms:play-services-auth:19.2.0")
 

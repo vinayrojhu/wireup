@@ -1,5 +1,6 @@
 package com.example.wireup.ui.Screen
 
+import android.widget.Toast
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -150,13 +151,19 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                         NewsBox2(NewsBoxData , navController =navController)
                         NewsBox2(NewsBoxData, navController =navController)
                         NewsBox2(NewsBoxData, navController =navController)
+                        NewsBox2(NewsBoxData , navController =navController)
+                        NewsBox2(NewsBoxData, navController =navController)
 
                         NewsBox3(NewsBoxData , navController =navController)
                         NewsBox3(NewsBoxData , navController =navController)
                         NewsBox3(NewsBoxData , navController =navController)
 
-                        NewsBox(NewsBoxData, navController = navController)
-                        NewsBox(NewsBoxData, navController = navController)
+                        NewsBox3(NewsBoxData , navController =navController)
+                        NewsBox3(NewsBoxData , navController =navController)
+                        NewsBox3(NewsBoxData , navController =navController)
+
+//                        NewsBox(NewsBoxData, navController = navController)
+//                        NewsBox(NewsBoxData, navController = navController)
 //                        NewsBox(NewsBoxData, navController = navController)
 //                        NewsBox(NewsBoxData, navController = navController)
                     }

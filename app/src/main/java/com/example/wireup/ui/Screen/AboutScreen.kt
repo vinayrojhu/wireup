@@ -40,8 +40,8 @@ fun AboutScreen(navController: NavHostController) {
         )
 
         Divider()
-        Text(text = "About Screen")
 
+        Text(text = "About Screen")
 
         }
     }

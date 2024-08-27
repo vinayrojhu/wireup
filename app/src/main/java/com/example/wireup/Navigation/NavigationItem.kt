@@ -19,6 +19,7 @@ enum class Screen {
     READMORE ,
     VIDEOPODCASTOPENED ,
     AUDIOPODCASTOPENED,
+    LIKED ,
 
     PROFILEVIEWMODE
 
@@ -43,6 +44,7 @@ sealed class NavigationItem(val route: String) {
     object ReadMore : NavigationItem(Screen.READMORE.name)
     object VideoPodcastOpened : NavigationItem(Screen.VIDEOPODCASTOPENED.name)
     object AudioPodcastOpened : NavigationItem(Screen.AUDIOPODCASTOPENED.name)
+    object Liked : NavigationItem(Screen.LIKED.name)
 
     object ProfileViewMode : NavigationItem(Screen.PROFILEVIEWMODE.name)
 }

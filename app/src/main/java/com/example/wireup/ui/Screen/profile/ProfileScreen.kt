@@ -106,112 +106,15 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
                     Row {
                         IconButton(onClick = {
-                            isRailExpanded = !isRailExpanded
-                            offsetX = 16.dp // adjust x offset to match menu button position
-                            offsetY = 48.dp // adjust y offset to match top app bar height
+                            navController.navigate(NavigationItem.Settings.route)
+//                            isRailExpanded = !isRailExpanded
+//                            offsetX = 16.dp // adjust x offset to match menu button position
+//                            offsetY = 48.dp // adjust y offset to match top app bar height
                         }) {
                             Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
                         }
                     }
 
-                    if (isRailExpanded) {
-                        Popup(
-                            onDismissRequest = { isRailExpanded = false },
-                            alignment = Alignment.TopEnd,
-                            offset = IntOffset(16,48),
-                        ) {
-                            NavigationRail(
-                                modifier = Modifier
-                                    .height(300.dp)
-                                    .width(100.dp)
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = 10.dp,
-                                            bottomStart = 10.dp
-                                        )
-                                    ),
-                                containerColor = Color.DarkGray,
-                                contentColor = Color.White,
-                                header = {
-//                                    Text("Menu")
-//                                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
-                                }
-                            ) {
-                                NavigationRailItem(
-                                    icon = { Icon(imageVector = Icons.Filled.Info, contentDescription = "About") },
-                                    label = { Text("About") },
-                                    selected = false,
-                                    onClick = {navController.navigate(NavigationItem.About.route)},
-                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
-                                                                      selectedIconColor=Color.White,
-                                                                      selectedTextColor= Color.White,
-                                                                      selectedIndicatorColor = Color.White,
-                                                                      unselectedIconColor=Color.White,
-                                                                      unselectedTextColor=Color.White,
-                                                                      disabledIconColor=Color.White)
-                                )
-
-                                NavigationRailItem(
-                                    icon = { Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings") },
-                                    label = { Text("Settings") },
-                                    selected = false,
-                                    onClick = {navController.navigate(NavigationItem.Settings.route)} ,
-                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
-                                        selectedIconColor=Color.White,
-                                        selectedTextColor= Color.White,
-                                        selectedIndicatorColor = Color.White,
-                                        unselectedIconColor=Color.White,
-                                        unselectedTextColor=Color.White,
-                                        disabledIconColor=Color.White)
-
-                                )
-                                NavigationRailItem(
-                                    icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "Account") },
-                                    label = { Text("Account") },
-                                    selected = false,
-                                    onClick = {navController.navigate(NavigationItem.Account.route)} ,
-                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
-                                        selectedIconColor=Color.White,
-                                        selectedTextColor= Color.White,
-                                        selectedIndicatorColor = Color.White,
-                                        unselectedIconColor=Color.White,
-                                        unselectedTextColor=Color.White,
-                                        disabledIconColor=Color.White)
-
-                                )
-                                NavigationRailItem(
-                                    icon = { Icon(imageVector = Icons.Filled.ExitToApp, contentDescription = "Exit") },
-                                    label = { Text("Logout") },
-                                    selected = false,
-                                    onClick = {FirebaseAuth.getInstance().signOut().run {
-                                        navController.navigate(NavigationItem.Authentication.route)
-                                    }} ,
-                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
-                                        selectedIconColor=Color.White,
-                                        selectedTextColor= Color.White,
-                                        selectedIndicatorColor = Color.White,
-                                        unselectedIconColor=Color.White,
-                                        unselectedTextColor=Color.White,
-                                        disabledIconColor=Color.White)
-
-                                )
-                                NavigationRailItem(
-                                    icon = { Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit") },
-                                    label = { Text("Edit") },
-                                    selected = false,
-                                    onClick = {navController.navigate(NavigationItem.Edit.route)} ,
-                                    colors = NavigationRailItemColors(disabledTextColor = Color.White ,
-                                        selectedIconColor=Color.White,
-                                        selectedTextColor= Color.White,
-                                        selectedIndicatorColor = Color.White,
-                                        unselectedIconColor=Color.White,
-                                        unselectedTextColor=Color.White,
-                                        disabledIconColor=Color.White)
-
-                                )
-                            }
-                        }
-                    }
                 }
             )
         }
@@ -266,6 +169,13 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         Row {
 
                             NavigationRailItem(
+                                icon = { Icon(Icons.Outlined.Person, contentDescription = "Following") },
+                                label = { Text("Following") },
+                                selected = false,
+                                onClick = { navController.navigate(NavigationItem.Friends.route)}
+                            )
+
+                            NavigationRailItem(
                                 icon = { Icon(painter = painterResource(id = R.drawable.save_wire),
                                     contentDescription = "Saved" )
                                        },
@@ -274,21 +184,16 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 onClick = {navController.navigate(NavigationItem.Saved.route)}
                             )
 
-                            NavigationRailItem(
-                                icon = { Icon(Icons.Outlined.Person, contentDescription = "Friends") },
-                                label = { Text("Friends") },
-                                selected = false,
-                                onClick = { navController.navigate(NavigationItem.Friends.route)}
-                            )
 
-                            if (currentUserId != userData?.id){
-                                NavigationRailItem(
-                                    icon = { Icon(Icons.Outlined.Add, contentDescription = "Follow") },
-                                    label = { Text("Follow") },
-                                    selected = false,
-                                    onClick = { viewModel.followUser(currentUserId) }
-                                )
-                            }
+
+//                            if (currentUserId != userData?.id){
+//                                NavigationRailItem(
+//                                    icon = { Icon(Icons.Outlined.Add, contentDescription = "Follow") },
+//                                    label = { Text("Follow") },
+//                                    selected = false,
+//                                    onClick = { viewModel.followUser(currentUserId) }
+//                                )
+//                            }
 
 
 
