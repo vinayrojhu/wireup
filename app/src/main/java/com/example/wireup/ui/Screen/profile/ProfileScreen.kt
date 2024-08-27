@@ -74,7 +74,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     val userData by viewModel.getUserData().observeAsState()
-    val userId = userData?.email?.split("@")?.get(0)
+    val userId = userData?.uniqueId.toString()
     val username = userData?.name.toString()
 
     val userImage = remember { mutableStateOf<Uri?>(null) }
@@ -98,7 +98,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(userId.toString(), fontSize = 18.sp) },
+                title = { Text(userId, fontSize = 18.sp) },
                 actions = {
                     var isRailExpanded by remember { mutableStateOf(false) }
                     var offsetX by remember { mutableStateOf(0.dp) }

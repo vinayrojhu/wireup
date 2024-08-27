@@ -42,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true            //
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -67,6 +68,8 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.cardview)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -123,6 +126,8 @@ dependencies {
 
 
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
+
+    implementation ("com.google.android.gms:play-services-auth:19.2.0")
 
 
 

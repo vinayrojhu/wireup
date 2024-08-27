@@ -24,6 +24,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     private val _followers = MutableLiveData<List<String>>()
     val followers: LiveData<List<String>> = _followers
 
+    private val _isUniqueIdAvailable = MutableLiveData<Boolean>()
+    val isUniqueIdAvailable: LiveData<Boolean> = _isUniqueIdAvailable
+
     fun getUserData(): LiveData<MUser> {
         val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         return firestoreRepository.getUserData(uuid)
@@ -64,7 +67,6 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         fetchTweetsFromFirestore()
         fetchUsersFromFirestore()
     }
-
     private fun fetchTweetsFromFirestore() {
         firestoreRepository.fetchTweetsFromFirestore().observeForever { tweets ->
             _tweets.value = tweets
@@ -141,6 +143,12 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
 
     fun getFollowers(userId: String): LiveData<List<String>> {
         return firestoreRepository.getFollowers(userId)
+    }
+
+    fun checkUniqueIdAvailability(uniqueId: String) {
+        firestoreRepository.checkUniqueIdAvailability(uniqueId).observeForever { available ->
+            _isUniqueIdAvailable.value = available
+        }
     }
 
 

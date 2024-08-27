@@ -1,10 +1,18 @@
 package com.example.wireup.ui.Screen.login
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wireup.R
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -13,12 +21,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class LoginScreenViewModel: ViewModel() {
+class LoginScreenViewModel(private val activity: Activity): ViewModel() {
+
      val loadingState = MutableStateFlow(LoadingState.IDLE)
     private val auth: FirebaseAuth = Firebase.auth
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
+
 
 
     fun signInWithEmailAndPassword(email: String, password: String, home: () -> Unit) = viewModelScope.launch {
@@ -30,27 +40,19 @@ class LoginScreenViewModel: ViewModel() {
             Log.d("FB", "signInWithEmailAndPassword: ${ex.message}")
         }
     }
-
-//    fun createUserWithEmailAndPassword(email: String, password: String, name: String, home: () -> Unit) = viewModelScope.launch {
-//        try {
-//            val result = auth.createUserWithEmailAndPassword(email, password).await()
-//            createUser(name)
-//            home()
-//        } catch (ex: Exception) {
-//            Log.d("FB", "createUserWithEmailAndPassword: ${ex.message}")
-//        }
-//    }
-fun createUserWithEmailAndPassword(email: String, password: String, name: String, home: () -> Unit) {
-    auth.createUserWithEmailAndPassword(email, password)
+    fun createUserWithEmailAndPassword(email: String, password: String, name: String, home: () -> Unit) {
+        auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val userId = auth.currentUser?.uid
                 val profile_image = ""
+                val uniqueId = ""
                 val user = hashMapOf(
                     "name" to name,
                     "email" to email,
                     "userID" to userId,
-                    "profile_image" to profile_image
+                    "profile_image" to profile_image,
+                    "uniqueId" to uniqueId
                 )
                 FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
                 home()
@@ -58,21 +60,27 @@ fun createUserWithEmailAndPassword(email: String, password: String, name: String
                 // Handle error
             }
         }
-}
+    }
 
-//    private fun createUser(displayName: String?) {
-//        val userId = auth.currentUser?.uid
-//
-//        val user = MUser(userId = userId.toString(),
-//            displayName = displayName.toString(),
-//            id = null).toMap()
-//
-//
-//        FirebaseFirestore.getInstance().collection("users")
-//            .document(userId.toString())
-//            .set(user)
-//
+    private val googleSignInClient: GoogleSignInClient by lazy {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(activity.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(activity, gso)
+    }
+
+//    fun signInWithGoogle() {
+//        googleSignInClient.signInIntent.also { intent ->
+//            startActivityForResult(activity, intent,123, Bundle())
+//        }
 //    }
+
+    fun signInWithGoogle(): Intent {
+        val intent = googleSignInClient.signInIntent
+        return intent
+    }
+
 
 
 }

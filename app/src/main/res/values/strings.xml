@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WireUp</string>
     <string name="create_acct"> *Please enter a valid email and password that  is at least 6 characters</string>
+    <string name="default_web_client_id">306637600231-titbgotst331holnmn5jj99rkhvbptkh.apps.googleusercontent.com</string>
 </resources>

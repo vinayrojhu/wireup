@@ -24,6 +24,9 @@ runtimeLivedata = "1.6.8"
 firebaseStorageKtx = "21.0.0"
 appcompat = "1.7.0"
 cardview = "1.0.0"
+googleServices = "4.4.2"
+firebaseAuth = "23.0.0"
+firebaseDatabaseKtx = "21.0.0"
 
 [libraries]
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
@@ -60,6 +63,9 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -19,8 +19,10 @@ class FirestoreRepository {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val user = MUser(
+                        id = document.getString("id") ?: "",
                         name = document.getString("name") ?: "",
-                        email = document.getString("email") ?: ""
+                        email = document.getString("email") ?: "",
+                        uniqueId = document.getString("uniqueId") ?: ""
                     )
                     liveData.value = user
                 } else {
@@ -33,22 +35,41 @@ class FirestoreRepository {
         return liveData
     }
 
+//    fun updateUserData(userId: String, userData: MUser): LiveData<Boolean> {
+//        val liveData = MutableLiveData<Boolean>()
+//        val userRef = firestore.collection("users").document(userId)
+//        userRef.update("name", userData.name)
+//            .addOnSuccessListener {
+//                userRef.update("email", userData.email)
+//                    .addOnSuccessListener {
+//                        liveData.value = true
+//                    }
+//                    .addOnFailureListener { exception ->
+//                        Log.d("FirestoreRepository", "Error updating user email", exception)
+//                        liveData.value = false
+//                    }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("FirestoreRepository", "Error updating user name", exception)
+//                liveData.value = false
+//            }
+//        return liveData
+//    }
+
     fun updateUserData(userId: String, userData: MUser): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("name", userData.name)
+        val updates = hashMapOf<String, Any>(
+            "name" to userData.name,
+            "email" to userData.email,
+            "uniqueId" to userData.uniqueId
+        )
+        userRef.update(updates)
             .addOnSuccessListener {
-                userRef.update("email", userData.email)
-                    .addOnSuccessListener {
-                        liveData.value = true
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d("FirestoreRepository", "Error updating user email", exception)
-                        liveData.value = false
-                    }
+                liveData.value = true
             }
             .addOnFailureListener { exception ->
-                Log.d("FirestoreRepository", "Error updating user name", exception)
+                Log.d("FirestoreRepository", "Error updating user data", exception)
                 liveData.value = false
             }
         return liveData
@@ -190,6 +211,22 @@ class FirestoreRepository {
             }
         return liveData
     }
+
+    fun checkUniqueIdAvailability(uniqueId: String): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        firestore.collection("users")
+            .whereEqualTo("uniqueId", uniqueId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                liveData.value = querySnapshot.documents.isEmpty()
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error checking unique ID", exception)
+                liveData.value = false
+            }
+        return liveData
+    }
+
 }
 
 

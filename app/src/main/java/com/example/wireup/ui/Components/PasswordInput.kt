@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 
 @Composable
 fun PasswordInput(
@@ -28,26 +30,62 @@ fun PasswordInput(
     passwordVisibility: MutableState<Boolean>,
     imeAction: ImeAction = ImeAction.Done,
     onAction: KeyboardActions = KeyboardActions.Default,
-                 ) {
-
+    focusRequester: FocusRequester
+) {
     val visualTransformation = if (passwordVisibility.value) VisualTransformation.None else
         PasswordVisualTransformation()
-    OutlinedTextField(value = passwordState.value,
+    OutlinedTextField(
+        value = passwordState.value,
         onValueChange = {
             passwordState.value = it
         },
-        label = { Text(text = labelId)},
+        label = { Text(text = labelId) },
         singleLine = true,
         textStyle = TextStyle(fontSize = 18.sp),
         modifier = modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
         enabled = enabled,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
-            imeAction = imeAction),
+            imeAction = imeAction
+        ),
         visualTransformation = visualTransformation,
-        trailingIcon = {PasswordVisibility(passwordVisibility = passwordVisibility)},
-        keyboardActions = onAction)
-
+        trailingIcon = { PasswordVisibility(passwordVisibility = passwordVisibility) },
+        keyboardActions = onAction
+    )
 }
+
+//@Composable
+//fun PasswordInput(
+//    modifier: Modifier,
+//    passwordState: MutableState<String>,
+//    labelId: String,
+//    enabled: Boolean,
+//    passwordVisibility: MutableState<Boolean>,
+//    imeAction: ImeAction = ImeAction.Done,
+//    onAction: KeyboardActions = KeyboardActions.Default,
+//                 ) {
+//
+//    val visualTransformation = if (passwordVisibility.value) VisualTransformation.None else
+//        PasswordVisualTransformation()
+//    OutlinedTextField(value = passwordState.value,
+//        onValueChange = {
+//            passwordState.value = it
+//        },
+//        label = { Text(text = labelId)},
+//        singleLine = true,
+//        textStyle = TextStyle(fontSize = 18.sp),
+//        modifier = modifier
+//            .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
+//            .fillMaxWidth(),
+//        enabled = enabled,
+//        keyboardOptions = KeyboardOptions(
+//            keyboardType = KeyboardType.Password,
+//            imeAction = imeAction),
+//        visualTransformation = visualTransformation,
+//        trailingIcon = {PasswordVisibility(passwordVisibility = passwordVisibility)},
+//        keyboardActions = onAction)
+//
+//}

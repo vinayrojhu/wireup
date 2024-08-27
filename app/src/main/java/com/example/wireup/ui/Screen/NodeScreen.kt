@@ -229,7 +229,7 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     }
     val nodeimage = tweet.imageUrl
     val username = user?.name ?: ""
-    val userUuid = FirebaseAuth.getInstance().currentUser?.uid
+    val userUuid = user?.id
     var isVisible by remember { mutableStateOf(false) }
     var retweets = tweet.retweetCount
     var likes = tweet.likeCount

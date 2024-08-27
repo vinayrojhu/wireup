@@ -9,7 +9,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +32,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +56,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
+import com.example.wireup.ui.Components.UniqueIdField
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -66,6 +68,15 @@ fun EditProfileScreen(navController: NavHostController) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var uniqueIdState by remember { mutableStateOf("") }
+    val userData by viewModel.getUserData().observeAsState()
+    val initialUserData = MUser(name = userData?.name.toString(),
+        email = userData?.email.toString() , uniqueId = userData?.uniqueId.toString() )
+    var updatedUserData = initialUserData.copy()
+
+    val isUniqueIdAvailable by viewModel.isUniqueIdAvailable.observeAsState(true)
+    val errorMessage = remember { mutableStateOf("") }
+
     val scope = rememberCoroutineScope()
     Column {
         TopAppBar(title = {
@@ -126,21 +137,82 @@ fun EditProfileScreen(navController: NavHostController) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+//                OutlinedTextField(
+//                    value = uniqueIdState,
+//                    onValueChange = { uniqueIdState = it },
+//                    label = { Text("Unique ID") },
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+//                )
+//                UniqueIdField(viewModel)
+                OutlinedTextField(
+                    value = uniqueIdState,
+                    onValueChange = { uniqueIdState = it },
+                    label = { Text("Unique ID") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                )
+                if (!isUniqueIdAvailable) {
+                    Text(
+                        text = errorMessage.value,
+                        color = Color.Red
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(modifier = Modifier.padding(start=15.dp , top = 15.dp)) {
 
                     Button(onClick = {
-                        val userData = MUser(name = name, email = email)
-                        viewModel.updateUserData(userData).observe(lifecycleOwner, Observer { isSuccess ->
+                        val userDataToUpdate = updatedUserData.copy()
+
+                        if (name == "") {
+                            userData?.name = name
+                        }else{
+                            userDataToUpdate.name = name
+                        }
+                        if (email == "") {
+                            userData?.email = email
+                        }else{
+                            userDataToUpdate.email = email
+                        }
+                        if (uniqueIdState == "") {
+                            userData?.uniqueId = uniqueIdState
+                        }else{
+                            userDataToUpdate.uniqueId = uniqueIdState
+                        }
+
+                        viewModel.updateUserData(userDataToUpdate).observe(lifecycleOwner, Observer { isSuccess ->
                             if (isSuccess) {
                                 Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+                                // Update the updatedUserData object with the new values
+                                updatedUserData = userDataToUpdate
                             } else {
                                 Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
                             }
                         })
-                    }) {
+                    },
+                        enabled = isUniqueIdAvailable) {
                         Text("Update Details")
                     }
+
+                    LaunchedEffect(uniqueIdState) {
+                        if (uniqueIdState.isNotEmpty()) {
+                            viewModel.checkUniqueIdAvailability(uniqueIdState)
+                        } else {
+                            errorMessage.value = "id already in use"
+                        }
+                    }
+
+//                    Button(onClick = {
+//                        val userData = MUser(name = name, email = email, userId = uniqueIdState)
+//                        viewModel.updateUserData(userData).observe(lifecycleOwner, Observer { isSuccess ->
+//                            if (isSuccess) {
+//                                Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+//                            } else {
+//                                Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
+//                            }
+//                        })
+//                    }) {
+//                        Text("Update Details")
+//                    }
 
                 }
 

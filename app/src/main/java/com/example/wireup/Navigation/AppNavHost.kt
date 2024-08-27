@@ -1,5 +1,6 @@
 package com.example.wireup.Navigation
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +8,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,7 +32,9 @@ import com.example.wireup.ui.Screen.SplashScreen
 import com.example.wireup.ui.Screen.login.AuthenticationScreen
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.ProfileScreenViewMode
+import com.example.wireup.ui.Screen.login.LoginScreenViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

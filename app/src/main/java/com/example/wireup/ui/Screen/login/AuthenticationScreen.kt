@@ -1,6 +1,8 @@
 package com.example.wireup.ui.Screen.login
 
-import android.widget.Space
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +43,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,19 +55,71 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.EmailInput
 import com.example.wireup.ui.Components.PasswordInput
+import com.example.wireup.ui.Screen.viewmodel.LoginScreenViewModelFactory
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 @ExperimentalComposeUiApi
 @Composable
 fun AuthenticationScreen(
     navController: NavController,
-    viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: LoginScreenViewModel = viewModel(factory = LoginScreenViewModelFactory(LocalContext.current as Activity))
 ) {
     val showLoginForm = rememberSaveable { mutableStateOf(true) }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val userId = FirebaseAuth.getInstance().currentUser?.uid
+                            val name = account.displayName
+                            val email = account.email
+                            val profileImage = account.photoUrl.toString()
+                            val uniqueId = ""
+
+                            val user = hashMapOf(
+                                "name" to name,
+                                "email" to email,
+                                "userID" to userId,
+                                "profile_image" to profileImage,
+                                "uniqueId" to uniqueId
+                            )
+
+                            FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        // User data stored successfully, navigate to Home screen
+                                        navController.navigate(NavigationItem.Home.route)
+                                    } else {
+                                        // Handle error
+                                    }
+                                }
+                        } else {
+                            // Handle sign-in error
+                        }
+                    }
+            } catch (e: ApiException) {
+                // Handle error
+            }
+        }
+    }
+
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -74,6 +129,15 @@ fun AuthenticationScreen(
             Spacer(modifier = Modifier.height(10.dp))
             WireLogo()
             Spacer(modifier = Modifier.height(8.dp))
+            GoogleButton(
+                textId ="Login via Google",
+                loading = false,
+                validInputs = true
+            ){
+//            viewModel.signInWithGoogle()
+                val intent = viewModel.signInWithGoogle()
+                launcher.launch(intent)
+            }
             Spacer(modifier = Modifier.height(8.dp))
             if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){ email, password, _ ->
                 viewModel.signInWithEmailAndPassword(email, password){
@@ -133,11 +197,11 @@ fun AuthenticationScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @ExperimentalComposeUiApi
-@Preview
 @Composable
 fun UserForm(
+    viewModel: LoginScreenViewModel = viewModel(),
     loading: Boolean = false,
     isCreateAccount: Boolean = false,
     onDone: (String, String, String) -> Unit = { email, password, name ->}
@@ -147,7 +211,8 @@ fun UserForm(
     val name = rememberSaveable { mutableStateOf("") }
     val uniqueId = rememberSaveable { mutableStateOf("") }
     val passwordVisibility = rememberSaveable { mutableStateOf(false) }
-    val passwordFocusRequest = FocusRequester.Default
+//    val passwordFocusRequest = FocusRequester.Default
+    val passwordFocusRequest = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val valid = remember(email.value, password.value, name.value) {
         email.value.trim().isNotEmpty() && password.value.trim().isNotEmpty() && (name.value.trim().isNotEmpty() || !isCreateAccount)
@@ -162,23 +227,6 @@ fun UserForm(
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         if (isCreateAccount) {
-//            OutlinedTextField(
-//                value = name.value,
-//                onValueChange = { name.value = it },
-//                label = { Text("Name") },
-//                modifier = Modifier
-//                    .padding(4.dp)
-//                    .fillMaxWidth(0.96f)
-//            )
-
-//            OutlinedTextField(
-//                value = name.value,
-//                onValueChange = { name.value = it },
-//                label = { Text("Unique Id") },
-//                modifier = Modifier
-//                    .padding(4.dp)
-//                    .fillMaxWidth(0.96f)
-//            )
             TextField(
                 value = name.value,
                 onValueChange = { name.value = it },
@@ -188,33 +236,29 @@ fun UserForm(
                     .fillMaxWidth(0.96f),
                 colors = TextFieldDefaults.colors(Color.Black)
             )
-            TextField(
-                value = uniqueId.value,
-                onValueChange = { uniqueId.value = it },
-                label = { Text("Unique Id") },
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(0.96f),
-                colors = TextFieldDefaults.colors(Color.Transparent)
-            )
 
         }
         EmailInput(
-            emailState = email, enabled = !loading,
+            emailState = email,
+            enabled = !loading,
             onAction = KeyboardActions {
                 passwordFocusRequest.requestFocus()
             },
+            passwordFocusRequest = passwordFocusRequest,
+            context = LocalContext.current
         )
         PasswordInput(
             modifier = Modifier.focusRequester(passwordFocusRequest),
             passwordState = password,
             labelId = "Password",
-            enabled = !loading, //Todo change this
+            enabled = !loading,
             passwordVisibility = passwordVisibility,
             onAction = KeyboardActions {
                 if (!valid) return@KeyboardActions
                 onDone(email.value.trim(), password.value.trim(), name.value.trim())
-            })
+            },
+            focusRequester = passwordFocusRequest
+        )
 
         Spacer(modifier = Modifier.height(25.dp))
 
@@ -234,6 +278,7 @@ fun UserForm(
             loading = loading,
             validInputs = valid
         ){
+            viewModel.signInWithGoogle()
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -242,8 +287,6 @@ fun UserForm(
             modifier = Modifier.padding(horizontal = 15.dp ) , fontSize = 13.sp) else Text("")
 
     }
-
-
 }
 
 @Composable
@@ -311,3 +354,4 @@ fun WireLogo(modifier: Modifier = Modifier) {
     }
 
 }
+

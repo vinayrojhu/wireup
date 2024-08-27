@@ -1,5 +1,6 @@
 package com.example.wireup
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.wireup.Navigation.AppNavHost
@@ -32,15 +39,32 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.Navigation.Screen
 import com.example.wireup.ui.Components.BottomNavItem
 import com.example.wireup.ui.Components.BottomNavigationBar
+import com.example.wireup.ui.Screen.login.LoginScreenViewModel
+import com.example.wireup.ui.Screen.viewmodel.LoginScreenViewModelFactory
 import com.example.wireup.ui.theme.WireUpTheme
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var viewModel: LoginScreenViewModel
+
+//    private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModelFactory = LoginScreenViewModelFactory(this)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(LoginScreenViewModel::class.java)
+
         FirebaseApp.initializeApp(this)
         setContent {
             WireUpTheme {
@@ -123,7 +147,6 @@ class MainActivity : ComponentActivity() {
                         }
                     ) {
                         AppNavHost(
-                          //  homeViewModel = homeViewModel,
                             navController = navController,
                             modifier = Modifier.padding(it)
                         )
@@ -132,6 +155,47 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == 123) {
+//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+//            try {
+//                val account = task.getResult(ApiException::class.java)
+//                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+//                FirebaseAuth.getInstance().signInWithCredential(credential)
+//                    .addOnCompleteListener { task ->
+//                        if (task.isSuccessful) {
+//                            val userId = FirebaseAuth.getInstance().currentUser?.uid
+//                            val name = account.displayName
+//                            val email = account.email
+//                            val profileImage = account.photoUrl.toString()
+//
+//                            val user = hashMapOf(
+//                                "name" to name,
+//                                "email" to email,
+//                                "userID" to userId,
+//                                "profile_image" to profileImage
+//                            )
+//
+//                            FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
+//                                .addOnCompleteListener { task ->
+//                                    if (task.isSuccessful) {
+//                                        // User data stored successfully, navigate to Home screen
+//                                        navController.navigate(NavigationItem.Home.route)
+//                                    } else {
+//                                        // Handle error
+//                                    }
+//                                }
+//                        } else {
+//                            // Handle sign-in error
+//                        }
+//                    }
+//            } catch (e: ApiException) {
+//                // Handle error
+//            }
+//        }
+//    }
 }
 
 
@@ -155,3 +219,5 @@ internal fun SetupTransparentSystemUi(
         )
     }
 }
+
+
