@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -128,6 +129,9 @@ dependencies {
     implementation (libs.core)
 
     implementation (libs.accompanist.pager.v0280)
+
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
 
 
 
