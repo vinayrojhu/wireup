@@ -30,6 +30,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -43,6 +44,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +60,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -116,7 +123,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "Back",
                         modifier = Modifier.padding(8.dp)
                     )
@@ -136,22 +143,26 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                 if (showDialog.value) {
                     AlertDialog(
                         onDismissRequest = { showDialog.value = false },
-                        title = { Text("Create Node") },
+//                        title = { Text("Create Node" )  },
                         text = {
                             Column {
+                                Text(text = "Create Node" , textAlign = TextAlign.Center)
+                                Spacer(modifier = Modifier.height(10.dp))
                                 TextField(
                                     value = tweetText.value,
                                     onValueChange = { tweetText.value = it },
                                     label = { Text("Node text") }
                                 )
 
-
+                                Spacer(modifier = Modifier.height(10.dp))
                                 if (imageUri.value == null) {
                                     Button(
                                         onClick = {
                                             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                                             launcher.launch(intent)
-                                        }
+                                        },
+                                        colors = ButtonColors(containerColor = Color.LightGray , disabledContainerColor = Color.LightGray , contentColor = Black , disabledContentColor = Black),
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Text("Upload Image")
                                     }
@@ -168,7 +179,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
+                                    .padding(end = 25.dp , bottom = 10.dp),
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 Button(
@@ -177,7 +188,8 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                                         showDialog.value = false
                                         tweetText.value = ""
                                         imageUrl.value = ""
-                                    }
+                                    } ,
+                                    colors = ButtonColors(containerColor = Black , disabledContainerColor = Black , contentColor = Color.White , disabledContentColor = Color.White),
                                 ) {
                                     Text("Done")
                                 }

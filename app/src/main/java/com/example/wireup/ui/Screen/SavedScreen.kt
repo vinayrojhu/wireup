@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.icons.Icons
@@ -41,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -80,76 +84,26 @@ fun SavedScreen(navController: NavHostController) {
         )
 
         Divider()
-        Text(text = "Saved Screen")
-        Spacer(modifier = Modifier.height(10.dp))
-        
-        AudioPlayer(imageResource = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0va-Y5gI_CwfAIlHes8kpl0pa_H5A1eAwYlRLivX-LiFpwQHA4VC0adh1Ng1ZDvLETII&usqp=CAU")
+
+        Row(modifier = Modifier.padding(10.dp)
+            , horizontalArrangement = Arrangement.SpaceAround){
+           Column(modifier = Modifier.fillMaxWidth(0.5f).padding(10.dp).clickable {  }) {
+               Image(painter = painterResource(id = R.drawable.podcastfinal),
+                   contentDescription = "",
+                   contentScale = ContentScale.Crop ,
+                   modifier = Modifier.fillMaxWidth().height(150.dp).clip(RoundedCornerShape(20.dp)) )
+               Text(text = "Audio Podcasts" , modifier = Modifier.padding(start = 10.dp , top = 5.dp) , fontSize = 15.sp)
+           }
 
 
-    }
-}
-
-
-
-
-
-@Composable
-fun AudioPlayer(imageResource: String) {
-    var isPlaying by remember { mutableStateOf(false) }
-    var progress by remember { mutableStateOf(0f) }
-    var mediaPlayer: MediaPlayer? = null
-    val audioResource = R.raw.audiorandom// Replace with your audio resource
-    val imageResource = R.drawable.indic_logo// Replace with your image resource
-
-    if (isPlaying) {
-        mediaPlayer = MediaPlayer.create(LocalContext.current, audioResource)
-        mediaPlayer?.start()
-    }
-
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            while (mediaPlayer?.isPlaying == true) {
-                progress = mediaPlayer!!.currentPosition.toFloat() / mediaPlayer!!.duration
-                delay(100) // Update every 100 milliseconds
-            }
-            mediaPlayer?.release()
-            mediaPlayer = null
-            isPlaying = false
-        }
-    }
-
-    Box(modifier = Modifier.height(80.dp).fillMaxWidth()) {
-        Row {
-            Image(
-                painter = rememberImagePainter(
-                    data = imageResource
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .height(60.dp)
-                    .width(60.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { isPlaying = !isPlaying }
+            Column(modifier = Modifier.fillMaxWidth()
+                .padding(10.dp).clickable {  }
                 ) {
-                    Text(text = if (isPlaying) "Pause" else "Play")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                LinearProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Image(painter = painterResource(id = R.drawable.podcast_video),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop ,
+                    modifier = Modifier.fillMaxWidth().height(150.dp).clip(RoundedCornerShape(20.dp)) )
+                Text(text = "Video Podcasts" , modifier = Modifier.padding(start = 10.dp , top = 5.dp) , fontSize = 15.sp)
             }
         }
 

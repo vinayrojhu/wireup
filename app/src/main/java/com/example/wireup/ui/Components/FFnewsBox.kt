@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,6 +45,7 @@ import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.FFData
+import org.checkerframework.common.subtyping.qual.Bottom
 
 //data class NewsItem(
 //    val heading: String,
@@ -61,222 +64,171 @@ import com.example.wireup.model.FFData
 
 @Composable
 fun FFnewsBox(data: FFData) {
-    // State to store the visibility of the heading, image, and description
-    val (showContent, setShowContent) = remember { mutableStateOf(true) }
 
-    // Content to be displayed when the heading, image, and description are hidden
-    val alternateContent = @Composable {
+    Column(horizontalAlignment = Alignment.CenterHorizontally ) {
+        // State to store the visibility of the heading, image, and description
+        val (showContent, setShowContent) = remember { mutableStateOf(true) }
 
-        Column {
-            Box(
-                modifier = Modifier
+        // Content to be displayed when the heading, image, and description are hidden
+        val alternateContent = @Composable {
+
+                Card(modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = data.item2.image,
-                    contentDescription = "Image in the box",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(5.dp)
-                    .background(Color.White)
-
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .fillMaxHeight(1f)
-                        .background(Color.White)
-                        .padding(5.dp)
+                    .fillMaxHeight(),
+                    colors = CardColors(containerColor = Color.Transparent,
+                        contentColor = Color.Unspecified,
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = Color.Transparent),
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-//                            text = data.item2.heading,
-                            text="Copying Congress Manifesto in 2024 Budget: Rahul Gandhi Accuses Government" ,
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                            maxLines = 2 ,
-                            fontWeight = FontWeight.Bold,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-//                            text = data.item2.description,
-                            text = "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto. ",
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
-                }
-
-                Row(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .align(Alignment.Bottom)
-                        .clickable { }
-                ) {
-                    Text(
-                            text = "Read",
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    color = Color.Black,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                    )
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.icons8_arrow_96),
-                        contentDescription = "read more",
                         modifier = Modifier
-                            .align(Alignment.Bottom)
-                            .weight(1f)
-                            .padding(start = 5.dp)
-                    )
-
-                }
-            }
-        }
-    }
-
-
-
-
-
-    Surface(modifier = Modifier
-        .padding(5.dp)
-        .clip(RoundedCornerShape(10.dp)),
-        color = Color.Black) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(10.dp)
-        ) {
-            // Hide the heading, image, and description when the toggle button is clicked
-            if (showContent) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(5.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = data.item1.image,
-                        contentDescription = "Image in the box",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-
-                    )
-                }
-
-
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(5.dp)
-                        .background(Color.White)
-
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .fillMaxHeight(1f)
-                            .background(Color.White)
-                            .padding(5.dp)
                     ) {
+
+                        Image(
+                            painter = data.item2.image,
+                            contentDescription = "Image in the box",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(5.dp)
+                                .clip(RoundedCornerShape(15.dp))
+                        )
+
                         Column(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp)
+                        ) {
+                            Text(
+//                            text = data.item2.heading,
+                                text = "Copying Congress Manifesto in 2024 Budget: Rahul Gandhi Accuses Government",
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                                maxLines = 2,
+                                fontWeight = FontWeight.Bold,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+//                       text = data.item2.description,
+                                text = "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
+                                        "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
+                                        "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
+                                        "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto. ",
+                                color = Color.Black,
+                                fontSize = 14.sp,
+                                maxLines = 12,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+//                    Spacer(modifier = Modifier.height(6.dp))
+
+
+                    }
+                }
+
+
+        }
+
+
+
+
+
+        Surface(modifier = Modifier
+            .clip(RoundedCornerShape(10.dp)),
+            color = Color.Transparent) {
+            Card(modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .fillMaxHeight(0.85f)
+                .padding(5.dp)
+                .clickable(
+                    enabled = true,
+                    onClick = {}),
+                colors = CardColors(containerColor = Color.Transparent,
+                    contentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = Color.Transparent),
+            ) {
+                Column(
+                    modifier = Modifier
+                ) {
+                    // Hide the heading, image, and description when the toggle button is clicked
+                    if (showContent) {
+
+                        Image(
+                            painter = data.item1.image,
+                            contentDescription = "Image in the box",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(5.dp)
+                                .clip(RoundedCornerShape(15.dp))
+                        )
+
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp)
                         ) {
                             Text(
 //                                text = data.item1.heading,
                                 text = "Congress Criticizes Union Budget 2024 as Inadequate for Economic Growth",
                                 color = Color.Black,
                                 fontSize = 18.sp,
-                                maxLines = 2 ,
+                                maxLines = 2,
                                 fontWeight = FontWeight.Bold,
                                 overflow = TextOverflow.Ellipsis
                             )
+                            Spacer(modifier = Modifier.height(10.dp))
                             Text(
 //                                text = data.item1.description,
-                                text="The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month.",
+                                text = "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
+                                        "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
+                                        "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
+                                        "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month.",
                                 color = Color.Black,
                                 fontSize = 14.sp,
-                                maxLines = 3,
+                                maxLines = 12,
                                 overflow = TextOverflow.Ellipsis
                             )
+
+
                         }
+//                    Spacer(modifier = Modifier.height(6.dp))
 
                     }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-
-                    Row(
-                        modifier = Modifier
-                            .background(Color.White)
-                            .align(Alignment.Bottom)
-                            .clickable { }
-                    ) {
-                        Text(
-                            text = "Read",
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.icons8_arrow_96),
-                            contentDescription = "read more",
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .weight(1f)
-                                .padding(start = 5.dp)
-                        )
-
+                    // Conditionally render the alternate content when the heading, image, and description are hidden
+                    if (!showContent) {
+                        alternateContent()
                     }
+
+
+
+
                 }
             }
 
 
 
-            // Conditionally render the alternate content when the heading, image, and description are hidden
-            if (!showContent) {
-                alternateContent()
-            }
-            // Toggle button to showand hide the heading, image, and description
-            ToggleContentButton(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape(7.dp)),
-                showContent = showContent,
-                onToggle = { setShowContent(!showContent) }
-            )
-
-
         }
+
+
+        // Toggle button to showand hide the heading, image, and description
+        ToggleContentButton(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp)),
+            showContent = showContent,
+            onToggle = { setShowContent(!showContent) }
+        )
     }
 
 
+
 }
+
 
 @Composable
 fun ToggleContentButton(
@@ -293,7 +245,7 @@ fun ToggleContentButton(
     Box(
         modifier = modifier
             .height(height)
-            .fillMaxWidth()
+            .fillMaxWidth(0.9f)
             .background(if (showContent) Color(0xFF4CAF50) else Color(0xFFEF4444))
             .clickable(onClick = onToggle)
 

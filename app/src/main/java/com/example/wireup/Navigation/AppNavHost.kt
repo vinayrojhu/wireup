@@ -17,6 +17,7 @@ import com.example.wireup.ui.Screen.EditProfileScreen
 import com.example.wireup.ui.Screen.FlipFlopScreen
 import com.example.wireup.ui.Screen.FriendsScreen
 import com.example.wireup.ui.Screen.HomeScreen
+import com.example.wireup.ui.Screen.LikedScreen
 import com.example.wireup.ui.Screen.NodeScreen
 import com.example.wireup.ui.Screen.OpenAudioPodcast
 import com.example.wireup.ui.Screen.OpenVideoPodcast
@@ -123,6 +124,10 @@ fun AppNavHost(
 
         composable(NavigationItem.ProfileViewMode.route + "/{userId}") { entry ->
             ProfileScreenViewMode(navController, entry.arguments?.getString("userId")!!)
+        }
+
+        composable(NavigationItem.Liked.route) {
+            LikedScreen( navController = navController)
         }
 
 

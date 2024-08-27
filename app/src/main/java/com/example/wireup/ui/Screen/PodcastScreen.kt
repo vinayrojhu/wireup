@@ -178,7 +178,9 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
                     .clip(RoundedCornerShape(16.dp))
             )
             Icon(Icons.Filled.PlayArrow, contentDescription = "Friends"
-                , modifier = Modifier.align(Alignment.Center).size(50.dp) ,
+                , modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(50.dp) ,
                 tint = Color.White)
         }
 
@@ -329,18 +331,33 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text(
-                    text = "by ${Apodcast.speaker}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "${Apodcast.duration} min",
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
+                    Column {
+                        Text(
+                            text = "by ${Apodcast.speaker}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "${Apodcast.duration} min",
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Column {
+                        val isLiked = remember { mutableStateOf(false) }
+                        IconButton(onClick = { isLiked.value = !isLiked.value  }) {
+                            Icon(
+                                if (isLiked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder ,
+                                contentDescription = "Like"
+                            )
+                        }
+                    }
+
+                }
+
             }
         }
     }
