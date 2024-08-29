@@ -107,9 +107,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                     Row {
                         IconButton(onClick = {
                             navController.navigate(NavigationItem.Settings.route)
-//                            isRailExpanded = !isRailExpanded
-//                            offsetX = 16.dp // adjust x offset to match menu button position
-//                            offsetY = 48.dp // adjust y offset to match top app bar height
                         }) {
                             Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
                         }

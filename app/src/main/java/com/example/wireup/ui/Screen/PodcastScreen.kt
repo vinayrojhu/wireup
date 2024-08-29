@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -174,7 +175,7 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth(1f)
-                    .height(190.dp)
+                    .height(200.dp)
                     .clip(RoundedCornerShape(16.dp))
             )
             Icon(Icons.Filled.PlayArrow, contentDescription = "Friends"
@@ -221,6 +222,7 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
                 }
 
         }
+        Divider()
     }
 }
 

@@ -64,7 +64,7 @@ fun NewsBox3(data: NewsData, navController: NavHostController) {
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .height(200.dp)
                 .clip(RoundedCornerShape(8.dp))
         )
 

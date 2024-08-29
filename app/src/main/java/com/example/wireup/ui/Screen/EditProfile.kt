@@ -56,7 +56,6 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
-import com.example.wireup.ui.Components.UniqueIdField
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,11 +60,11 @@ fun NewsBox2(data: NewsData , navController: NavHostController) {
 //        border = BorderStroke(width = 1.dp,
 //            brush = Brush.linearGradient(colors = listOf(Color.LightGray, Color.LightGray)))
     ) {
-        Row (modifier = Modifier.fillMaxWidth(1f)){
+        Row(horizontalArrangement = Arrangement.SpaceBetween ,modifier = Modifier.fillMaxWidth(1f).padding(end = 10.dp)){
 
             Column(modifier = Modifier
                 .padding(start = 15.dp, top = 8.dp, end = 10.dp, bottom = 6.dp)
-                .fillMaxWidth(0.61f))
+                .fillMaxWidth(0.65f))
               {
                 // Title
                 Text(
