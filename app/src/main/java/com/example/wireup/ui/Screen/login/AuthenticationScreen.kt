@@ -1,6 +1,7 @@
 package com.example.wireup.ui.Screen.login
 
 import android.app.Activity
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -19,12 +20,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -32,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -50,6 +60,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -124,20 +137,12 @@ fun AuthenticationScreen(
     Surface(modifier = Modifier.fillMaxSize()) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Top) {
 
             Spacer(modifier = Modifier.height(10.dp))
             WireLogo()
             Spacer(modifier = Modifier.height(8.dp))
-            GoogleButton(
-                textId ="Login via Google",
-                loading = false,
-                validInputs = true
-            ){
-//            viewModel.signInWithGoogle()
-                val intent = viewModel.signInWithGoogle()
-                launcher.launch(intent)
-            }
+
             Spacer(modifier = Modifier.height(8.dp))
             if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){ email, password, _ ->
                 viewModel.signInWithEmailAndPassword(email, password){
@@ -152,7 +157,18 @@ fun AuthenticationScreen(
                 }
             }
 
+            GoogleButton(
+                textId ="Login via Google",
+                loading = false,
+                validInputs = true
+            ){
+//            viewModel.signInWithGoogle()
+                val intent = viewModel.signInWithGoogle()
+                launcher.launch(intent)
+            }
+
         }
+
 //        Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier.padding(bottom = 25.dp),
@@ -193,6 +209,7 @@ fun AuthenticationScreen(
 
         }
 
+
     }
 
 }
@@ -219,7 +236,6 @@ fun UserForm(
 
     }
     val modifier = Modifier
-        .height(1000.dp)
         .verticalScroll(rememberScrollState())
 
 
@@ -227,40 +243,58 @@ fun UserForm(
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         if (isCreateAccount) {
-            TextField(
+            OutlinedTextField(
                 value = name.value,
                 onValueChange = { name.value = it },
                 label = { Text("Name") },
                 modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth(0.96f),
-                colors = TextFieldDefaults.colors(Color.Black)
+                colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent , unfocusedContainerColor = Color.Transparent),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Person icon"
+                    )
+                }
             )
 
         }
-        EmailInput(
+//        EmailInput(context = LocalContext.current , emailState = email , passwordFocusRequest = passwordFocusRequest )
+        com.example.wireup.ui.Screen.login.EmailInput(
             emailState = email,
-            enabled = !loading,
-            onAction = KeyboardActions {
-                passwordFocusRequest.requestFocus()
-            },
-            passwordFocusRequest = passwordFocusRequest,
+            passwordFocusRequest =passwordFocusRequest ,
             context = LocalContext.current
         )
-        PasswordInput(
-            modifier = Modifier.focusRequester(passwordFocusRequest),
+
+
+//        old password box
+
+//        PasswordInput(
+//            modifier = Modifier.focusRequester(passwordFocusRequest),
+//            passwordState = password,
+//            labelId = "Password",
+//            enabled = !loading,
+//            passwordVisibility = passwordVisibility,
+//            onAction = KeyboardActions {
+//                if (!valid) return@KeyboardActions
+//                onDone(email.value.trim(), password.value.trim(), name.value.trim())
+//            },
+//            focusRequester = passwordFocusRequest
+//        )
+
+
+        //new box password
+
+        com.example.wireup.ui.Screen.login.PasswordInput(
             passwordState = password,
-            labelId = "Password",
-            enabled = !loading,
-            passwordVisibility = passwordVisibility,
-            onAction = KeyboardActions {
-                if (!valid) return@KeyboardActions
-                onDone(email.value.trim(), password.value.trim(), name.value.trim())
-            },
+            passwordVisibility =passwordVisibility ,
             focusRequester = passwordFocusRequest
         )
 
-        Spacer(modifier = Modifier.height(25.dp))
+        if (isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
+            modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp ) , fontSize = 13.sp) else Text("")
+//        Spacer(modifier = Modifier.height(25.dp))
 
         SubmitButton(
             textId = if (isCreateAccount) "Create Account" else "Login",
@@ -273,18 +307,18 @@ fun UserForm(
 
 
         Text(text = "or" , fontSize = 13.sp , fontWeight = FontWeight.W500)
-        GoogleButton(
-            textId = if (isCreateAccount) "Continue with Google" else "Login via Google",
-            loading = loading,
-            validInputs = valid
-        ){
-            viewModel.signInWithGoogle()
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
 
-        if (isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
-            modifier = Modifier.padding(horizontal = 15.dp ) , fontSize = 13.sp) else Text("")
+//        GoogleButton(
+//            textId = if (isCreateAccount) "Continue with Google" else "Login via Google",
+//            loading = loading,
+//            validInputs = valid
+//        ){
+//            viewModel.signInWithGoogle()
+//        }
+
+
+
 
     }
 }
@@ -346,8 +380,8 @@ fun WireLogo(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(10.dp))
         Text(text = "WIREup",
             textAlign = TextAlign.Center,
-            modifier = modifier.padding(top = 20.dp, bottom = 1.dp),
-            fontSize = 40.sp,
+            modifier = modifier.padding(top = 23.dp, bottom = 1.dp),
+            fontSize = 35.sp,
             fontWeight = FontWeight.W700,
             color = Color.Black.copy(alpha = 0.7f))
 
@@ -355,3 +389,87 @@ fun WireLogo(modifier: Modifier = Modifier) {
 
 }
 
+@Composable
+fun EmailInput(
+    modifier: Modifier = Modifier,
+    emailState: MutableState<String>,
+    labelId: String = "Email",
+    enabled: Boolean = true,
+    imeAction: ImeAction = ImeAction.Next,
+    onAction: KeyboardActions = KeyboardActions.Default,
+    passwordFocusRequest: FocusRequester,
+    context: Context
+) {
+    OutlinedTextField(
+        value = emailState.value,
+        onValueChange = { emailState.value = it },
+        label = { Text(text = labelId) },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = "Email Icon"
+            )
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = imeAction
+        ),
+        keyboardActions = onAction,
+        modifier = modifier
+            .fillMaxWidth(0.94f)
+            .focusRequester(passwordFocusRequest),
+        singleLine = true,
+        enabled = enabled
+    )
+}
+
+
+
+@Composable
+fun PasswordInput(
+    modifier: Modifier = Modifier,
+    passwordState: MutableState<String>,
+    labelId: String = "Password",
+    enabled: Boolean = true,
+    passwordVisibility: MutableState<Boolean>,
+    onAction: KeyboardActions = KeyboardActions.Default,
+    focusRequester: FocusRequester
+) {
+    val visibilityIcon = if (passwordVisibility.value) {
+        Icons.Default.Lock
+    } else {
+        Icons.Default.Build
+    }
+
+    OutlinedTextField(
+        value = passwordState.value,
+        onValueChange = { passwordState.value = it },
+        label = { Text(text = labelId) },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Lock,
+                contentDescription = "Password Icon"
+            )
+        },
+        trailingIcon = {
+            IconButton(onClick = {
+                passwordVisibility.value = !passwordVisibility.value
+            }) {
+                Icon(
+                    imageVector = visibilityIcon,
+                    contentDescription = if (passwordVisibility.value) "Hide Password" else "Show Password"
+                )
+            }
+        },
+        visualTransformation = if (passwordVisibility.value) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
+        keyboardActions = onAction,
+        modifier = modifier
+            .fillMaxWidth(0.94f)
+            .focusRequester(focusRequester),
+        singleLine = true,
+        enabled = enabled
+    )
+}
