@@ -197,6 +197,7 @@ fun AuthenticationScreen(
                 }
             }
 
+
             Text(text,
                 modifier = Modifier
                     .clickable {
