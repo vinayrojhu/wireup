@@ -87,7 +87,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
     val followers by viewModel.followers.observeAsState(initial = emptyList())
 
-    val userFollowers = "Followers: ${followers.size ?: 0}"
+    val userFollowers = "Followers : ${followers.size ?: 0}"
 
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
@@ -100,10 +100,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             TopAppBar(
                 title = { Text(userId, fontSize = 18.sp) },
                 actions = {
-                    var isRailExpanded by remember { mutableStateOf(false) }
-                    var offsetX by remember { mutableStateOf(0.dp) }
-                    var offsetY by remember { mutableStateOf(0.dp) }
-
                     Row {
                         IconButton(onClick = {
                             navController.navigate(NavigationItem.Settings.route)
@@ -132,7 +128,12 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         Spacer(modifier = Modifier.width(15.dp))
 
                             Image(
-                                painter = rememberImagePainter(userImage.value), // Replace with actual resource ID
+                                painter = if (userImage.value != null) {
+                                    rememberImagePainter(userImage.value)
+                                } else {
+                                    painterResource(R.drawable.usericon) // Replace with your default image resource ID
+                                },
+//                                painter = rememberImagePainter(userImage.value), // Replace with actual resource ID
                                 contentDescription = "Profile Picture",
                                 modifier = Modifier
                                     .height(100.dp)
@@ -140,6 +141,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                     .clip(CircleShape)
                                     .align(alignment = Alignment.CenterHorizontally),
                                 contentScale = ContentScale.Crop
+
                             )
 
                             Column(modifier = Modifier
