@@ -1,20 +1,23 @@
 package com.example.wireup.model
 
-//data class MUser(val id: String?,
-//                 val userId: String,
-//                 val displayName: String){
-//    fun toMap(): MutableMap<String, Any> {
-//        return mutableMapOf("user_id" to this.userId,
-//            "display_name" to this.displayName)
-//    }
-//
-//}
+import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 
 data class MUser(
     val id: String = "",
     var name: String = "",
     var email: String = "",
-    var profileImage: String = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg",
+    var profileImage: String = "",
     val followers: MutableList<String> = mutableListOf(),
     var uniqueId: String = ""
+)
+
+//data class Follower(val name: String, val image: String)
+
+data class Follower(
+    val followerId: String = "",
+    val name: String = "",
+    val image: Uri? = null
+    // Add other relevant fields as needed
 )

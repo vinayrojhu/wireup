@@ -47,12 +47,14 @@ class LoginScreenViewModel(private val activity: Activity): ViewModel() {
                 val userId = auth.currentUser?.uid
                 val profile_image = ""
                 val uniqueId = ""
+                val followers = mutableListOf<String>()
                 val user = hashMapOf(
                     "name" to name,
                     "email" to email,
                     "userID" to userId,
                     "profile_image" to profile_image,
-                    "uniqueId" to uniqueId
+                    "uniqueId" to uniqueId,
+                    "followers" to followers
                 )
                 FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
                 home()

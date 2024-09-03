@@ -60,6 +60,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -69,6 +70,7 @@ import coil.compose.rememberImagePainter
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -360,6 +362,16 @@ fun UploadImage(viewModel: UserViewModel) {
 }
 
 
+
+//class UserViewModelFactory(private val firestoreRepository: FirestoreRepository) : ViewModelProvider.Factory {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
+//            @Suppress("UNCHECKED_CAST")
+//            return UserViewModel(firestoreRepository) as T
+//        }
+//        throw IllegalArgumentException("Unknown ViewModel class")
+//    }
+//}
 
 class UserViewModelFactory(private val firestoreRepository: FirestoreRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

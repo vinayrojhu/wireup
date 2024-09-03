@@ -2,14 +2,25 @@ package com.example.wireup.ui.Screen.profile
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.wireup.model.Follower
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 
@@ -21,11 +32,15 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     private val _users = MutableLiveData<List<MUser>>()
     val users: LiveData<List<MUser>> = _users
 
-    private val _followers = MutableLiveData<List<String>>()
-    val followers: LiveData<List<String>> = _followers
-
     private val _isUniqueIdAvailable = MutableLiveData<Boolean>()
     val isUniqueIdAvailable: LiveData<Boolean> = _isUniqueIdAvailable
+
+    private val _followerCount = MutableStateFlow(0)
+    val followerCount: StateFlow<Int> = _followerCount
+
+    private val _followerss = MutableStateFlow<List<String>>(emptyList())
+    val followerss: StateFlow<List<String>> = _followerss
+
 
     fun getUserData(): LiveData<MUser> {
         val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -33,6 +48,12 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     }
     fun getUserData2(uuid: String): LiveData<MUser> {
         return firestoreRepository.getUserData(uuid)
+    }
+
+    fun getUser(userId: String): Flow<MUser> = flow {
+        firestoreRepository.getUser(userId).collect { user ->
+            emit(user)
+        }
     }
 
     fun updateUserData(userData: MUser): LiveData<Boolean> {
@@ -56,12 +77,6 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         }
         return liveData
     }
-
-//    fun addTweet(tweetText: String, imageUrl: String) {
-//        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-//        val tweet = Tweet(userId = userId, description = tweetText, NodeimageUrl = imageUrl )
-//        firestoreRepository.addTweet(tweet)
-//    }
 
     init {
         fetchTweetsFromFirestore()
@@ -121,35 +136,32 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         return liveData
     }
 
-    fun followUser(userId: String) {
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        firestoreRepository.followUser(currentUserId, userId).observeForever { isSuccess ->
-            if (isSuccess) {
-                val currentFollowers = _followers.value
-                if (currentFollowers != null) {
-                    if (currentFollowers.contains(userId)) {
-                        // User is already following, so remove them from the followers list
-                        _followers.value = currentFollowers.minus(userId)
-                        // Update the button text and icon to "Follow"
-                    } else {
-                        // User is not following, so add them to the followers list
-                        _followers.value = currentFollowers.plus(userId)
-                        // Update the button text and icon to "Unfollow"
-                    }
-                }
-            }
-        }
-    }
-
-    fun getFollowers(userId: String): LiveData<List<String>> {
-        return firestoreRepository.getFollowers(userId)
-    }
-
     fun checkUniqueIdAvailability(uniqueId: String) {
         firestoreRepository.checkUniqueIdAvailability(uniqueId).observeForever { available ->
             _isUniqueIdAvailable.value = available
         }
     }
+
+    fun addFollowerToUser(userId: String, followerId: String, /*followerName: String, followerImage: String*/) {
+        firestoreRepository.addFollowerToUser(userId, followerId) { success ->
+            _followerCount.value = (_followerCount.value ?: 0) + 1
+        }
+    }
+
+    fun getFollowerCount(userId: String) {
+        viewModelScope.launch {
+            val count = firestoreRepository.getFollowerCount(userId)
+            _followerCount.value = count
+        }
+    }
+
+    fun getFollowersOfUser(userId: String) {
+        viewModelScope.launch {
+            val result = firestoreRepository.getFollowersOfUser(userId)
+            _followerss.value = result
+        }
+    }
+
 
 
 }
