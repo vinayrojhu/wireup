@@ -18,6 +18,7 @@ import com.example.wireup.ui.Screen.AboutScreen
 import com.example.wireup.ui.Screen.AccountScreen
 import com.example.wireup.ui.Screen.EditProfileScreen
 import com.example.wireup.ui.Screen.FlipFlopScreen
+import com.example.wireup.ui.Screen.FollowNodes
 import com.example.wireup.ui.Screen.FriendsScreen
 import com.example.wireup.ui.Screen.HomeScreen
 import com.example.wireup.ui.Screen.LikedScreen
@@ -133,6 +134,10 @@ fun AppNavHost(
 
         composable(NavigationItem.Liked.route) {
             LikedScreen( navController = navController)
+        }
+
+        composable(NavigationItem.FollowNodes.route){
+            FollowNodes(navController = navController)
         }
 
 

@@ -15,12 +15,14 @@ import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 
@@ -161,6 +163,25 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
             _followerss.value = result
         }
     }
+
+    suspend fun getFollowersOfUser2(userId: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            firestoreRepository.getFollowersOfUser(userId)
+        }
+    }
+
+    fun fetchTweetsForCurrentUser(userId: String) {
+        viewModelScope.launch {
+            val followers = getFollowersOfUser2(userId)
+            if (followers.isNotEmpty()) {
+                firestoreRepository.fetchTweetsFromFollowedUsers(followers).observeForever { tweets ->
+                    _tweets.value = tweets
+                }
+            }
+        }
+    }
+
+
 
 
 

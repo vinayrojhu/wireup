@@ -62,6 +62,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -71,6 +72,8 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.wireup.Navigation.NavigationItem
+import com.example.wireup.R
 import com.example.wireup.model.MUser
 import com.example.wireup.ui.Components.CircularImage
 import com.example.wireup.ui.Components.TweetActionRow
@@ -128,7 +131,16 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                         modifier = Modifier.padding(8.dp)
                     )
                 }
-            }
+            },
+                actions = {
+                    Row {
+                        IconButton(onClick = { navController.navigate(NavigationItem.FollowNodes.route) }) {
+                            Icon(painter = painterResource(id = R.drawable.global_network),
+                                contentDescription = "globe",
+                                modifier = Modifier.padding(8.dp))
+                        }
+                    }
+                }
             )
             Divider()
 

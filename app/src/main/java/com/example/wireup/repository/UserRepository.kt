@@ -217,6 +217,32 @@ class FirestoreRepository {
         }
     }
 
+    fun fetchTweetsFromFollowedUsers(/*userId: String,*/ followedUserIds: List<String>): LiveData<List<Tweet>> {
+        val liveData = MutableLiveData<List<Tweet>>()
+        firestore.collection("tweets").whereIn("userId", followedUserIds).get()
+            .addOnSuccessListener { querySnapshot ->
+                val tweets = querySnapshot.documents.map { document ->
+                    Tweet(
+                        id = document.id,
+                        userId = document.getString("userId") ?: "",
+                        imageUrl = document.getString("imageUrl"),
+                        description = document.getString("description") ?: "",
+                        likeCount = document.getLong("likeCount")?.toInt() ?: 0,
+                        bookmarkCount = document.getLong("bookmarkCount")?.toInt() ?: 0,
+                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0
+                    )
+                }
+                liveData.value = tweets
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting tweets", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
+    }
+
+
+
 
 }
 
