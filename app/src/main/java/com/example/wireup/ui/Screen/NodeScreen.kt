@@ -329,7 +329,7 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             Image(
                 painter = rememberImagePainter(nodeimage),
                 contentDescription = "Tweet Image",
-                modifier = Modifier.size(300.dp)
+                modifier = Modifier.size(280.dp)
             )
         }
 
@@ -340,67 +340,72 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             fontWeight = FontWeight.W400
         )
         Spacer(modifier = Modifier.height(8.dp))
+
 //        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
-        TweetActionRow(
-            isLiked, isRetweeted, isBookmarked,
-            likes,
-            retweets,
-            bookmarks,
-            onLikeClicked = {
-                if (it)
-                    likes++
-                else
-                    likes--
-                isLiked = it
-            }, onRetweetClicked = {
-                if (it)
-                    retweets++
-                else
-                    retweets--
-                isRetweeted = it
-            }, onBookmarkClicked = {
-                if (it)
-                    bookmarks++
-                else
-                    bookmarks--
-                isBookmarked = it
-            }) {
-            isVisible = !isVisible
-        }
+
+//        TweetActionRow(
+//            isLiked, isRetweeted, isBookmarked,
+//            likes,
+//            retweets,
+//            bookmarks,
+//            onLikeClicked = {
+//                if (it)
+//                    likes++
+//                else
+//                    likes--
+//                isLiked = it
+//            }, onRetweetClicked = {
+//                if (it)
+//                    retweets++
+//                else
+//                    retweets--
+//                isRetweeted = it
+//            }
+//            , onBookmarkClicked = {
+//                if (it)
+//                    bookmarks++
+//                else
+//                    bookmarks--
+//                isBookmarked = it
+//            }) {
+//            isVisible = !isVisible
+//        }
 //        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
     }
 
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .height(420.dp) // Set the desired height here
-                .drawBehind {
-                    drawLine(
-                        color = Color.LightGray,
-                        start = Offset(150f, 0f),
-                        end = Offset(150f, this.size.height)
-                    )
-                }
-        ) {
-            // ... rest of your code
-            items(5) {
-                TweetItem(tweet = Tweet(
-                    description = "Incorporate and convert Java code into #Kotlin using #Android Studio, and learn Kotlin language conventions along the way. You’ll also learn how to write Kotlin code to make it callable from Java code.",
-                    userId = FirebaseAuth.getInstance().currentUser?.email.toString(),
-                    comments = listOf("very nice"),
-                    likeCount = 203,
-                    retweetCount = 50,
-                    bookmarkCount = 135,
-                    imageUrl = "https://vectorportal.com/storage/anime-avatar.jpg"),
-                    onCommentClick = { },
-                    navController = navController) {}
-            }
-        }
-    }
+
+//    nodes k andar aur nodes
+//    AnimatedVisibility(
+//        visible = isVisible,
+//        enter = fadeIn(),
+//        exit = fadeOut()
+//    ) {
+//        LazyColumn(
+//            modifier = Modifier
+//                .height(420.dp) // Set the desired height here
+//                .drawBehind {
+//                    drawLine(
+//                        color = Color.LightGray,
+//                        start = Offset(150f, 0f),
+//                        end = Offset(150f, this.size.height)
+//                    )
+//                }
+//        ) {
+//            // ... rest of your code
+//            items(5) {
+//                TweetItem(tweet = Tweet(
+//                    description = "Incorporate and convert Java code into #Kotlin using #Android Studio, and learn Kotlin language conventions along the way. You’ll also learn how to write Kotlin code to make it callable from Java code.",
+//                    userId = FirebaseAuth.getInstance().currentUser?.email.toString(),
+//                    comments = listOf("very nice"),
+//                    likeCount = 203,
+//                    retweetCount = 50,
+//                    bookmarkCount = 135,
+//                    imageUrl = "https://vectorportal.com/storage/anime-avatar.jpg"),
+//                    onCommentClick = { },
+//                    navController = navController) {}
+//            }
+//        }
+//    }
 
 }
 
