@@ -57,8 +57,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: LoginScreenViewModel
-
-//    private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,7 +70,6 @@ class MainActivity : ComponentActivity() {
                     systemUiController = rememberSystemUiController(),
                     actualBackgroundColor = MaterialTheme.colorScheme.surface
                 )
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize()
                         .statusBarsPadding()
@@ -122,6 +119,11 @@ class MainActivity : ComponentActivity() {
                                                 NavigationItem.Node.route,
                                                 Screen.NODE.name,
                                                 icon = painterResource(id = R.drawable.node_iconn)
+                                            ),
+                                            BottomNavItem(
+                                                NavigationItem.FlipFlop.route,
+                                                Screen.FLIPFLOP.name,
+                                                icon = painterResource(id = R.drawable.coin)
                                             ),
                                             BottomNavItem(
                                                 NavigationItem.Profile.route,

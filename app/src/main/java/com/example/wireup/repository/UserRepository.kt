@@ -4,10 +4,21 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.wireup.model.Follower
 import com.example.wireup.model.MUser
 import com.example.wireup.ui.Screen.Tweet
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class FirestoreRepository {
     private val firestore = FirebaseFirestore.getInstance()
@@ -22,7 +33,8 @@ class FirestoreRepository {
                         id = document.getString("id") ?: "",
                         name = document.getString("name") ?: "",
                         email = document.getString("email") ?: "",
-                        uniqueId = document.getString("uniqueId") ?: ""
+                        uniqueId = document.getString("uniqueId") ?: "",
+                        profileImage = document.getString("profileImage") ?: ""
                     )
                     liveData.value = user
                 } else {
@@ -35,26 +47,28 @@ class FirestoreRepository {
         return liveData
     }
 
-//    fun updateUserData(userId: String, userData: MUser): LiveData<Boolean> {
-//        val liveData = MutableLiveData<Boolean>()
-//        val userRef = firestore.collection("users").document(userId)
-//        userRef.update("name", userData.name)
-//            .addOnSuccessListener {
-//                userRef.update("email", userData.email)
-//                    .addOnSuccessListener {
-//                        liveData.value = true
-//                    }
-//                    .addOnFailureListener { exception ->
-//                        Log.d("FirestoreRepository", "Error updating user email", exception)
-//                        liveData.value = false
-//                    }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.d("FirestoreRepository", "Error updating user name", exception)
-//                liveData.value = false
-//            }
-//        return liveData
-//    }
+    fun getUser(userId: String): Flow<MUser> = callbackFlow {
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = MUser(
+                        id = document.getString("userID") ?: "",
+                        name = document.getString("name") ?: "",
+                        email = document.getString("email") ?: "",
+                        uniqueId = document.getString("uniqueId") ?: "",
+                        profileImage = document.getString("profile_image") ?: ""
+                    )
+                    trySend(user)
+                } else {
+                    Log.d("FirestoreRepository", "User not found")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting user data", exception)
+                close(exception)
+            }
+        awaitClose {}
+    }.flowOn(Dispatchers.IO)
 
     fun updateUserData(userId: String, userData: MUser): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
@@ -152,66 +166,6 @@ class FirestoreRepository {
         return liveData
     }
 
-    fun followUser(currentUserId: String, userId: String): LiveData<Boolean> {
-        val liveData = MutableLiveData<Boolean>()
-        val userRef = firestore.collection("users").document(userId)
-        userRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val user = document.toObject(MUser::class.java)
-                    if (user != null) {
-                        if (!user.followers.contains(currentUserId)) {
-                            user.followers.add(currentUserId)
-                            userRef.set(user)
-                                .addOnSuccessListener {
-                                    liveData.value = true
-                                }
-                                .addOnFailureListener { exception ->
-                                    Log.d("FirestoreRepository", "Error following user", exception)
-                                    liveData.value = false
-                                }
-                        } else {
-                            liveData.value = true // already following
-                        }
-                    } else {
-                        Log.d("FirestoreRepository", "User not found")
-                        liveData.value = false
-                    }
-                } else {
-                    Log.d("FirestoreRepository", "User not found")
-                    liveData.value = false
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("FirestoreRepository", "Error getting user", exception)
-                liveData.value = false
-            }
-        return liveData
-    }
-
-    fun getFollowers(userId: String): LiveData<List<String>> {
-        val liveData = MutableLiveData<List<String>>()
-        val userRef = firestore.collection("users").document(userId)
-        userRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val user = document.toObject(MUser::class.java)
-                    if (user != null) {
-                        liveData.value = user.followers ?: emptyList()
-                    } else {
-                        liveData.value = emptyList()
-                    }
-                } else {
-                    liveData.value = emptyList()
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("FirestoreRepository", "Error getting followers", exception)
-                liveData.value = emptyList()
-            }
-        return liveData
-    }
-
     fun checkUniqueIdAvailability(uniqueId: String): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
         firestore.collection("users")
@@ -227,7 +181,81 @@ class FirestoreRepository {
         return liveData
     }
 
+    fun addFollowerToUser(userId: String, followerId: String, callback: (Boolean) -> Unit) {
+        firestore.collection("users").document(userId)
+            .update("followers", FieldValue.arrayUnion(followerId))
+        callback(true)
+    }
+
+    suspend fun getFollowerCount(userId: String): Int {
+        return try {
+            val document = firestore.collection("users").document(userId).get().await()
+            if (document.exists()) {
+                val followers = document.get("followers") as? List<String>
+                followers?.size ?: 0
+            } else {
+                0
+            }
+        } catch (e: Exception) {
+            Log.d("FirestoreRepository", "Error getting follower count: $e")
+            0
+        }
+    }
+
+
+    suspend fun getFollowersOfUser(userId: String): List<String> {
+        return try {
+            val document = firestore.collection("users").document(userId).get().await()
+            if (document.exists()) {
+                document.get("followers") as? List<String> ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.d("Error", "get failed with ", e)
+            emptyList()
+        }
+    }
+
+
 }
 
 
 
+
+
+
+
+
+//    fun createFollowerDocument(followerId: String, userId: String, followerName: String, followerImage: String) {
+//        val followerData = hashMapOf(
+//            "followerId" to followerId,
+//            "name" to followerName,
+//            "image" to followerImage
+//        )
+//        firestore.collection("users").document(userId).collection("followers").document(followerId).set(followerData)
+//            .addOnSuccessListener {
+//                Log.d("FirestoreRepository", "Follower document created successfully")
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("FirestoreRepository", "Error creating follower document: $exception")
+//            }
+//    }
+
+//    suspend fun getFollowersForUser(userId: String): List<Follower> {
+//        Log.d("FirestoreRepository", "Fetching followers for user $userId")
+//        return try {
+//            val followersCollection = firestore.collection("users").document(userId).collection("followers")
+//            val querySnapshot = followersCollection.get().await()
+//            Log.d("FirestoreRepository", "Received query snapshot with ${querySnapshot.documents.size} documents")
+//            querySnapshot.documents.map { document ->
+//                Log.d("FirestoreRepository", "Mapping document ${document.id} to Follower object")
+//                document.toObject(Follower::class.java) ?: Follower().also {
+//                    Log.d("FirestoreRepository", "Document ${document.id} could not be mapped to Follower object")
+//                }
+//            }
+//        } catch (e: Exception) {
+//            Log.d("FirestoreRepository", "Error getting followers: $e")
+//            emptyList()
+//        }
+//    }

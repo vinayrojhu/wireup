@@ -85,11 +85,10 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
         }
     }
 
-    val followers by viewModel.followers.observeAsState(initial = emptyList())
-
-    val userFollowers = "Followers: ${followers.size ?: 0}"
+    val userFollowers = "Followers: 7"
 
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    val userIdToFollow = userData?.id.toString()
 
 
 
@@ -100,9 +99,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             TopAppBar(
                 title = { Text(userId, fontSize = 18.sp) },
                 actions = {
-                    var isRailExpanded by remember { mutableStateOf(false) }
-                    var offsetX by remember { mutableStateOf(0.dp) }
-                    var offsetY by remember { mutableStateOf(0.dp) }
 
                     Row {
                         IconButton(onClick = {
@@ -167,7 +163,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
                             NavigationRailItem(
                                 icon = { Icon(Icons.Outlined.Person, contentDescription = "Following") },
-                                label = { Text("Following") },
+                                label = { Text("Followers") },
                                 selected = false,
                                 onClick = { navController.navigate(NavigationItem.Friends.route)}
                             )
@@ -180,18 +176,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 selected = false,
                                 onClick = {navController.navigate(NavigationItem.Saved.route)}
                             )
-
-
-
-//                            if (currentUserId != userData?.id){
-//                                NavigationRailItem(
-//                                    icon = { Icon(Icons.Outlined.Add, contentDescription = "Follow") },
-//                                    label = { Text("Follow") },
-//                                    selected = false,
-//                                    onClick = { viewModel.followUser(currentUserId) }
-//                                )
-//                            }
-
 
 
                             NavigationRailItem(
@@ -207,61 +191,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
                 }
 
-//            NavigationRail(
-//                modifier = Modifier.weight(1f),
-//                header = {
-//                    Column(
-//                        modifier = Modifier.padding(16.dp)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Settings,
-//                            contentDescription = "Settings"
-//                        )
-//                        Text(text = "Settings")
-//                    }
-//                },
-//                content = {
-//                    NavigationRailItem(
-//                        icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Account") },
-//                        label = { Text("Account") },
-//                        selected = false,
-//                        onClick = { /* Handle account click */ }
-//                    )
-//                    NavigationRailItem(
-//                        icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings") },
-//                        label = { Text("Settings") },
-//                        selected = false,
-//                        onClick = { /* Handle settings click */ }
-//                    )
-//                }
-//            )
-
-
-//            Row {
-//                tabs.forEachIndexed { index, (text, icon) ->
-//                    Tab(
-//                        selected = selectedTabIndex == index,
-//                        onClick = { selectedTabIndex = index },
-//                        content = {
-//                            Row(
-//                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-//                                verticalAlignment = Alignment.CenterVertically
-//                            ) {
-//                                if (selectedTabIndex != index) {
-//                                    Icon(icon, contentDescription = null)
-//                                } else {
-//                                    Text(text)
-//                                }
-//                            }
-//                        }
-//                    )
-//                }
-//            }
-//            when (selectedTabIndex) {
-//                0 -> VideoScreen()
-//                1 -> AudioScreen()
-//                2 -> VideoScreen()
-//            }
 
             TabView(
                 imageWithText = listOf(

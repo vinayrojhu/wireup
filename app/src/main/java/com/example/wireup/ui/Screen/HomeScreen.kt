@@ -99,18 +99,6 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
         }, actions = {
             Row {
                 IconButton(onClick = {
-                    navController.navigate(NavigationItem.FlipFlop.route)
-
-                }) {
-                    Icon(
-                        painterResource(id = R.drawable.coin),
-                        contentDescription = null,
-                        Modifier.padding(8.dp)
-                    )
-                }
-
-
-                IconButton(onClick = {
                     navController.navigate(NavigationItem.Search.route)
 
                 }) {

@@ -104,14 +104,16 @@ fun AuthenticationScreen(
                             val name = account.displayName
                             val email = account.email
                             val profileImage = account.photoUrl.toString()
-                            val uniqueId = ""
+                            val uniqueId = "Create UID"
+                            val followers = mutableListOf<String>()
 
                             val user = hashMapOf(
                                 "name" to name,
                                 "email" to email,
                                 "userID" to userId,
                                 "profile_image" to profileImage,
-                                "uniqueId" to uniqueId
+                                "uniqueId" to uniqueId,
+                                "followers" to followers
                             )
 
                             FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)

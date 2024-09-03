@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
@@ -56,16 +58,20 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
     val userData by viewModel.getUserData2(uuid = userId).observeAsState()
     val userImage = remember { mutableStateOf<Uri?>(null) }
 
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    val followerCount = viewModel.followerCount.collectAsState().value
+
     LaunchedEffect(Unit) {
         FirebaseStorage.getInstance().reference.child("users/$userId/profile_image").downloadUrl.addOnSuccessListener { uri ->
             userImage.value = uri
         }
     }
 
-    val followers by viewModel.followers.observeAsState(initial = emptyList())
+    LaunchedEffect(Unit) {
+        viewModel.getFollowerCount(userId)
+    }
 
-    val userFollowers = "Followers: ${followers.size ?: 0}"
-    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
 
     Scaffold(
         topBar = {
@@ -103,7 +109,7 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                 )
 
                 Text(
-                    text = userFollowers,
+                    text = "Followers: $followerCount\"",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
@@ -114,16 +120,9 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                             icon = { Icon(Icons.Outlined.Add, contentDescription = "Follow") },
                             label = { Text("Follow") },
                             selected = false,
-                            onClick = { viewModel.followUser(currentUserId) }
+                            onClick = { viewModel.addFollowerToUser(userId, currentUserId) }
                         )
                     }
-
-//                    NavigationRailItem(
-//                        icon = { Icon(Icons.Outlined.Person, contentDescription = "Following") },
-//                        label = { Text("Following") },
-//                        selected = false,
-//                        onClick = { navController.navigate(NavigationItem.Friends.route)}
-//                    )
 
 
                     NavigationRailItem(
@@ -139,6 +138,8 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Divider()
             }
+
+
 
 
             // You can add other user details here
