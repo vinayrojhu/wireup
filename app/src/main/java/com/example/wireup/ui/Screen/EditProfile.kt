@@ -7,11 +7,14 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,13 +26,19 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,9 +52,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
@@ -79,7 +91,7 @@ fun EditProfileScreen(navController: NavHostController) {
     val errorMessage = remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
-    Column {
+    Column(modifier = Modifier.fillMaxSize(1f)) {
         TopAppBar(title = {
             Text(
                 "Edit Profile", fontSize = 18.sp
@@ -99,43 +111,61 @@ fun EditProfileScreen(navController: NavHostController) {
 
         Divider()
 
-        Surface(modifier = Modifier
-            .padding(start = 10.dp, top = 16.dp, end = 10.dp)
-            .fillMaxWidth(),
-            elevation = 3.dp,
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Column(modifier = Modifier.padding(top = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center){
-                UploadImage(viewModel)
-            }
-        }
+//        Surface(modifier = Modifier
+//            .padding(start = 10.dp, top = 16.dp, end = 10.dp)
+//            .fillMaxWidth(),
+//            elevation = 3.dp,
+//            shape = RoundedCornerShape(5.dp)
+//        ) {
+//            Column(modifier = Modifier.padding(top = 10.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.Center){
+//                UploadImage(viewModel)
+//            }
+//        }
 
 
 
 
         Surface(modifier = Modifier
-            .padding(start = 10.dp, top = 16.dp, end = 10.dp)
-            .fillMaxWidth(),
-            elevation = 3.dp,
-            shape = RoundedCornerShape(5.dp)
+            .fillMaxSize(),
+            color = Color.Transparent
         ) {
-            Column(verticalArrangement = Arrangement.Center,
+            Column(verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp)) {
-                OutlinedTextField(
+                modifier = Modifier.padding(top = 20.dp).fillMaxHeight()) {
+                Text(text = "Change Details" , textAlign = TextAlign.Start , fontWeight = FontWeight.W700)
+                Spacer(modifier = Modifier.height(20.dp))
+                TextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Change UserName") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier.padding(4.dp)
+                        .fillMaxWidth(0.9f),
+                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent , unfocusedContainerColor = Color.Transparent),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Person icon"
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
+                TextField(
                     value = email,
                     onValueChange = { email = it },
                     label = { Text("Change Email") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.padding(4.dp)
+                        .fillMaxWidth(0.9f),
+                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent , unfocusedContainerColor = Color.Transparent),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.MailOutline,
+                            contentDescription = "mail icon"
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 //                OutlinedTextField(
@@ -145,21 +175,40 @@ fun EditProfileScreen(navController: NavHostController) {
 //                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
 //                )
 //                UniqueIdField(viewModel)
-                OutlinedTextField(
+                TextField(
                     value = uniqueIdState,
                     onValueChange = { uniqueIdState = it },
                     label = { Text("Unique ID") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.padding(4.dp)
+                        .fillMaxWidth(0.9f),
+                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent , unfocusedContainerColor = Color.Transparent),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Face,
+                            contentDescription = "face icon"
+                        )
+                    }
                 )
+
                 if (!isUniqueIdAvailable) {
                     Text(
                         text = errorMessage.value,
                         color = Color.Red
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
 
-                Row(modifier = Modifier.padding(start=15.dp , top = 15.dp)) {
+                Spacer(modifier = Modifier.height(26.dp))
+
+                Column(modifier = Modifier.padding(top = 10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top){
+                    UploadImage(viewModel)
+                }
+//                Spacer(modifier = Modifier.height(16.dp))
+
+                Column(modifier = Modifier.padding(end=25.dp , bottom = 25.dp).fillMaxSize(), verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.End) {
 
                     Button(onClick = {
                         val userDataToUpdate = updatedUserData.copy()
@@ -185,11 +234,15 @@ fun EditProfileScreen(navController: NavHostController) {
                                 Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
                                 // Update the updatedUserData object with the new values
                                 updatedUserData = userDataToUpdate
+
+                                navController.popBackStack()
+
                             } else {
                                 Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
                             }
                         })
                     },
+                        colors = ButtonColors(containerColor = Color.Black , disabledContainerColor = Color.Black , contentColor = Color.White , disabledContentColor = Color.White),
                         enabled = isUniqueIdAvailable) {
                         Text("Update Details")
                     }
@@ -246,7 +299,7 @@ fun UploadImage(viewModel: UserViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -254,9 +307,11 @@ fun UploadImage(viewModel: UserViewModel) {
             onClick = {
                 val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 launcher.launch(intent)
-            }
+            },
+            colors = ButtonColors(containerColor = Color.LightGray , disabledContainerColor = Color.LightGray , contentColor = Color.Black , disabledContentColor = Color.Black)
+
         ) {
-            Text("Update Image")
+            Text("                      Update Image                           ")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -267,9 +322,11 @@ fun UploadImage(viewModel: UserViewModel) {
                 contentDescription = "Selected Image",
                 modifier = Modifier
                     .size(100.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape) ,
+                contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(16.dp))
+
 
             Button(
                 onClick = {
@@ -291,9 +348,10 @@ fun UploadImage(viewModel: UserViewModel) {
                             isLoading.value = false
                         }
                     })
-                }
+                },
+                colors = ButtonColors(containerColor = Color.Black , disabledContainerColor = Color.Gray , contentColor = Color.White, disabledContentColor = Color.Black)
             ) {
-                Text("Done")
+                Text("Save Image")
             }
 
         }
