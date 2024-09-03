@@ -43,6 +43,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     private val _followerss = MutableStateFlow<List<String>>(emptyList())
     val followerss: StateFlow<List<String>> = _followerss
 
+    private val _following = MutableStateFlow<List<String>>(emptyList())
+    val following: StateFlow<List<String>> = _following
+
 
     fun getUserData(): LiveData<MUser> {
         val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -164,15 +167,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         }
     }
 
-    suspend fun getFollowersOfUser2(userId: String): List<String> {
-        return withContext(Dispatchers.IO) {
-            firestoreRepository.getFollowersOfUser(userId)
-        }
-    }
-
     fun fetchTweetsForCurrentUser(userId: String) {
         viewModelScope.launch {
-            val followers = getFollowersOfUser2(userId)
+            val followers = getFollowingsOfUser2(userId)
             if (followers.isNotEmpty()) {
                 firestoreRepository.fetchTweetsFromFollowedUsers(followers).observeForever { tweets ->
                     _tweets.value = tweets
@@ -181,6 +178,17 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         }
     }
 
+    fun addFollowingToUser(userId: String, followingId: String, /*followerName: String, followerImage: String*/) {
+        firestoreRepository.addFollowingToUser(userId, followingId) { success ->
+            _followerCount.value = (_followerCount.value ?: 0) + 1
+        }
+    }
+
+    suspend fun getFollowingsOfUser2(userId: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            firestoreRepository.getFollowingOfUser(userId)
+        }
+    }
 
 
 

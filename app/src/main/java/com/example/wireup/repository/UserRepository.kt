@@ -241,6 +241,26 @@ class FirestoreRepository {
         return liveData
     }
 
+    fun addFollowingToUser(userId: String, followingId: String, callback: (Boolean) -> Unit) {
+        firestore.collection("users").document(userId)
+            .update("following", FieldValue.arrayUnion(followingId))
+        callback(true)
+    }
+
+    suspend fun getFollowingOfUser(userId: String): List<String> {
+        return try {
+            val document = firestore.collection("users").document(userId).get().await()
+            if (document.exists()) {
+                document.get("following") as? List<String> ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.d("Error", "get failed with ", e)
+            emptyList()
+        }
+    }
+
 
 
 

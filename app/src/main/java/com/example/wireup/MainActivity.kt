@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.wireup.Navigation.AppNavHost
@@ -85,7 +86,8 @@ class MainActivity : ComponentActivity() {
                         NavigationItem.Node.route,
                         NavigationItem.Friends.route,
                         NavigationItem.Saved.route,
-                        NavigationItem.Search.route
+                        NavigationItem.Search.route,
+                        NavigationItem.FollowNodes.route
 
                     )
                     val showBottomBar = navController

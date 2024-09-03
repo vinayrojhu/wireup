@@ -75,10 +75,12 @@ import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.MUser
+import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Components.CircularImage
 import com.example.wireup.ui.Components.TweetActionRow
 import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.example.wireup.util.DateUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
@@ -244,6 +246,8 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
 
 @Composable
 fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val userimage = remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
@@ -289,6 +293,8 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
         Button(
             onClick = {
                 isFollowed = !isFollowed
+                viewModel.addFollowingToUser(userId = currentUserId, followingId = userUuid.toString())
+
             },
             colors = ButtonColors(
                 containerColor =
