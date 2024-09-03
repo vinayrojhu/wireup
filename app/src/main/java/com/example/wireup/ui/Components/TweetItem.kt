@@ -125,31 +125,31 @@ fun TweetItem(
             Spacer(Modifier.height(8.dp))
             Text(tweet.description, fontSize = 13.sp, fontWeight = FontWeight.W400)
             Spacer(Modifier.height(8.dp))
-            TweetActionRow(isLiked, isRetweeted, isBookmarked,
-                likes,
-                retweets,
-                bookmarks,
-                onLikeClicked = {
-                    if (it)
-                        likes++
-                    else
-                        likes--
-                    isLiked = it
-                }, onRetweetClicked = {
-                    if (it)
-                        retweets++
-                    else
-                        retweets--
-                    isRetweeted = it
-                }, onBookmarkClicked = {
-                    if (it)
-                        bookmarks++
-                    else
-                        bookmarks--
-                    isBookmarked = it
-                }) {
-                onCommentClick()
-            }
+//            TweetActionRow(isLiked, isRetweeted, isBookmarked,
+//                likes,
+//                retweets,
+//                bookmarks,
+//                onLikeClicked = {
+//                    if (it)
+//                        likes++
+//                    else
+//                        likes--
+//                    isLiked = it
+//                }, onRetweetClicked = {
+//                    if (it)
+//                        retweets++
+//                    else
+//                        retweets--
+//                    isRetweeted = it
+//                }, onBookmarkClicked = {
+//                    if (it)
+//                        bookmarks++
+//                    else
+//                        bookmarks--
+//                    isBookmarked = it
+//                }) {
+//                onCommentClick()
+//            }
         }
     }
 }
