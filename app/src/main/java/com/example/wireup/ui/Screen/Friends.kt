@@ -3,16 +3,18 @@ package com.example.wireup.ui.Screen
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +42,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.wireup.model.Follower
 import com.example.wireup.repository.FirestoreRepository
@@ -99,17 +101,23 @@ fun FriendsScreen(navController: NavHostController) {
                             var imageUri by remember { mutableStateOf<Uri?>(null) }
 
                             LaunchedEffect(Unit) {
-                                if (u.profileImage.startsWith("https://firebasestorage.googleapis.com/")) {
-                                    val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(u.profileImage)
-                                    storageRef.downloadUrl.addOnSuccessListener { uri ->
-                                        imageUri = uri
-                                    }.addOnFailureListener { e ->
-                                        Log.e("FriendsScreen", "Failed to download image", e)
-                                    }
-                                } else {
-                                    imageUri = Uri.parse(u.profileImage)
+                                FirebaseStorage.getInstance().reference.child("users/${u.id}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+                                    imageUri = uri
                                 }
                             }
+
+//                            LaunchedEffect(Unit) {
+//                                if (u.profileImage.startsWith("https://firebasestorage.googleapis.com/")) {
+//                                    val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(u.profileImage)
+//                                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+//                                        imageUri = uri
+//                                    }.addOnFailureListener { e ->
+//                                        Log.e("FriendsScreen", "Failed to download image", e)
+//                                    }
+//                                } else {
+//                                    imageUri = Uri.parse(u.profileImage)
+//                                }
+//                            }
 
                             FollowerItem(
                                 follower = Follower(
@@ -144,7 +152,11 @@ fun FollowerItem(follower: Follower) {
                     .data(follower.image)
                     .build(),
                 contentDescription = "Follower image",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(40.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
         } else {
             // Display a placeholder or a loading indicator

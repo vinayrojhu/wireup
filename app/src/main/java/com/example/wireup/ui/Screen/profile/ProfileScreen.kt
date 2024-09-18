@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -61,16 +64,23 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
 import com.example.wireup.ui.Components.TweetItem
+import com.example.wireup.ui.Screen.MainNode
 import com.example.wireup.ui.Screen.PodcastItem
 import com.example.wireup.ui.Screen.Tweet
 import com.example.wireup.ui.Screen.audiopodcasts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import dagger.multibindings.LazyClassKey
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
+
+    val tweets by viewModel.tweets.observeAsState(initial = emptyList())
+    val users by viewModel.users.observeAsState(initial = emptyList())
+
+
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     val userData by viewModel.getUserData().observeAsState()
@@ -79,20 +89,25 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
 
     val userImage = remember { mutableStateOf<Uri?>(null) }
 
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
     LaunchedEffect(Unit) {
         FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
             userImage.value = uri
         }
     }
 
-    val userFollowers = "Followers: 7"
+    LaunchedEffect(Unit) {
+        viewModel.fetchTweetsofCurrentUser(userData?.id.toString())
+    }
 
-    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-    val userIdToFollow = userData?.id.toString()
+    LaunchedEffect(Unit) {
+        viewModel.getFollowerCount(userData?.id.toString())
+    }
 
+    val followerCount = viewModel.followerCount.collectAsState().value
 
-
-
+    val userFollowers = "Followers: $followerCount"
 
     Scaffold(
         topBar = {
@@ -201,7 +216,16 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                 selectedTabIndex = it
             }
             when (selectedTabIndex) {
-                0 -> UserNode(navController)
+                0 -> Column {
+
+                        val filteredTweets = tweets.filter { it.userId == currentUserId }
+
+                        filteredTweets.forEach { tweet ->
+                            val user = users.find { it.id == tweet.userId }
+                            MainNode(tweet, user, navController)
+                        }
+
+                }
                 1 -> LazyColumn(
                     modifier = Modifier
                         .padding(16.dp)
@@ -213,33 +237,5 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
             }
         }
     }
-}
 
-
-
-@Composable
-fun UserNode(navController: NavHostController){
-    LazyColumn(
-        modifier = Modifier
-            .height(500.dp) // Set the desired height here
-            .drawBehind {
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(150f, 0f),
-                    end = Offset(150f, this.size.height)
-                )
-            }
-    ) {
-
-        items(5) {
-            TweetItem(tweet = Tweet(
-                description = "Incorporate and convert Java code into #Kotlin using #Android Studio, and learn Kotlin language conventions along the way. You’ll also learn how to write Kotlin code to make it callable from Java code.",
-                userId = FirebaseAuth.getInstance().currentUser?.email.toString(),
-                comments = listOf("very nice"),
-                likeCount = 203,
-                retweetCount = 50,
-                bookmarkCount = 135,
-                imageUrl = "https://cdn.pixabay.com/photo/2023/07/14/10/50/flower-8126748_1280.jpg"), onCommentClick = { }, navController = navController) {}
-        }
-    }
 }

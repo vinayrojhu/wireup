@@ -4,20 +4,17 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.wireup.model.Follower
 import com.example.wireup.model.MUser
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FirestoreRepository {
@@ -30,11 +27,11 @@ class FirestoreRepository {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val user = MUser(
-                        id = document.getString("id") ?: "",
+                        id = document.getString("userID") ?: "",
                         name = document.getString("name") ?: "",
                         email = document.getString("email") ?: "",
                         uniqueId = document.getString("uniqueId") ?: "",
-                        profileImage = document.getString("profileImage") ?: ""
+                        profileImage = document.getString("profile_image") ?: ""
                     )
                     liveData.value = user
                 } else {
@@ -124,7 +121,7 @@ class FirestoreRepository {
 
     fun fetchTweetsFromFirestore(): LiveData<List<Tweet>> {
         val liveData = MutableLiveData<List<Tweet>>()
-        firestore.collection("tweets").get()
+        firestore.collection("tweets").orderBy("timeStamp", Query.Direction.DESCENDING).get()
             .addOnSuccessListener { querySnapshot ->
                 val tweets = querySnapshot.documents.map { document ->
                     Tweet(
@@ -134,7 +131,8 @@ class FirestoreRepository {
                         description = document.getString("description") ?: "",
                         likeCount = document.getLong("likeCount")?.toInt() ?: 0,
                         bookmarkCount = document.getLong("bookmarkCount")?.toInt() ?: 0,
-                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0
+                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0,
+                        timeStamp = document.getLong("timeStamp") ?: System.currentTimeMillis()
                     )
                 }
                 liveData.value = tweets
@@ -229,9 +227,10 @@ class FirestoreRepository {
                         description = document.getString("description") ?: "",
                         likeCount = document.getLong("likeCount")?.toInt() ?: 0,
                         bookmarkCount = document.getLong("bookmarkCount")?.toInt() ?: 0,
-                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0
+                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0,
+                        timeStamp = document.getLong("timeStamp") ?: System.currentTimeMillis()
                     )
-                }
+                }.sortedByDescending { it.timeStamp } // Sort tweets in descending order
                 liveData.value = tweets
             }
             .addOnFailureListener { exception ->
@@ -259,6 +258,31 @@ class FirestoreRepository {
             Log.d("Error", "get failed with ", e)
             emptyList()
         }
+    }
+
+    fun fetchTweetsofCurrentUser(userId: String): LiveData<List<Tweet>> {
+        val liveData = MutableLiveData<List<Tweet>>()
+        firestore.collection("tweets").whereEqualTo("userId", userId).orderBy("timeStamp", Query.Direction.DESCENDING).get()
+            .addOnSuccessListener { querySnapshot ->
+                val tweets = querySnapshot.documents.map { document ->
+                    Tweet(
+                        id = document.id,
+                        userId = document.getString("userId") ?: "",
+                        imageUrl = document.getString("imageUrl"),
+                        description = document.getString("description") ?: "",
+                        likeCount = document.getLong("likeCount")?.toInt() ?: 0,
+                        bookmarkCount = document.getLong("bookmarkCount")?.toInt() ?: 0,
+                        retweetCount = document.getLong("retweetCount")?.toInt() ?: 0,
+                        timeStamp = document.getLong("timeStamp") ?: System.currentTimeMillis()
+                    )
+                }
+                liveData.value = tweets
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting tweets", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
     }
 
 
