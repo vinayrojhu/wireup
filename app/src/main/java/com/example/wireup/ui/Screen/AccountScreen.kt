@@ -60,67 +60,60 @@ fun AccountScreen(navController: NavHostController) {
         }
         )
 
-        Divider()
+        Divider(Modifier.height(3.dp))
 
-        Column {
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                ,
-                colors = CardDefaults.cardColors(Color.Transparent)) {
-                Text(text = "Account Details", color = Color.Gray , fontSize = 13.sp, modifier = Modifier.padding(horizontal = 15.dp , vertical = 5.dp))
 
-                Spacer(modifier = Modifier.height(10.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth().padding(top = 10.dp)
+            ,
+            colors = CardDefaults.cardColors(Color.Transparent)) {
+            Row(modifier = Modifier.padding(start = 15.dp , top = 5.dp ,bottom = 20.dp)
+                , verticalAlignment = Alignment.CenterVertically){
 
-                Row(modifier = Modifier
-                    .padding(start = 15.dp, top = 5.dp, bottom = 20.dp)
-                    .clickable(
-                        onClick = {
-                        }
-                    ), verticalAlignment = Alignment.CenterVertically){
-
-                    Icon(imageVector = Icons.Outlined.Person, contentDescription = "Account")
-                    Row(modifier= Modifier
-                        .padding(start = 10.dp, end = 10.dp)
-                        .fillMaxWidth() , horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Name" , fontWeight = FontWeight(500) , fontSize = 16.sp)
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowRight, contentDescription = "arrow")
-                    }
-                }
-
-                Row(modifier = Modifier
-                    .padding(start = 15.dp, top = 5.dp, bottom = 20.dp)
-                    .clickable(
-                        onClick = {
-                        }
-                    ), verticalAlignment = Alignment.CenterVertically){
-
-                    Icon(imageVector = Icons.Outlined.Person, contentDescription = "Account")
-                    Row(modifier= Modifier
-                        .padding(start = 10.dp, end = 10.dp)
-                        .fillMaxWidth() , horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Unique Id " , fontWeight = FontWeight(500) , fontSize = 16.sp)
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowRight, contentDescription = "arrow")
-                    }
-                }
-
-                Row(modifier = Modifier
-                    .padding(start = 15.dp, top = 5.dp, bottom = 20.dp)
-                    .clickable(
-                        onClick = {
-
-                        }
-                    ), verticalAlignment = Alignment.CenterVertically){
-
-                    Icon(imageVector = Icons.Outlined.Email, contentDescription = "Account")
-                    Row(modifier= Modifier
-                        .padding(start = 10.dp, end = 10.dp)
-                        .fillMaxWidth() , horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Email" , fontWeight = FontWeight(500) , fontSize = 16.sp)
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowRight, contentDescription = "arrow")
-                    }
+                Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = "Account")
+                Column(modifier=Modifier.padding(start = 10.dp, end = 105.dp)) {
+                    Text(text = "User Name" , fontWeight = FontWeight(500) , fontSize = 16.sp)
+                    Text(text = "Ankush Dhankhar  " , fontWeight = FontWeight(400) , fontSize = 13.sp)
                 }
             }
         }
+
+        Divider(modifier = Modifier.height(1.dp))
+
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            ,
+            colors = CardDefaults.cardColors(Color.Transparent)) {
+            Row(modifier = Modifier.padding(start = 15.dp , top = 5.dp ,bottom = 20.dp)
+                , verticalAlignment = Alignment.CenterVertically){
+
+                Icon(imageVector = Icons.Outlined.Person, contentDescription = "Account")
+                Column(modifier=Modifier.padding(start = 10.dp, end = 105.dp)) {
+                    Text(text = "Unique Id " , fontWeight = FontWeight(500) , fontSize = 16.sp)
+                    Text(text = "_ankushdhankhar " , fontWeight = FontWeight(400) , fontSize = 13.sp)
+                }
+            }
+        }
+
+        Divider(modifier = Modifier.height(1.dp))
+
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            ,
+            colors = CardDefaults.cardColors(Color.Transparent)) {
+            Row(modifier = Modifier.padding(start = 15.dp , top = 5.dp ,bottom = 20.dp)
+                , verticalAlignment = Alignment.CenterVertically){
+
+                Icon(imageVector = Icons.Outlined.Email, contentDescription = "Account")
+                Column(modifier=Modifier.padding(start = 10.dp, end = 105.dp)) {
+                    Text(text = "Email" , fontWeight = FontWeight(500) , fontSize = 16.sp)
+                    Text(text = "ankushdhankhar@gmail.com " , fontWeight = FontWeight(400) , fontSize = 13.sp)
+                }
+            }
+        }
+
+        Divider(modifier = Modifier.height(1.dp))
+
 
         Spacer(modifier = Modifier.height(50.dp))
 

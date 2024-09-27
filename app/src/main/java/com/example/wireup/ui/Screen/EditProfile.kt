@@ -203,7 +203,7 @@ fun EditProfileScreen(navController: NavHostController) {
                 Column(modifier = Modifier.padding(top = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top){
-                    UploadImage(viewModel)
+                    UploadImage(viewModel,navController)
                 }
 //                Spacer(modifier = Modifier.height(16.dp))
 
@@ -282,7 +282,7 @@ fun EditProfileScreen(navController: NavHostController) {
 
 
 @Composable
-fun UploadImage(viewModel: UserViewModel) {
+fun UploadImage(viewModel: UserViewModel,navController: NavHostController) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val imageUri = remember { mutableStateOf<Uri?>(null) }
@@ -338,6 +338,7 @@ fun UploadImage(viewModel: UserViewModel) {
                             viewModel.updateUserProfileImage(userId).observe(lifecycleOwner, Observer { isSuccess ->
                                 if (isSuccess) {
                                     Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
                                 } else {
                                     Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
                                 }

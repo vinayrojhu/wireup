@@ -20,6 +20,7 @@ import com.example.wireup.ui.Screen.EditProfileScreen
 import com.example.wireup.ui.Screen.FlipFlopScreen
 import com.example.wireup.ui.Screen.FollowNodes
 import com.example.wireup.ui.Screen.FriendsScreen
+import com.example.wireup.ui.Screen.HelpScreen
 import com.example.wireup.ui.Screen.HomeScreen
 import com.example.wireup.ui.Screen.LikedScreen
 import com.example.wireup.ui.Screen.NodeScreen
@@ -120,6 +121,7 @@ fun AppNavHost(
 
         composable(NavigationItem.ReadMore.route){
             ReadMore(navController = navController)
+
         }
         composable(NavigationItem.VideoPodcastOpened.route){
             OpenVideoPodcast(navController = navController)
@@ -138,6 +140,10 @@ fun AppNavHost(
 
         composable(NavigationItem.FollowNodes.route){
             FollowNodes(navController = navController)
+        }
+
+        composable(NavigationItem.Help.route){
+            HelpScreen(navController = navController)
         }
 
 

@@ -329,7 +329,8 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             Image(
                 painter = rememberImagePainter(nodeimage),
                 contentDescription = "Tweet Image",
-                modifier = Modifier.size(280.dp)
+                modifier = Modifier.height(300.dp),
+                alignment = Alignment.TopStart
             )
         }
 

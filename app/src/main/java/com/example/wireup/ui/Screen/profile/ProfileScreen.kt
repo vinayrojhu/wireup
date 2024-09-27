@@ -1,5 +1,7 @@
 package com.example.wireup.ui.Screen.profile
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +54,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -90,6 +93,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
     val userImage = remember { mutableStateOf<Uri?>(null) }
 
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
 
     LaunchedEffect(Unit) {
         FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
@@ -197,7 +201,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 icon = { Icon(Icons.Outlined.Share, contentDescription = "share") },
                                 label = { Text("Share") },
                                 selected = false,
-                                onClick = { /* Handle account click */ }
+                                onClick = {  }
                             )
                         }
 
@@ -238,4 +242,18 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
         }
     }
 
+}
+
+fun shareAccount(context: android.content.Context, username: String, userid: String) {
+    val shareText = "Check out my account!\nUsername: $username\nuserid: $userid"
+
+    val intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+    }
+
+    // Use createChooser to display all available apps
+    val chooserIntent = Intent.createChooser(intent, "Share via")
+    context.startActivity(chooserIntent)
 }
