@@ -1,5 +1,7 @@
 package com.example.wireup.ui.Screen
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +50,7 @@ import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +65,8 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val followerCount = viewModel.followerCount.collectAsState().value
 
+    val deepLinkUri = "https://wireup.com/user/${currentUserId}"
+    val context= LocalContext.current
     LaunchedEffect(Unit) {
         FirebaseStorage.getInstance().reference.child("users/$userId/profile_image").downloadUrl.addOnSuccessListener { uri ->
             userImage.value = uri
@@ -129,7 +135,7 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                         icon = { Icon(Icons.Outlined.Share, contentDescription = "share") },
                         label = { Text("Share") },
                         selected = false,
-                        onClick = { /* Handle account click */ }
+                        onClick = { shareUserProfile(context = context) }
                     )
 
 
@@ -145,4 +151,16 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
             // You can add other user details here
         }
     }
+}
+
+
+fun shareUserProfile(context: Context) {
+
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, "Check out ${currentUserId}'s profile: https://wireup.com/user/${currentUserId}")
+    }
+    context.startActivity(Intent.createChooser(shareIntent, "Share profile via"))
 }

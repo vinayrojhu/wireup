@@ -16,6 +16,9 @@ enum class Screen {
     SETTINGS,
     SEARCH,
 
+
+    HELP ,
+
     READMORE ,
     VIDEOPODCASTOPENED ,
     AUDIOPODCASTOPENED,
@@ -50,4 +53,6 @@ sealed class NavigationItem(val route: String) {
     object ProfileViewMode : NavigationItem(Screen.PROFILEVIEWMODE.name)
 
     object FollowNodes : NavigationItem(Screen.FOLLOWNODES.name)
+
+    object Help : NavigationItem(Screen.HELP.name)
 }
