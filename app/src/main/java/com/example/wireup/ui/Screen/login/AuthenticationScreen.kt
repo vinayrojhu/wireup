@@ -106,6 +106,7 @@ fun AuthenticationScreen(
                             val profileImage = account.photoUrl.toString()
                             val uniqueId = "Create UID"
                             val followers = mutableListOf<String>()
+                            val following = mutableListOf<String>()
 
                             val user = hashMapOf(
                                 "name" to name,
@@ -113,7 +114,8 @@ fun AuthenticationScreen(
                                 "userID" to userId,
                                 "profile_image" to profileImage,
                                 "uniqueId" to uniqueId,
-                                "followers" to followers
+                                "followers" to followers,
+                                "following" to following
                             )
 
                             FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
@@ -309,15 +311,6 @@ fun UserForm(
 
 
         Text(text = "or" , fontSize = 13.sp , fontWeight = FontWeight.W500)
-
-
-//        GoogleButton(
-//            textId = if (isCreateAccount) "Continue with Google" else "Login via Google",
-//            loading = loading,
-//            validInputs = valid
-//        ){
-//            viewModel.signInWithGoogle()
-//        }
 
 
 

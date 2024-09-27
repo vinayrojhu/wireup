@@ -113,6 +113,11 @@ class MainActivity : ComponentActivity() {
                                                 icon = painterResource(id = R.drawable.icons8_newspaper_48)
                                             ),
                                             BottomNavItem(
+                                                NavigationItem.FlipFlop.route,
+                                                Screen.FLIPFLOP.name,
+                                                icon = painterResource(id = R.drawable.coin)
+                                            ),
+                                            BottomNavItem(
                                                 NavigationItem.Podcast.route,
                                                 Screen.PODCAST.name,
                                                 icon = painterResource(id = R.drawable.podcastfinal)
@@ -121,11 +126,6 @@ class MainActivity : ComponentActivity() {
                                                 NavigationItem.Node.route,
                                                 Screen.NODE.name,
                                                 icon = painterResource(id = R.drawable.node_iconn)
-                                            ),
-                                            BottomNavItem(
-                                                NavigationItem.FlipFlop.route,
-                                                Screen.FLIPFLOP.name,
-                                                icon = painterResource(id = R.drawable.coin)
                                             ),
                                             BottomNavItem(
                                                 NavigationItem.Profile.route,

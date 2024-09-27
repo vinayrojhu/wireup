@@ -335,7 +335,7 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
         }
 
         Text(
-            DateUtil.getDateTime(System.currentTimeMillis()),
+            DateUtil.getDateTime(tweet.timeStamp),
             color = Color.Gray,
             fontSize = 11.sp ,
             fontWeight = FontWeight.W400

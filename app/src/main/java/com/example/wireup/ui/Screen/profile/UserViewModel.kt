@@ -2,14 +2,10 @@ package com.example.wireup.ui.Screen.profile
 
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wireup.model.Follower
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
@@ -19,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -180,13 +175,19 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
 
     fun addFollowingToUser(userId: String, followingId: String, /*followerName: String, followerImage: String*/) {
         firestoreRepository.addFollowingToUser(userId, followingId) { success ->
-            _followerCount.value = (_followerCount.value ?: 0) + 1
+
         }
     }
 
     suspend fun getFollowingsOfUser2(userId: String): List<String> {
         return withContext(Dispatchers.IO) {
             firestoreRepository.getFollowingOfUser(userId)
+        }
+    }
+
+    fun fetchTweetsofCurrentUser(userId: String) {
+        firestoreRepository.fetchTweetsofCurrentUser(userId).observeForever { tweets ->
+            _tweets.value = tweets
         }
     }
 

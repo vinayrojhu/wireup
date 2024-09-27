@@ -15,11 +15,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
@@ -37,15 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.example.wireup.Navigation.NavigationItem
-import com.example.wireup.R
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
@@ -83,8 +80,16 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
         topBar = {
             TopAppBar(
                 title = { Text(userData?.name.toString(), fontSize = 18.sp) },
-                actions = {
-                    // You can add a back button here if you want
+                 navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
             )
         }
@@ -115,7 +120,7 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                 )
 
                 Text(
-                    text = "Followers: $followerCount\"",
+                    text = "Followers: $followerCount",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
@@ -126,7 +131,8 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                             icon = { Icon(Icons.Outlined.Add, contentDescription = "Follow") },
                             label = { Text("Follow") },
                             selected = false,
-                            onClick = { viewModel.addFollowerToUser(userId, currentUserId) }
+                            onClick = { viewModel.addFollowerToUser(userId, currentUserId)
+                            viewModel.addFollowingToUser(currentUserId,userId)}
                         )
                     }
 
@@ -141,26 +147,14 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
 
 
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                Divider()
+
             }
+            Spacer(modifier = Modifier.height(20.dp))
+            Divider()
 
+        // You can add other user details here
 
-
-
-            // You can add other user details here
         }
     }
-}
 
-
-fun shareUserProfile(context: Context) {
-
-    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, "Check out ${currentUserId}'s profile: https://wireup.com/user/${currentUserId}")
-    }
-    context.startActivity(Intent.createChooser(shareIntent, "Share profile via"))
 }

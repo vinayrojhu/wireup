@@ -2,7 +2,10 @@ package com.example.wireup.ui.Screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -38,6 +41,9 @@ fun FollowNodes(navController: NavHostController) {
     val tweets by viewModel.tweets.observeAsState(initial = emptyList())
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val users by viewModel.users.observeAsState(initial = emptyList())
+    LaunchedEffect(Unit) {
+        viewModel.fetchTweetsForCurrentUser(currentUserId)
+    }
 
     Column {
         TopAppBar(title = {
@@ -67,13 +73,19 @@ fun FollowNodes(navController: NavHostController) {
         )
         Divider()
 
-        tweets.forEach { tweet ->
-            val user = users.find { it.id == tweet.userId }
-            MainNode(tweet, navController = navController, user = user )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            tweets.forEach { tweet ->
+                val user = users.find { it.id == tweet.userId }
+                MainNode(tweet, navController = navController, user = user )
+            }
         }
+
+
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchTweetsForCurrentUser(currentUserId)
-    }
+
 }
