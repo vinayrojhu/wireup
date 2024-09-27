@@ -6,7 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wireup.model.FlipNews
 import com.example.wireup.model.MUser
+import com.example.wireup.model.NewsData1
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +27,12 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
 
     private val _tweets = MutableLiveData<List<Tweet>>()
     val tweets: LiveData<List<Tweet>> = _tweets
+
+    private val _news1 = MutableLiveData<List<NewsData1>>()
+    val news1: LiveData<List<NewsData1>> = _news1
+
+    private val _flipNews = MutableLiveData<List<FlipNews>>()
+    val flipNews: LiveData<List<FlipNews>> = _flipNews
 
     private val _users = MutableLiveData<List<MUser>>()
     val users: LiveData<List<MUser>> = _users
@@ -81,7 +89,27 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     init {
         fetchTweetsFromFirestore()
         fetchUsersFromFirestore()
+        fetchNewsFromFirestore()
+        fetchFlipNews()
     }
+
+    private fun fetchNewsFromFirestore() {
+        firestoreRepository.fetchNewsFromFirestore().observeForever { news ->
+            _news1.value = news
+        }
+    }
+
+    fun getNewsData(id: String): LiveData<NewsData1> {
+        return firestoreRepository.getNewsData(id)
+    }
+
+    private fun fetchFlipNews() {
+        firestoreRepository.fetchFlipNews().observeForever { news ->
+            _flipNews.value = news
+        }
+    }
+
+
     private fun fetchTweetsFromFirestore() {
         firestoreRepository.fetchTweetsFromFirestore().observeForever { tweets ->
             _tweets.value = tweets
@@ -190,7 +218,6 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
             _tweets.value = tweets
         }
     }
-
 
 
 

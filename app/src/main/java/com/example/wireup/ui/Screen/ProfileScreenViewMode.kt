@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -141,7 +142,7 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
                         icon = { Icon(Icons.Outlined.Share, contentDescription = "share") },
                         label = { Text("Share") },
                         selected = false,
-                        onClick = { shareUserProfile(context = context) }
+                        onClick = { /*shareUserProfile(context = context)*/ }
                     )
 
 

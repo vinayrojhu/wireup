@@ -20,15 +20,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.example.wireup.R
 import com.example.wireup.model.FFData
+import com.example.wireup.model.FlipNews
 
+data class newsx(
+    val heading: String,
+    val description: String,
+    val report: String,
+    val imageUrl: String,
+    val time: String
+)
 @Composable
-fun FlipCard() {
+fun FlipCard(flipNews: FlipNews) {
     var isFlipped by remember { mutableStateOf(false) }
     val rotationY by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
         animationSpec = tween(durationMillis = 600)
+    )
+
+    val news1 = newsx(
+        heading = flipNews.heading1.toString(),
+        description = flipNews.description1,
+        report = flipNews.report1,
+        imageUrl = flipNews.imageUrl1,
+        time = flipNews.time.toString()
+    )
+
+    val news2 = newsx(
+        heading = flipNews.heading2.toString(),
+        description = flipNews.description2,
+        report = flipNews.report2,
+        imageUrl = flipNews.imageUrl2,
+        time = flipNews.time.toString()
     )
 
 
@@ -49,9 +74,9 @@ fun FlipCard() {
             contentAlignment = Alignment.Center
         ) {
             if (rotationY <= 90f) {
-                FrontCardContent()
+                FrontCardContent(news1)
             } else {
-                BackCardContent()
+                BackCardContent(news2)
             }
         }
         Button(
@@ -70,7 +95,7 @@ fun FlipCard() {
 
 
 @Composable
-fun FrontCardContent() {
+fun FrontCardContent(news: newsx) {
     Card(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()
@@ -85,8 +110,7 @@ fun FrontCardContent() {
         ) {
 
             Image(
-//                painter = data.item2.image,
-                painter = painterResource(id = R.drawable.study_in_australia),
+                painter = rememberImagePainter(news.imageUrl),
                 contentDescription = "Image in the box",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -102,8 +126,7 @@ fun FrontCardContent() {
                     .padding(10.dp)
             ) {
                 Text(
-//                            text = data.item2.heading,
-                    text = "Copying Congress Manifesto in 2024 Budget: Rahul Gandhi Accuses Government",
+                    text = news.heading,
                     color = Color.Black,
                     fontSize = 18.sp,
                     maxLines = 2,
@@ -112,18 +135,21 @@ fun FrontCardContent() {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-//                       text = data.item2.description,
-                    text = "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
-                            "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
-                            "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
-                            "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto. ",
+                    text = news.description,
                     color = Color.Black,
                     fontSize = 14.sp,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = news.report,
+                    color = Color.Black,
+                    fontSize = 10.sp,
                     maxLines = 12,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-//                    Spacer(modifier = Modifier.height(6.dp))
 
 
         }
@@ -132,7 +158,7 @@ fun FrontCardContent() {
 }
 
 @Composable
-fun BackCardContent() {
+fun BackCardContent(news: newsx) {
     Card(modifier = Modifier
         .fillMaxWidth(1f)
         .fillMaxHeight(1f)
@@ -147,8 +173,7 @@ fun BackCardContent() {
             modifier = Modifier
         ) {
                 Image(
-//                    painter = data.item1.image,
-                    painter = painterResource(id = R.drawable.criminal_laws),
+                    painter = rememberImagePainter(news.imageUrl),
                     contentDescription = "Image in the box",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -165,8 +190,7 @@ fun BackCardContent() {
                         .padding(10.dp)
                 ) {
                     Text(
-//                                text = data.item1.heading,
-                        text = "Congress Criticizes Union Budget 2024 as Inadequate for Economic Growth",
+                        text = news.heading,
                         color = Color.Black,
                         fontSize = 18.sp,
                         maxLines = 2,
@@ -175,11 +199,15 @@ fun BackCardContent() {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-//                                text = data.item1.description,
-                        text = "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
-                                "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
-                                "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
-                                "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month.",
+                        text = news.description,
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = news.report,
                         color = Color.Black,
                         fontSize = 14.sp,
                         maxLines = 12,
