@@ -4,7 +4,10 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.wireup.model.FlipNews
 import com.example.wireup.model.MUser
+import com.example.wireup.model.NewsData1
+import com.example.wireup.model.SearchData
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -286,7 +289,133 @@ class FirestoreRepository {
     }
 
 
+    fun fetchNewsFromFirestore(): LiveData<List<NewsData1>> {
+        val liveData = MutableLiveData<List<NewsData1>>()
+        firestore.collection("news").orderBy("time", Query.Direction.DESCENDING).get()
+            .addOnSuccessListener { querySnapshot ->
+                val news = querySnapshot.documents.map { document ->
+                    NewsData1(
+                        id = document.id,
+                        description = document.getString("description") ?: "",
+                        heading = document.getString("heading") ?: "",
+                        imageUrl = document.getString("imageUrl") ?: "",
+                        report = document.getString("report") ?: "",
+                        tags = document.get("tags") as? List<String>,
+                        time = document.getLong("time") ?: 0L
+                    )
+                }
+                liveData.value = news
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting news", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
+    }
 
+    fun getNewsData(Id: String): LiveData<NewsData1> {
+        val liveData = MutableLiveData<NewsData1>()
+        firestore.collection("news").document(Id).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val newsread= NewsData1(
+                        id = document.id,
+                        description = document.getString("description") ?: "",
+                        heading = document.getString("heading") ?: "",
+                        imageUrl = document.getString("imageUrl") ?: "",
+                        report = document.getString("report") ?: "",
+                        tags = document.get("tags") as? List<String>,
+                        time = document.getLong("time") ?: 0L
+                    )
+
+                    liveData.value = newsread
+                } else {
+                    Log.d("FirestoreRepository", "news not found")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting news data", exception)
+            }
+        return liveData
+    }
+
+    fun fetchFlipNews(): LiveData<List<FlipNews>> {
+        val liveData = MutableLiveData<List<FlipNews>>()
+        firestore.collection("flipnews").orderBy("time", Query.Direction.DESCENDING).get()
+            .addOnSuccessListener { querySnapshot ->
+                val flipNews = querySnapshot.documents.map { document ->
+                    FlipNews(
+                        id = document.id,
+                        description1 = document.getString("description1") ?: "",
+                        heading1 = document.getString("heading1") ?: "",
+                        imageUrl1 = document.getString("imageUrl1") ?: "",
+                        report1 = document.getString("report1") ?: "",
+                        time = document.getLong("time") ?: 0L,
+                        description2 = document.getString("description2") ?: "",
+                        heading2 = document.getString("heading2") ?: "",
+                        imageUrl2 = document.getString("imageUrl2") ?: "",
+                        report2 = document.getString("report2") ?: "",
+                    )
+                }
+                liveData.value = flipNews
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting news", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
+    }
+
+    suspend fun searchNews(query: String): List<SearchData> {
+        Log.d("FirestoreRepository", "Searching for news with query: $query")
+        val lowerCaseQuery = query.toLowerCase()
+        return firestore.collection("news")
+            .get()
+            .await()
+            .documents
+            .filter { document ->
+                val description = document.getString("description")?.toLowerCase() ?: ""
+                val heading = document.getString("heading")?.toLowerCase() ?: ""
+                val imageUrl = document.getString("imageUrl")?.toLowerCase() ?: ""
+                val report = document.getString("report")?.toLowerCase() ?: ""
+                val tags = document.get("tags") as? List<String>
+                val tagsString = tags?.joinToString(" ")?.toLowerCase() ?: ""
+
+                description.contains(lowerCaseQuery) ||
+                        heading.split(" ").any { it.contains(lowerCaseQuery) } ||
+                        imageUrl.contains(lowerCaseQuery) ||
+                        report.contains(lowerCaseQuery) ||
+                        tagsString.contains(lowerCaseQuery)
+            }
+            .map {
+                SearchData(
+                    id = it.id,
+                    description = it.getString("description") ?: "",
+                    heading = it.getString("heading") ?: "",
+                    imageUrl = it.getString("imageUrl") ?: "",
+                    report = it.getString("report") ?: ""
+                )
+            }
+    }
+
+//    suspend fun searchNews(query: String): List<SearchData> {
+//        Log.d("FirestoreRepository", "Searching for news with query: $query")
+//        return firestore.collection("news")
+//            .whereGreaterThanOrEqualTo("heading", query)
+//            .whereLessThanOrEqualTo("heading", query + "\uf8ff")
+//            .get()
+//            .await()
+//            .documents
+//            .map {
+//                SearchData(
+//                    id = it.id,
+//                    description = it.getString("description") ?: "",
+//                    heading = it.getString("heading") ?: "",
+//                    imageUrl = it.getString("imageUrl") ?: "",
+//                    report = it.getString("report") ?: ""
+//                )
+//            }
+//    }
 
 }
 
