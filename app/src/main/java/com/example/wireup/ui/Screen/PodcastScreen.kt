@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,18 +58,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.PlayerView
 
 data class AudioPodcast(
     val title: String,
     val speaker: String,
     val imageUrl: String,
     val duration: Int,
+    val url: String
 )
 
 data class VideoPodcast(
@@ -133,7 +139,7 @@ fun PodcastScreen(navController: NavHostController) {
                             .padding(16.dp)
                     ) {
                         items(audiopodcasts) { Apodcast ->
-                            PodcastItem(Apodcast, navController)
+                            PodcastItem(Apodcast, navController , )
                         }
                     }
                 }
@@ -285,14 +291,20 @@ val videopodcasts = listOf(
 //Audio
 
 @Composable
-fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController) {
+fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
+
+    // Manage the state to control when the audio player should be visible
+    var isPlaying by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable(
                 onClick = {
-                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
+                    isPlaying = true
+//                    AudioPodcastPlayer(url = url)
+//                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
                 }
             ),
         shape = RoundedCornerShape(8.dp),
@@ -363,6 +375,36 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController) {
             }
         }
     }
+
+    // Conditionally show the audio player when the podcast box is clicked
+    if (isPlaying) {
+        // AudioPodcastPlayer is invoked here in the same @Composable context
+        AudioPodcastPlayer("")
+    }
+}
+
+@Composable
+fun AudioPodcastPlayer(url: String) {
+    val context = LocalContext.current
+    val exoPlayer = remember {
+        SimpleExoPlayer.Builder(context).build().apply {
+            setMediaItem(MediaItem.fromUri(url))
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(
+        AndroidView(factory = {
+            PlayerView(context).apply {
+                player = exoPlayer
+            }
+        })
+    ) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
 }
 
 val audiopodcasts = listOf(
@@ -370,37 +412,43 @@ val audiopodcasts = listOf(
         title = "All About Android 522: Guacamole Comes To Android",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10
+        duration = 10 ,
+        url=""
     ),
     AudioPodcast(
         title = "All About Android 513: Unlocking Android 12 Secrets",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10
+        duration = 10 ,
+        url = ""
     ),
     AudioPodcast(
         title = "All About Android 506: Android Adjacent",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10
+        duration = 10 ,
+        url = ""
     ),
     AudioPodcast(
         title = "Best External Android Microphones",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10
+        duration = 10 ,
+        url = ""
     ),
     AudioPodcast(
         title = "MacBreak Weekly",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10
+        duration = 10 ,
+        url = ""
     ),
     AudioPodcast(
         title = "Keep Productive: Latest Software Updates",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10
+        duration = 10 ,
+        url = ""
     )
 )
 
