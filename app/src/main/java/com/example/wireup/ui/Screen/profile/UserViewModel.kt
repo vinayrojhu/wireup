@@ -232,6 +232,13 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         }
     }
 
+    fun verifyUserID(uuid: String, callback: () -> Unit) {
+        viewModelScope.launch {
+            firestoreRepository.VerifyUserID(uuid)
+        }
+        callback()
+    }
+
 
 
 }

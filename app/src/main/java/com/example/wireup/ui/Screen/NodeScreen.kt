@@ -82,8 +82,13 @@ import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.example.wireup.util.DateUtil
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 data class Tweet(
@@ -103,18 +108,34 @@ data class Tweet(
 fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
     val tweets by viewModel.tweets.observeAsState(initial = emptyList())
     val users by viewModel.users.observeAsState(initial = emptyList())
+    val userId = Firebase.auth.currentUser?.uid.toString()
 
     val isLoading by remember { mutableStateOf(false) }
     val tweetText = remember { mutableStateOf("") }
     val imageUri = remember { mutableStateOf<Uri?>(null) }      //
     val imageUrl = remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
+    val showDialog2 = remember { mutableStateOf(true) }
+    val showVerificationDialog = remember { mutableStateOf(false) }
+    val isUserInListState = remember { mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             val uri = data?.data
             imageUri.value = uri
         }
+    }
+
+    fun isUserInList(userId: String): Boolean {
+        val db = Firebase.firestore
+        return runBlocking {
+            val query = db.collection("VerifiedUsers").whereEqualTo("uuid", userId).get().await()
+            query.documents.isNotEmpty()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        isUserInListState.value = isUserInList(userId ?: "")
     }
 
     Box{
@@ -152,12 +173,9 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                     .padding(horizontal = 16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Other composables...
-
                 if (showDialog.value) {
                     AlertDialog(
                         onDismissRequest = { showDialog.value = false },
-//                        title = { Text("Create Node" )  },
                         text = {
                             Column {
                                 Text(text = "Create Node" , textAlign = TextAlign.Center)
@@ -212,6 +230,41 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                     )
                 }
 
+                if (showVerificationDialog.value) {
+                    AlertDialog(
+                        onDismissRequest = { showVerificationDialog.value = false },
+                        text = {
+                            Text("You need to apply for verification to create a node.")
+                        },
+                        buttons = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(end = 25.dp, bottom = 10.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Button(
+                                    onClick = {
+                                        viewModel.verifyUserID(userId){
+                                            showDialog2.value = false
+                                        }
+//                                        showVerificationDialog.value = false
+                                    },
+                                    enabled = showDialog2.value,
+                                    colors = ButtonColors(
+                                        containerColor = Black,
+                                        disabledContainerColor = Black,
+                                        contentColor = Color.White,
+                                        disabledContentColor = Color.White
+                                    ),
+                                ) {
+                                    Text(if (showDialog2.value) "Apply for verification" else "Applied")
+                                }
+                            }
+                        })
+
+                }
+
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -228,7 +281,11 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
             }
         }
         FloatingActionButton(
-            onClick = { showDialog.value = true },
+            onClick = { if (isUserInListState.value) {
+                showDialog.value = true
+            } else {
+                showVerificationDialog.value = true
+            } },
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd),
@@ -258,19 +315,6 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val nodeimage = tweet.imageUrl
     val username = user?.name ?: ""
     val userUuid = user?.id
-    var isVisible by remember { mutableStateOf(false) }
-    var retweets = tweet.retweetCount
-    var likes = tweet.likeCount
-    var bookmarks = tweet.bookmarkCount
-    var isRetweeted by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isLiked by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isBookmarked by rememberSaveable {
-        mutableStateOf(false)
-    }
     var isFollowed by rememberSaveable {
         mutableStateOf(false)
     }
@@ -314,18 +358,16 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
         ) {
             Text(if (isFollowed) "Following" else "Follow")
         }}
-//    Spacer(modifier = Modifier
-//        .height(1.dp))
     Column(
         Modifier
             .fillMaxWidth()
             .padding(start = 50.dp)) {
-        Text(tweet.description, fontSize = 15.sp , fontWeight = FontWeight.W400)
+        Text(tweet.description, fontSize = 15.sp, fontWeight = FontWeight.W400)
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (nodeimage == null){
+        if (nodeimage == null) {
 
-        }else{
+        } else {
             Image(
                 painter = rememberImagePainter(nodeimage),
                 contentDescription = "Tweet Image",
@@ -337,77 +379,14 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
         Text(
             DateUtil.getDateTime(tweet.timeStamp),
             color = Color.Gray,
-            fontSize = 11.sp ,
+            fontSize = 11.sp,
             fontWeight = FontWeight.W400
         )
         Spacer(modifier = Modifier.height(8.dp))
-
-//        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
-
-//        TweetActionRow(
-//            isLiked, isRetweeted, isBookmarked,
-//            likes,
-//            retweets,
-//            bookmarks,
-//            onLikeClicked = {
-//                if (it)
-//                    likes++
-//                else
-//                    likes--
-//                isLiked = it
-//            }, onRetweetClicked = {
-//                if (it)
-//                    retweets++
-//                else
-//                    retweets--
-//                isRetweeted = it
-//            }
-//            , onBookmarkClicked = {
-//                if (it)
-//                    bookmarks++
-//                else
-//                    bookmarks--
-//                isBookmarked = it
-//            }) {
-//            isVisible = !isVisible
-//        }
-//        androidx.compose.material3.Divider(thickness = 1.dp, color = Color.Gray)
     }
 
-
-//    nodes k andar aur nodes
-//    AnimatedVisibility(
-//        visible = isVisible,
-//        enter = fadeIn(),
-//        exit = fadeOut()
-//    ) {
-//        LazyColumn(
-//            modifier = Modifier
-//                .height(420.dp) // Set the desired height here
-//                .drawBehind {
-//                    drawLine(
-//                        color = Color.LightGray,
-//                        start = Offset(150f, 0f),
-//                        end = Offset(150f, this.size.height)
-//                    )
-//                }
-//        ) {
-//            // ... rest of your code
-//            items(5) {
-//                TweetItem(tweet = Tweet(
-//                    description = "Incorporate and convert Java code into #Kotlin using #Android Studio, and learn Kotlin language conventions along the way. You’ll also learn how to write Kotlin code to make it callable from Java code.",
-//                    userId = FirebaseAuth.getInstance().currentUser?.email.toString(),
-//                    comments = listOf("very nice"),
-//                    likeCount = 203,
-//                    retweetCount = 50,
-//                    bookmarkCount = 135,
-//                    imageUrl = "https://vectorportal.com/storage/anime-avatar.jpg"),
-//                    onCommentClick = { },
-//                    navController = navController) {}
-//            }
-//        }
-//    }
-
 }
+
+
 
 

@@ -398,25 +398,20 @@ class FirestoreRepository {
             }
     }
 
-//    suspend fun searchNews(query: String): List<SearchData> {
-//        Log.d("FirestoreRepository", "Searching for news with query: $query")
-//        return firestore.collection("news")
-//            .whereGreaterThanOrEqualTo("heading", query)
-//            .whereLessThanOrEqualTo("heading", query + "\uf8ff")
-//            .get()
-//            .await()
-//            .documents
-//            .map {
-//                SearchData(
-//                    id = it.id,
-//                    description = it.getString("description") ?: "",
-//                    heading = it.getString("heading") ?: "",
-//                    imageUrl = it.getString("imageUrl") ?: "",
-//                    report = it.getString("report") ?: ""
-//                )
-//            }
-//    }
+    fun VerifyUserID(uuid: String) {
+        Log.d("FirebaseRepository", "Uploading data to Firebase...")
+        val data = hashMapOf(
+            "uuid" to uuid
+        )
 
+        firestore.collection("PendingUsers").add(data)
+            .addOnSuccessListener { documentReference ->
+                Log.d("FirebaseRepository", "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseRepository", "Error adding document", e)
+            }
+    }
 }
 
 
