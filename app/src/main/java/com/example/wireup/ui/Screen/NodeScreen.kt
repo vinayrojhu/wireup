@@ -175,6 +175,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
             ) {
                 if (showDialog.value) {
                     AlertDialog(
+
                         onDismissRequest = { showDialog.value = false },
                         text = {
                             Column {
