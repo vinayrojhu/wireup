@@ -149,6 +149,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                             Text(text = "Health & Lifestyle", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
+
                     }
 
                 }
