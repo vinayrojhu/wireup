@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -96,7 +97,13 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.ExtraBold,
             )
-        }, actions = {
+        },
+//            navigationIcon = {
+//                Icon(imageVector = Icons.Default.Menu, contentDescription = "Search")
+
+//            },
+            actions = {
+
             Row {
                 IconButton(onClick = {
                     navController.navigate(NavigationItem.Search.route)
@@ -104,6 +111,15 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                 }) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                 }
+
+                IconButton(onClick = {
+                    navController.navigate(NavigationItem.Search.route)
+
+                }) {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+                }
+
+
             }
         })
         Divider()
