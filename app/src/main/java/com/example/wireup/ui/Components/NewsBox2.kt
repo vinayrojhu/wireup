@@ -58,7 +58,8 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
                 Text(
                     text = data.heading,
                     fontWeight = FontWeight.Bold ,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    maxLines = 2
                 )
 
                 Spacer(modifier = Modifier.height(1.dp))
@@ -66,13 +67,15 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
                 // Subtitle
                 Text(
                     text = data.description,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                            maxLines = 3
                 )
                   Text(
                       DateUtil.getDate2(data.time),
                       color = Color.Black,
-                      fontSize = 12.sp ,
+                      fontSize = 11.sp ,
                       fontWeight = FontWeight.W300
+
                   )
               }
 
@@ -83,8 +86,8 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp)
+                    .height(120.dp)
+                    .width(120.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .align(Alignment.CenterVertically)
             )
