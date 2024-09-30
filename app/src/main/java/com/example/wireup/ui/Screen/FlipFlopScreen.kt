@@ -33,7 +33,7 @@ import com.google.accompanist.pager.PagerState
 
 
 @OptIn(ExperimentalMaterial3Api::class,
-    ExperimentalPagerApi::class, ExperimentalFoundationApi::class
+    ExperimentalPagerApi::class
 )
 @Composable
 fun FlipFlopScreen(navController: NavHostController) {

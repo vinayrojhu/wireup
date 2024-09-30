@@ -1,5 +1,7 @@
 package com.example.wireup.model
 
+import com.google.errorprone.annotations.Keep
+
 data class NewsData1(
     val id: String,
     val description: String,
@@ -22,3 +24,14 @@ data class FlipNews(
     val imageUrl2: String,
     val report2: String
 )
+
+@Keep
+data class SearchData(
+    val id: String,
+    val description: String,
+    val heading: String,
+    val imageUrl: String,
+    val report: String
+) {
+    constructor() : this("", "","","","") // Add this no-argument constructor
+}

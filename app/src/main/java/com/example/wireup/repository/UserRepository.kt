@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.wireup.model.FlipNews
 import com.example.wireup.model.MUser
 import com.example.wireup.model.NewsData1
+import com.example.wireup.model.SearchData
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -365,8 +366,56 @@ class FirestoreRepository {
         return liveData
     }
 
+    suspend fun searchNews(query: String): List<SearchData> {
+        Log.d("FirestoreRepository", "Searching for news with query: $query")
+        val lowerCaseQuery = query.toLowerCase()
+        return firestore.collection("news")
+            .get()
+            .await()
+            .documents
+            .filter { document ->
+                val description = document.getString("description")?.toLowerCase() ?: ""
+                val heading = document.getString("heading")?.toLowerCase() ?: ""
+                val imageUrl = document.getString("imageUrl")?.toLowerCase() ?: ""
+                val report = document.getString("report")?.toLowerCase() ?: ""
+                val tags = document.get("tags") as? List<String>
+                val tagsString = tags?.joinToString(" ")?.toLowerCase() ?: ""
 
+                description.contains(lowerCaseQuery) ||
+                        heading.split(" ").any { it.contains(lowerCaseQuery) } ||
+                        imageUrl.contains(lowerCaseQuery) ||
+                        report.contains(lowerCaseQuery) ||
+                        tagsString.contains(lowerCaseQuery)
+            }
+            .map {
+                SearchData(
+                    id = it.id,
+                    description = it.getString("description") ?: "",
+                    heading = it.getString("heading") ?: "",
+                    imageUrl = it.getString("imageUrl") ?: "",
+                    report = it.getString("report") ?: ""
+                )
+            }
+    }
 
+//    suspend fun searchNews(query: String): List<SearchData> {
+//        Log.d("FirestoreRepository", "Searching for news with query: $query")
+//        return firestore.collection("news")
+//            .whereGreaterThanOrEqualTo("heading", query)
+//            .whereLessThanOrEqualTo("heading", query + "\uf8ff")
+//            .get()
+//            .await()
+//            .documents
+//            .map {
+//                SearchData(
+//                    id = it.id,
+//                    description = it.getString("description") ?: "",
+//                    heading = it.getString("heading") ?: "",
+//                    imageUrl = it.getString("imageUrl") ?: "",
+//                    report = it.getString("report") ?: ""
+//                )
+//            }
+//    }
 
 }
 

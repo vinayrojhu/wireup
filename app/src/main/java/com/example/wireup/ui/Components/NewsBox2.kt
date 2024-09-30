@@ -89,10 +89,6 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
                     .align(Alignment.CenterVertically)
             )
 
-
-
-
-
         }
 
         Divider(modifier = Modifier.alpha(0.5F))

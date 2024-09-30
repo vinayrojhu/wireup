@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.wireup.model.FlipNews
 import com.example.wireup.model.MUser
 import com.example.wireup.model.NewsData1
+import com.example.wireup.model.SearchData
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
 import com.google.firebase.auth.FirebaseAuth
@@ -33,6 +34,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
 
     private val _flipNews = MutableLiveData<List<FlipNews>>()
     val flipNews: LiveData<List<FlipNews>> = _flipNews
+
+    private val _searchResults = MutableLiveData<List<SearchData>>()
+    val searchResults: LiveData<List<SearchData>> = _searchResults
 
     private val _users = MutableLiveData<List<MUser>>()
     val users: LiveData<List<MUser>> = _users
@@ -216,6 +220,15 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     fun fetchTweetsofCurrentUser(userId: String) {
         firestoreRepository.fetchTweetsofCurrentUser(userId).observeForever { tweets ->
             _tweets.value = tweets
+        }
+    }
+
+    fun searchNews(query: String) {
+        Log.d("UserViewModel", "Searching for news with query: $query")
+        viewModelScope.launch {
+            val results = firestoreRepository.searchNews(query)
+            Log.d("UserViewModel", "Search results: $results")
+            _searchResults.value = results
         }
     }
 
