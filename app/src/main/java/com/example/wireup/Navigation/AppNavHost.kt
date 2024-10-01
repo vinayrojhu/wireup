@@ -34,6 +34,7 @@ import com.example.wireup.ui.Screen.SplashScreen
 import com.example.wireup.ui.Screen.login.AuthenticationScreen
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.ProfileScreenViewMode
+import com.example.wireup.ui.Screen.TagsScreen
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -88,7 +89,10 @@ fun AppNavHost(
         composable(NavigationItem.Edit.route) {
             EditProfileScreen( navController = navController)
         }
-
+        composable(NavigationItem.Tags.route + "/{newsId}") {backStackEntry ->
+            val tag = backStackEntry.arguments?.getString("newsId").toString()
+            TagsScreen( navController = navController, tag)
+        }
 
 
 
@@ -114,10 +118,6 @@ fun AppNavHost(
             AccountScreen( navController = navController)
         }
 
-//        composable(NavigationItem.ReadMore.route){
-//            ReadMore(navController = navController)
-//
-//        }
         composable(NavigationItem.ReadMore.route + "/{newsId}") { backStackEntry ->
             val newsId = backStackEntry.arguments?.getString("newsId").toString()
             ReadMore(navController = navController, newsId)
