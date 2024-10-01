@@ -25,7 +25,9 @@ enum class Screen {
     LIKED ,
 
     PROFILEVIEWMODE,
-    FOLLOWNODES
+    FOLLOWNODES,
+
+    TAGS
 
 }
 
@@ -55,4 +57,6 @@ sealed class NavigationItem(val route: String) {
     object FollowNodes : NavigationItem(Screen.FOLLOWNODES.name)
 
     object Help : NavigationItem(Screen.HELP.name)
+
+    object Tags : NavigationItem(Screen.TAGS.name)
 }

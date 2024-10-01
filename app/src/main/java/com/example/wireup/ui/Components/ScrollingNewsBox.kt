@@ -68,7 +68,6 @@ fun ScrollingNewsBox(data: NewsData1, navController: NavHostController) {
             fontWeight = FontWeight(600),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-//                .background(Color.Black.copy(alpha = 0.5f))
                 .padding(8.dp)
         )
     }

@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
@@ -108,46 +109,57 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
 
                         Spacer(modifier = Modifier.height(15.dp))
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
-                            Text(text = "Home", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
-                            Spacer(modifier = Modifier.height(15.dp))
-                        }
-
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/trending")}
+                            .fillMaxWidth()) {
                             Text(text = "Trending", style = MaterialTheme.typography.titleMedium  , modifier = Modifier.padding(start = 20.dp))
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/world")}
+                            .fillMaxWidth()) {
                             Text(text = "World", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/politics")}
+                            .fillMaxWidth()) {
                             Text(text = "Politics", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable {navController.navigate(NavigationItem.FlipFlop.route) }
+                            .fillMaxWidth()) {
                             Text(text = "FLIP-FLOP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight(800) , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable {navController.navigate(NavigationItem.Tags.route + "/sports") }
+                            .fillMaxWidth()) {
                             Text(text = "Sports", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable {navController.navigate(NavigationItem.Tags.route + "/business") }
+                            .fillMaxWidth()) {
                             Text(text = "Business", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/india")}
+                            .fillMaxWidth()) {
                             Text(text = "IN INDIA", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier.clickable { }.fillMaxWidth()) {
+                        Column(modifier = Modifier
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health&lifestyle")}
+                            .fillMaxWidth()) {
                             Text(text = "Health & Lifestyle", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
@@ -244,230 +256,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
             }
         )
     }
-//        TopAppBar(title = {
-//            Text(
-//                "WIREup",
-//                fontFamily = FontFamily.Monospace,
-//                fontWeight = FontWeight.ExtraBold,
-//            )
-//        },
-////            navigationIcon = {
-////                Icon(imageVector = Icons.Default.Menu, contentDescription = "Search")
-//
-////            },
-//            actions = {
-//
-//            Row {
-//                IconButton(onClick = {
-//                    navController.navigate(NavigationItem.Search.route)
-//
-//                }) {
-//                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-//                }
-//
-//                IconButton(onClick = {
-//                }) {
-//                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
-//                }
-//
-//
-//            }
-//        })
-//        Divider()
-//
-//        Column(modifier = Modifier.verticalScroll(scrollState)) {
-//            Column(modifier = Modifier.padding(20.dp)) {
-////                Text(text = "Saturday, March 24th" , fontWeight = FontWeight.W300 , fontSize = 12.sp)
-//                Text(
-//                    DateUtil.getDate(System.currentTimeMillis()),
-//                    color = Color.Black,
-//                    fontSize = 12.sp ,
-//                    fontWeight = FontWeight.W300
-//                )
-//                Text(text = "Welcome Back , " , fontSize = 28.sp , fontWeight =FontWeight.W600)
-//                Text(text = username, fontSize = 28.sp , fontWeight =FontWeight.W600)
-//            }
-//
-//            Box(modifier = Modifier.fillMaxHeight()){
-//
-//                when (tabIndex.value) {
-//                    0 -> Column() {
-//                        Row(modifier = Modifier
-//                            .horizontalScroll(rememberScrollState())
-//                            .padding(bottom = 20.dp)) {
-//
-//                            news1.filter { it.tags?.contains("scroll") == true }
-//                                .take(5)
-//                                .forEach { news1 ->
-//                                ScrollingNewsBox(news1, navController)
-//                            }
-//                        }
-//
-//                        news1.filter { it.tags?.contains("trending") == true }
-//                            .take(5)
-//                            .forEach { news1 ->
-//                            NewsBox2(news1, navController)
-//                        }
-//
-//                        news1.filter { it.tags?.contains("all") == true }
-//                            .forEach { news1 ->
-//                                NewsBox3(news1, navController)
-//                            }
-//
-//
-//                    }
-//                }
-//            }
-//        }
-
-    }
-
-
-
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun TopBarWithSidebarMaterial3Example() {
-//    // Drawer state for Material3
-//    val drawerState = rememberDrawerState(DrawerValue.Closed)
-//    val scope = rememberCoroutineScope()
-//
-//    // ModalNavigationDrawer for Material3
-//    ModalNavigationDrawer(
-//        drawerState = drawerState,
-//        drawerContent = {
-//            // Sidebar content
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .padding(16.dp)
-//                    .background(Color.LightGray)
-//            ) {
-//                Text(text = "Sidebar Item 1", style = MaterialTheme.typography.titleMedium)
-//                Spacer(modifier = Modifier.height(10.dp))
-//                Text(text = "Sidebar Item 2", style = MaterialTheme.typography.titleMedium)
-//                Spacer(modifier = Modifier.height(10.dp))
-//                // Add more sidebar content here
-//            }
-//        },
-//        content = {
-//            Scaffold(
-//                topBar = {
-//                    TopAppBar(
-//                        title = { Text("WIREup", fontWeight = FontWeight(800)) },
-//                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-//                        navigationIcon = {
-//                            IconButton(onClick = {
-//                                // Open the sidebar when button is clicked
-//                                scope.launch { drawerState.open() }
-//                            }) {
-//                                Icon(
-//                                    imageVector = Icons.Default.Menu,
-//                                    contentDescription = "Menu Icon"
-//                                )
-//                            }
-//                            IconButton(onClick = {
-//                                navController.navigate(NavigationItem.Search.route)
-//
-//                            }) {
-//                                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-//                            }
-//                        }
-//                    )
-//                },
-//                content = { padding ->
-//                    // Main content
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(padding)
-//                    ) {
-//                        Text("Main content goes here")
-//                    }
-//                }
-//            )
-//        }
-//    )
-//}
-
-
-
-
-
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(color = Color.White)
-//        ) {
-//
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(color = Color.White)
-//        ) {
-//            // Your screen content here
-//
-//            BottomNavigation(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(color = Color.Transparent),
-//                elevation = 0.dp
-//            ) {
-//                TabRow(
-//                    selectedTabIndex = tabIndex.value
-//                ) {
-//                    Tab(
-//                        selected = tabIndex.value == 0,
-//                        onClick = { tabIndex.value = 0 },
-////                        icon = {
-////                            Icon(
-////                                imageVector = Icons.Default.Home,
-////                                contentDescription = "Home"
-////                            )
-////                        },
-//                        text = { Text(text = "Home") }
-//                    )
-//                    Tab(
-//                        selected = tabIndex.value == 1,
-//                        onClick = { tabIndex.value = 1 },
-////                        icon = {
-////                            Icon(
-////                                imageVector = Icons.Default.ShoppingCart,
-////                                contentDescription = "Shopping Cart"
-////                            )
-////                        },
-//                        text = { Text(text = "Flip-Flop") }
-//                    )
-//                    Tab(
-//                        selected = tabIndex.value == 2,
-//                        onClick = { tabIndex.value = 2 },
-////                        icon = {
-////                            Icon(
-////                                imageVector = Icons.Default.AccountBox,
-////                                contentDescription = "Account"
-////                            )
-////                        },
-//                        text = { Text(text = "Research") }
-//                    )
-//                }
-//            }
-//            when (tabIndex.value) {
-//                0 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                    NewsBox(NewsBoxData)
-//                    NewsBox(NewsBoxData)
-//                    NewsBox(NewsBoxData)
-//                    NewsBox(NewsBoxData)
-//                }
-//                1 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                    NewsBox(NewsBoxData)
-//                }
-//                2 -> Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//                    NewsBox(NewsBoxData)
-//                    NewsBox(NewsBoxData)
-//                }
-//            }
-//        }
-//      }
+}
 
 
 
