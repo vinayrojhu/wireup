@@ -302,11 +302,11 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
             .padding(vertical = 8.dp)
             .clickable(
                 onClick = {
-                    isPlaying = true
+                    isPlaying = !isPlaying
 //                    AudioPodcastPlayer(url = url)
 //                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
                 }
-            ),
+            ), 
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -379,7 +379,7 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
     // Conditionally show the audio player when the podcast box is clicked
     if (isPlaying) {
         // AudioPodcastPlayer is invoked here in the same @Composable context
-        AudioPodcastPlayer("")
+        AudioPodcastPlayer("https://www.iheart.com/podcast/1119-stuff-you-should-know-26940277/")
     }
 }
 
@@ -413,7 +413,7 @@ val audiopodcasts = listOf(
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
         duration = 10 ,
-        url=""
+        url="https://www.iheart.com/podcast/1119-stuff-you-should-know-26940277/"
     ),
     AudioPodcast(
         title = "All About Android 513: Unlocking Android 12 Secrets",

@@ -45,7 +45,7 @@ fun ScrollingNewsBox(data: NewsData1, navController: NavHostController) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .alpha(0.8f)
+                .alpha(0.99f)
 
         )
         Row(modifier = Modifier.padding(10.dp)){
@@ -54,8 +54,7 @@ fun ScrollingNewsBox(data: NewsData1, navController: NavHostController) {
                 color = Color.White,
                 fontSize = 10.sp,
                 modifier = Modifier
-
-                    .background(Color.Black.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
+                    .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
                     .padding(horizontal = 8.dp)
             )
         }
@@ -63,12 +62,12 @@ fun ScrollingNewsBox(data: NewsData1, navController: NavHostController) {
 
         Text(
             text = data.heading,
-            color = Color.Black,
-            fontSize = 14.sp,
+            color = Color.White,
+            fontSize = 15.sp,
             fontWeight = FontWeight(600),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-//                .background(Color.Black.copy(alpha = 0.5f))
+                .background(Color.Black.copy(alpha = 0.2f))
                 .padding(8.dp)
         )
     }
