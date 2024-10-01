@@ -41,6 +41,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,17 +56,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
+import com.example.wireup.repository.FirestoreRepository
+import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OpenVideoPodcast( navController : NavHostController) {
+fun OpenVideoPodcast( navController : NavHostController, videoLink: String, videoHeading: String) {
+
 
         Column() {
             TopAppBar(title = {
@@ -95,42 +102,42 @@ fun OpenVideoPodcast( navController : NavHostController) {
 //                        .fillMaxWidth()
 //                        .height(190.dp)
 //                )
-                YouTubeVideoPlayer(videoId = getYoutubeVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+                YouTubeVideoPlayer(videoId = getYoutubeVideoId(videoLink))
 
                 Column(modifier = Modifier.padding(start = 10.dp , top = 5.dp)) {
                     Text(
-                        text = "what should i do",
+                        text = videoHeading,
                         fontWeight = FontWeight.W900,
                         fontFamily = FontFamily.SansSerif,
                         fontSize = 25.sp,
                         textAlign =TextAlign.Start
                     )
 
-                    Row(modifier = Modifier.padding(start = 5.dp)) {
-                        Text(
-                            text = "2024",
-                            fontWeight = FontWeight.W400,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp,
-                            textAlign = TextAlign.Start
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "U/A 13+",
-                            fontWeight = FontWeight.W400,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp,
-                            textAlign = TextAlign.Start
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "2h 55m",
-                            fontWeight = FontWeight.W400,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp,
-                            textAlign = TextAlign.Start
-                        )
-                    }
+//                    Row(modifier = Modifier.padding(start = 5.dp)) {
+//                        Text(
+//                            text = "2024",
+//                            fontWeight = FontWeight.W400,
+//                            fontFamily = FontFamily.Monospace,
+//                            fontSize = 11.sp,
+//                            textAlign = TextAlign.Start
+//                        )
+//                        Spacer(modifier = Modifier.width(8.dp))
+//                        Text(
+//                            text = "U/A 13+",
+//                            fontWeight = FontWeight.W400,
+//                            fontFamily = FontFamily.Monospace,
+//                            fontSize = 11.sp,
+//                            textAlign = TextAlign.Start
+//                        )
+//                        Spacer(modifier = Modifier.width(8.dp))
+//                        Text(
+//                            text = "2h 55m",
+//                            fontWeight = FontWeight.W400,
+//                            fontFamily = FontFamily.Monospace,
+//                            fontSize = 11.sp,
+//                            textAlign = TextAlign.Start
+//                        )
+//                    }
 
                     Button(
                         onClick = { },
@@ -164,14 +171,14 @@ fun OpenVideoPodcast( navController : NavHostController) {
                         Text("Download")
                     }
                     
-                    Text(text = "My technical expertise span programming languages such as Kotlin and JavaScript, and frameworks and libraries like Jetpack Compose and Coroutines." ,
-                        modifier = Modifier.padding(top = 10.dp , end = 5.dp) ,
-                        fontSize = 15.sp)
-
-                    Text(text = "by Vinay Rojh" , fontSize = 12.sp ,
-                        fontWeight = FontWeight(600),
-                        modifier = Modifier.padding(top = 5.dp)
-                    )
+//                    Text(text = "My technical expertise span programming languages such as Kotlin and JavaScript, and frameworks and libraries like Jetpack Compose and Coroutines." ,
+//                        modifier = Modifier.padding(top = 10.dp , end = 5.dp) ,
+//                        fontSize = 15.sp)
+//
+//                    Text(text = "by Vinay Rojh" , fontSize = 12.sp ,
+//                        fontWeight = FontWeight(600),
+//                        modifier = Modifier.padding(top = 5.dp)
+//                    )
                     Row(horizontalArrangement = Arrangement.SpaceAround ,
                         modifier = Modifier
                             .fillMaxWidth(1f)

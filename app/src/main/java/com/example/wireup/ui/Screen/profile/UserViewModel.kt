@@ -12,6 +12,7 @@ import com.example.wireup.model.NewsData1
 import com.example.wireup.model.SearchData
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.Tweet
+import com.example.wireup.ui.Screen.VideoPodcast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
 
     private val _news1 = MutableLiveData<List<NewsData1>>()
     val news1: LiveData<List<NewsData1>> = _news1
+
+    private val _video = MutableLiveData<List<VideoPodcast>>()
+    val video: LiveData<List<VideoPodcast>> = _video
 
     private val _flipNews = MutableLiveData<List<FlipNews>>()
     val flipNews: LiveData<List<FlipNews>> = _flipNews
@@ -95,6 +99,13 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         fetchUsersFromFirestore()
         fetchNewsFromFirestore()
         fetchFlipNews()
+        fetchYTlink()
+    }
+
+    private fun fetchYTlink() {
+        firestoreRepository.fetchYTlink().observeForever { video ->
+            _video.value = video
+        }
     }
 
     private fun fetchNewsFromFirestore() {

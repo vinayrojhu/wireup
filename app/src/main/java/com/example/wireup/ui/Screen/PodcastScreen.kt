@@ -1,6 +1,7 @@
 package com.example.wireup.ui.Screen
 
 import android.content.Context
+import android.net.Uri
 import android.widget.MediaController
 import android.widget.VideoView
 import androidx.compose.foundation.Image
@@ -39,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,12 +61,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
+import com.example.wireup.repository.FirestoreRepository
+import com.example.wireup.ui.Components.NewsBox3
 import com.example.wireup.ui.Components.TabView
+import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
@@ -78,14 +86,18 @@ data class AudioPodcast(
 )
 
 data class VideoPodcast(
+    val id: String,
     val imageUrl: String,
     val title: String,
-    val author: String
+    val videoLink: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PodcastScreen(navController: NavHostController) {
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
+    val video1 by viewModel.video.observeAsState(initial = emptyList())
+
     var selectedTabIndex by remember {
         mutableIntStateOf(0)
     }
@@ -126,32 +138,48 @@ fun PodcastScreen(navController: NavHostController) {
                     selectedTabIndex = it
                 }
                 when (selectedTabIndex) {
-                    0 -> LazyColumn(
+                    0 -> Column(
                         modifier = Modifier
                             .padding(16.dp)
                     ) {
-                        items(videopodcasts) { Vpodcast ->
-                            VideoPostBox(Vpodcast, navController)
-                        }
+                        video1.forEach { data ->
+                                VideoPostBox(Vpodcast = data, navController)
+                            }
                     }
                     1 -> LazyColumn(
                         modifier = Modifier
                             .padding(16.dp)
                     ) {
                         items(audiopodcasts) { Apodcast ->
-                            PodcastItem(Apodcast, navController , )
+                            PodcastItem(Apodcast, navController )
                         }
                     }
                 }
+     }
+}
 
+fun getVideoIdFromUrl(url: String): String? {
+    val pattern = "v=([^&]+)".toRegex()
+    val matchResult = pattern.find(url)
+    return matchResult?.groups?.get(1)?.value
+}
 
-
-
-
-            }
-        }
-
-
+@Composable
+fun YouTubeVideoThumbnail(url: String) {
+    val videoId = getVideoIdFromUrl(url)
+    if (videoId != null) {
+        val thumbnailUrl = "https://img.youtube.com/vi/$videoId/0.jpg"
+        AsyncImage(model = thumbnailUrl,
+            contentDescription = "YouTube video thumbnail",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(16.dp)))
+    } else {
+        Text("Invalid YouTube video URL")
+    }
+}
 
 
 
@@ -166,7 +194,9 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
             .padding(top = 8.dp, bottom = 8.dp)
             .clickable(
                 onClick = {
-                    navController.navigate(NavigationItem.VideoPodcastOpened.route)
+                    val videoLinkEncoded = Uri.encode(Vpodcast.videoLink)
+                    val headingEncoded = Uri.encode(Vpodcast.title)
+                    navController.navigate(NavigationItem.VideoPodcastOpened.route + "/$videoLinkEncoded/$headingEncoded")
                 }
             ),
         shape = RoundedCornerShape(16.dp),
@@ -175,117 +205,54 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
     ) {
 
         Box(){
-            Image(
-                painter = rememberAsyncImagePainter(Vpodcast.imageUrl),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            )
-            Icon(Icons.Filled.PlayArrow, contentDescription = "Friends"
+//            Image(
+//                painter = rememberAsyncImagePainter(Vpodcast.videoLink),
+//                contentDescription = null,
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .fillMaxWidth(1f)
+//                    .height(200.dp)
+//                    .clip(RoundedCornerShape(16.dp))
+//            )
+            YouTubeVideoThumbnail(Vpodcast.videoLink)
+            Icon(Icons.Filled.PlayArrow, contentDescription = "Play"
                 , modifier = Modifier
                     .align(Alignment.Center)
                     .size(50.dp) ,
                 tint = Color.White)
         }
 
-//            Spacer(modifier = Modifier.height(8.dp))
             Column(modifier = Modifier.padding(top = 14.dp , start = 5.dp , end = 5.dp)) {
                 Text(
-//                    text = Vpodcast.title,
-                    text = "The Motivation Expert : Why You're FAILING To Achieve Your Goals (& What To Do About It!)",
+                    text = Vpodcast.title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Start ,
                     maxLines = 3
                 )
 
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(
-//                    text = Vpodcast.author,
-//                    fontSize = 14.sp,
-//                    textAlign = TextAlign.Start
-//                )
-
-                Row(modifier = Modifier ,
-                    verticalAlignment = Alignment.CenterVertically ,
-                    horizontalArrangement = Arrangement.spacedBy(200.dp)){
-                    Text(
-                        text = "3 july, 2024",
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Start
-                    )
-
-                    val isLiked = remember { mutableStateOf(false) }
-                    IconButton(onClick = { isLiked.value = !isLiked.value  }) {
-                        Icon(
-                            if (isLiked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder ,
-                            contentDescription = "Like"
-                        )
-                    }
-                }
+//                Row(modifier = Modifier ,
+//                    verticalAlignment = Alignment.CenterVertically ,
+//                    horizontalArrangement = Arrangement.spacedBy(200.dp)){
+//                    Text(
+//                        text = "3 july, 2024",
+//                        fontSize = 14.sp,
+//                        textAlign = TextAlign.Start
+//                    )
+//
+//                    val isLiked = remember { mutableStateOf(false) }
+//                    IconButton(onClick = { isLiked.value = !isLiked.value  }) {
+//                        Icon(
+//                            if (isLiked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder ,
+//                            contentDescription = "Like"
+//                        )
+//                    }
+//                }
 
         }
         Divider()
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewVideoPostBox() {
-//    VideoScreen()
-//}
-
-val videopodcasts = listOf(
-    VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
-        title = "Podcast 1 !  ",
-        author = "description 1"),
-    VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
-        title = "Podcast 2 !",
-        author = "description 2"),
-    VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
-        title = "Podcast 3 !",
-        author = "description 3"),
-    VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
-        title = "Podcast 4 !",
-        author = "description 4"),
-    VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
-        title = "Podcast 5 !",
-        author = "description 5"),
-    VideoPodcast(imageUrl = "https://dpas4li76ctjb.cloudfront.net/wp-content/uploads/2021/11/Picture3-2.png",
-        title = "Podcast 6 !",
-        author = "description 6")
-
-)
-
-
-
-//
-//@Composable
-//fun VideoScreen(){
-//    LazyColumn(
-//        modifier = Modifier
-//            .padding(16.dp)
-//    ) {
-//        items(videopodcasts) { Vpodcast ->
-//            VideoPostBox(Vpodcast)
-//        }
-//    }
-//}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Audio
@@ -293,7 +260,6 @@ val videopodcasts = listOf(
 @Composable
 fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
 
-    // Manage the state to control when the audio player should be visible
     var isPlaying by remember { mutableStateOf(false) }
 
     Card(

@@ -9,6 +9,7 @@ import com.example.wireup.model.MUser
 import com.example.wireup.model.NewsData1
 import com.example.wireup.model.SearchData
 import com.example.wireup.ui.Screen.Tweet
+import com.example.wireup.ui.Screen.VideoPodcast
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -411,6 +412,27 @@ class FirestoreRepository {
             .addOnFailureListener { e ->
                 Log.w("FirebaseRepository", "Error adding document", e)
             }
+    }
+
+    fun fetchYTlink(): LiveData<List<VideoPodcast>> {
+        val liveData = MutableLiveData<List<VideoPodcast>>()
+        firestore.collection("YTvideo").orderBy("Time", Query.Direction.DESCENDING).get()
+            .addOnSuccessListener { querySnapshot ->
+                val video = querySnapshot.documents.map { document ->
+                    VideoPodcast(
+                        id = document.id,
+                        title = document.getString("heading") ?: "",
+                        imageUrl = document.getString("imageUrl") ?: "",
+                        videoLink = document.getString("VideoUrl") ?: "",
+                    )
+                }
+                liveData.value = video
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error getting news", exception)
+                liveData.value = emptyList()
+            }
+        return liveData
     }
 }
 

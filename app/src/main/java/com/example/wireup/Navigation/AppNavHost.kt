@@ -9,8 +9,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.AboutScreen
 import com.example.wireup.ui.Screen.AccountScreen
@@ -122,8 +124,15 @@ fun AppNavHost(
             val newsId = backStackEntry.arguments?.getString("newsId").toString()
             ReadMore(navController = navController, newsId)
         }
-        composable(NavigationItem.VideoPodcastOpened.route){
-            OpenVideoPodcast(navController = navController)
+        composable(NavigationItem.VideoPodcastOpened.route + "/{videoLink}/{heading}",
+            arguments = listOf(
+                navArgument("videoLink") { type = NavType.StringType },
+                navArgument("heading") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val videoLink = backStackEntry.arguments?.getString("videoLink").toString()
+            val videoHeading = backStackEntry.arguments?.getString("heading").toString()
+            OpenVideoPodcast(navController = navController, videoLink, videoHeading)
         }
         composable(NavigationItem.AudioPodcastOpened.route){
             OpenAudioPodcast(navController = navController)
