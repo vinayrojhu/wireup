@@ -73,8 +73,7 @@ data class AudioPodcast(
     val title: String,
     val speaker: String,
     val imageUrl: String,
-    val duration: Int,
-    val url: String
+    val duration: Int
 )
 
 data class VideoPodcast(
@@ -139,7 +138,7 @@ fun PodcastScreen(navController: NavHostController) {
                             .padding(16.dp)
                     ) {
                         items(audiopodcasts) { Apodcast ->
-                            PodcastItem(Apodcast, navController , )
+                            PodcastItem(Apodcast, navController )
                         }
                     }
                 }
@@ -293,8 +292,7 @@ val videopodcasts = listOf(
 @Composable
 fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
 
-    // Manage the state to control when the audio player should be visible
-    var isPlaying by remember { mutableStateOf(false) }
+
 
     Card(
         modifier = Modifier
@@ -302,11 +300,9 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
             .padding(vertical = 8.dp)
             .clickable(
                 onClick = {
-                    isPlaying = !isPlaying
-//                    AudioPodcastPlayer(url = url)
-//                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
+                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
                 }
-            ), 
+            ),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -376,79 +372,47 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
         }
     }
 
-    // Conditionally show the audio player when the podcast box is clicked
-    if (isPlaying) {
-        // AudioPodcastPlayer is invoked here in the same @Composable context
-        AudioPodcastPlayer("https://www.iheart.com/podcast/1119-stuff-you-should-know-26940277/")
-    }
+
 }
 
-@Composable
-fun AudioPodcastPlayer(url: String) {
-    val context = LocalContext.current
-    val exoPlayer = remember {
-        SimpleExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(url))
-            prepare()
-            playWhenReady = true
-        }
-    }
-
-    DisposableEffect(
-        AndroidView(factory = {
-            PlayerView(context).apply {
-                player = exoPlayer
-            }
-        })
-    ) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-}
 
 val audiopodcasts = listOf(
     AudioPodcast(
         title = "All About Android 522: Guacamole Comes To Android",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url="https://www.iheart.com/podcast/1119-stuff-you-should-know-26940277/"
+        duration = 10
+
     ),
     AudioPodcast(
         title = "All About Android 513: Unlocking Android 12 Secrets",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
+        duration = 10
     ),
     AudioPodcast(
         title = "All About Android 506: Android Adjacent",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
+        duration = 10
     ),
     AudioPodcast(
         title = "Best External Android Microphones",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
+        duration = 10
     ),
     AudioPodcast(
         title = "MacBreak Weekly",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
+        duration = 10
     ),
     AudioPodcast(
         title = "Keep Productive: Latest Software Updates",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
+        duration = 10
     )
 )
 
