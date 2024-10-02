@@ -335,30 +335,31 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
         }
         Spacer(modifier = Modifier.width(8.dp))
-        Button(
-            onClick = {
-                isFollowed = !isFollowed
-                viewModel.addFollowingToUser(userId = currentUserId, followingId = userUuid.toString())
-
-            },
-            colors = ButtonColors(
-                containerColor =
-                if (isFollowed) {
-                    MaterialTheme.colorScheme.background
-                } else {
-                    MaterialTheme.colorScheme.background
-                },
-                contentColor = if (isFollowed) {
-                    MaterialTheme.colorScheme.onBackground
-                } else {
-                    MaterialTheme.colorScheme.onBackground
-                },
-                disabledContentColor = Color.Gray,
-                disabledContainerColor = Color.LightGray
-            )
-        ) {
-            Text(if (isFollowed) "Following" else "Follow")
-        }}
+//        Button(
+//            onClick = {
+//                isFollowed = !isFollowed
+//                viewModel.addFollowingToUser(userId = currentUserId, followingId = userUuid.toString())
+//
+//            },
+//            colors = ButtonColors(
+//                containerColor =
+//                if (isFollowed) {
+//                    MaterialTheme.colorScheme.background
+//                } else {
+//                    MaterialTheme.colorScheme.background
+//                },
+//                contentColor = if (isFollowed) {
+//                    MaterialTheme.colorScheme.onBackground
+//                } else {
+//                    MaterialTheme.colorScheme.onBackground
+//                },
+//                disabledContentColor = Color.Gray,
+//                disabledContainerColor = Color.LightGray
+//            )
+//        ) {
+//            Text(if (isFollowed) "Following" else "Follow")
+//        }
+    }
     Column(
         Modifier
             .fillMaxWidth()
