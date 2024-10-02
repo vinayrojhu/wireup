@@ -43,6 +43,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -83,7 +86,7 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.Filled.Close,
+                        imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back",
                         modifier = Modifier.padding(8.dp)
                     )
@@ -92,6 +95,9 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
             )
 
             Divider()
+
+
+            var isPlaying by remember { mutableStateOf(false) } // Track if the play button is clicked
 
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 //                Image(
@@ -102,14 +108,15 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
 //                        .fillMaxWidth()
 //                        .height(190.dp)
 //                )
-                YouTubeVideoPlayer(videoId = getYoutubeVideoId(videoLink))
+                // YouTube Video Player remains visible and reacts to `isPlaying`
+                YouTubeVideoPlayer(videoId = getYoutubeVideoId(videoLink), isPlaying = isPlaying)
 
-                Column(modifier = Modifier.padding(start = 10.dp , top = 5.dp)) {
+                Column(modifier = Modifier.padding(horizontal =  12.dp , vertical = 12.dp)) {
                     Text(
                         text = videoHeading,
-                        fontWeight = FontWeight.W900,
+                        fontWeight = FontWeight.W800,
                         fontFamily = FontFamily.SansSerif,
-                        fontSize = 25.sp,
+                        fontSize = 20.sp,
                         textAlign =TextAlign.Start
                     )
 
@@ -140,7 +147,8 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
 //                    }
 
                     Button(
-                        onClick = { },
+                        onClick = { isPlaying = !isPlaying// Set the video to play when the button is clicked
+                        },
                         colors = ButtonColors(containerColor = Color.LightGray , disabledContainerColor = Color.LightGray , contentColor = Color.Black , disabledContentColor = Color.Black),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -149,8 +157,12 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
                         elevation = ButtonDefaults.buttonElevation(8.dp),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Account")
-                        Text("Play")
+
+                        if (isPlaying){
+                            Icon(painter = painterResource(id = R.drawable.pause_icon), contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
+                        Text("Pause") }
+                        else{ Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Account")
+                        Text(text = "Play")}
                     }
 
                     Button(
@@ -165,7 +177,8 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
                     ) {
                         Icon(painter = painterResource(id = R.drawable.download_icon),
                             contentDescription = "Download" ,
-                            modifier = Modifier.size(25.dp)
+                            modifier = Modifier
+                                .size(25.dp)
                                 .padding(end = 5.dp))
 //                        Icon(imageVector = Icons.Outlined.AddCircle, contentDescription = "Account")
                         Text("Download")
@@ -215,20 +228,37 @@ fun OpenVideoPodcast( navController : NavHostController, videoLink: String, vide
 
 }
 
-
 @Composable
-fun YouTubeVideoPlayer(videoId: String) {
+fun YouTubeVideoPlayer(videoId: String, isPlaying: Boolean) {
     val context = LocalContext.current
+    // Keep a reference to YouTubePlayer instance in remember to persist across recompositions
+    val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
 
-    AndroidView(factory = {
-        val youTubePlayerView = YouTubePlayerView(context)
-        youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-            override fun onReady(youTubePlayer: YouTubePlayer) {
-                youTubePlayer.loadVideo(videoId, 0.5f)
+    AndroidView(
+        factory = {
+            // Create the YouTubePlayerView
+            val youTubePlayerView = YouTubePlayerView(context)
+            youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                override fun onReady(youTubePlayer: YouTubePlayer) {
+                    // Assign the YouTubePlayer instance
+                    youTubePlayerInstance.value = youTubePlayer
+                    // Load the video, but don't auto-play
+                    youTubePlayer.cueVideo(videoId, 0f)
+                }
+            })
+            youTubePlayerView
+        },
+        update = {
+            // Control the YouTubePlayer based on `isPlaying` only after it's ready
+            youTubePlayerInstance.value?.let { player ->
+                if (isPlaying) {
+                    player.play() // Play the video
+                } else {
+                    player.pause() // Pause the video
+                }
             }
-        })
-        youTubePlayerView
-    })
+        }
+    )
 }
 
 fun getYoutubeVideoId(url: String): String {

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -103,7 +104,7 @@ fun FFnewsBox(data: FFData) {
                             Text(
 //                            text = data.item2.heading,
                                 text = "Copying Congress Manifesto in 2024 Budget: Rahul Gandhi Accuses Government",
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp,
                                 maxLines = 2,
                                 fontWeight = FontWeight.Bold,
@@ -116,7 +117,7 @@ fun FFnewsBox(data: FFData) {
                                         "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
                                         "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto." +
                                         "In a sharp critique of the recently unveiled Union Budget 2024, Congress leader Rahul Gandhi has accused the ruling Bharatiya Janata Party (BJP) government of plagiarizing the Congress party’s election manifesto. ",
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp,
                                 maxLines = 12,
                                 overflow = TextOverflow.Ellipsis
@@ -176,7 +177,7 @@ fun FFnewsBox(data: FFData) {
                             Text(
 //                                text = data.item1.heading,
                                 text = "Congress Criticizes Union Budget 2024 as Inadequate for Economic Growth",
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp,
                                 maxLines = 2,
                                 fontWeight = FontWeight.Bold,
@@ -189,7 +190,7 @@ fun FFnewsBox(data: FFData) {
                                         "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
                                         "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month." +
                                         "The Indian National Congress has voiced strong criticism against the Union Budget 2024, presented by Finance Minister Nirmala Sitharaman earlier this month.",
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp,
                                 maxLines = 12,
                                 overflow = TextOverflow.Ellipsis
@@ -253,7 +254,7 @@ fun ToggleContentButton(
         Text(
             text = "Flip News",
             modifier = Modifier.align(Alignment.Center),
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )

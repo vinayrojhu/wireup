@@ -2,6 +2,7 @@ package com.example.wireup.ui.Screen
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
@@ -31,6 +32,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -49,6 +51,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -123,24 +126,40 @@ fun SearchScreen(navController: NavHostController,
         }
         Spacer(modifier = Modifier.height(8.dp))
         Box {
-            Column {
-                Text(text = "Politics",
-                    Modifier.padding(start = 9.dp, top = 8.dp),
-                    fontWeight = FontWeight.W400,
-                    fontSize = 16.sp)
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                    news1.filter { it.tags?.contains("all") == true }
-                        .forEach { news1 ->
-                            NewsCard(news1, navController)
-                        }
-                }
-            }
+               Column(modifier = Modifier.verticalScroll(state = ScrollState(0))) {
+                   Column {
+                       Text(text = "Trending",
+                           Modifier.padding(start = 9.dp, top = 8.dp),
+                           fontWeight = FontWeight.W400,
+                           fontSize = 16.sp)
+                       Spacer(modifier = Modifier.height(6.dp))
+                       Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                           news1.filter { it.tags?.contains("all") == true }
+                               .forEach { news1 ->
+                                   NewsCard(news1, navController)
+                               }
+                       }
+                   }
+                   Column {
+                       Text(text = "Politics",
+                           Modifier.padding(start = 9.dp, top = 8.dp),
+                           fontWeight = FontWeight.W400,
+                           fontSize = 16.sp)
+                       Spacer(modifier = Modifier.height(6.dp))
+                       Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                           news1.filter { it.tags?.contains("all") == true }
+                               .forEach { news1 ->
+                                   NewsCard2(news1, navController)
+                               }
+                       }
+                   }
+
+               }
 
             if (searchQuery.value.length >= 2) {
                 Column(modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .background(Color.White)) {
+                    .background(MaterialTheme.colorScheme.background)) {
                     searchResults.forEach { news ->
                         NewsItem(news, navController)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -164,10 +183,10 @@ fun NewsItem(data: SearchData, navController: NavHostController) {
             .clickable(enabled = true,
                 onClick = { navController.navigate(NavigationItem.ReadMore.route + "/${data.id}") }
             ),
-        colors = CardColors(containerColor = Color.White,
-            contentColor = Color.Unspecified,
-            disabledContainerColor = Color.White,
-            disabledContentColor = Color.White)
+        colors = CardColors(containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            disabledContainerColor = MaterialTheme.colorScheme.background,
+            disabledContentColor =MaterialTheme.colorScheme.onBackground)
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween ,modifier = Modifier
             .fillMaxWidth(1f)
@@ -206,13 +225,12 @@ fun NewsCard(newsItem: NewsData1, navController: NavHostController) {
         modifier = Modifier
             .width(290.dp)
             .height(380.dp)
-            .padding(8.dp),
+            .padding(start = 12.dp, end = 5.dp, bottom = 5.dp, top = 5.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
@@ -233,9 +251,10 @@ fun NewsCard(newsItem: NewsData1, navController: NavHostController) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis ,
+                modifier = Modifier.padding(horizontal = 5.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(27.dp))
             Button(
                 onClick = { navController.navigate(NavigationItem.ReadMore.route + "/${newsItem.id}") },
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -250,6 +269,45 @@ fun NewsCard(newsItem: NewsData1, navController: NavHostController) {
 
 
 
+@Composable
+fun NewsCard2(newsItem: NewsData1, navController: NavHostController) {
+    Card(
+        modifier = Modifier
+            .width(260.dp)
+            .height(250.dp)
+            .padding(start = 12.dp, end = 5.dp, bottom = 10.dp, top = 5.dp)
+            .clickable { navController.navigate(NavigationItem.ReadMore.route + "/${newsItem.id}") },
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(newsItem.imageUrl)
+                        .crossfade(true)
+                        .build()
+                ),
+                contentDescription = "News Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = newsItem.heading,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis ,
+                modifier = Modifier.padding(horizontal = 5.dp)
+            )
+        }
+    }
+}
 
 
 

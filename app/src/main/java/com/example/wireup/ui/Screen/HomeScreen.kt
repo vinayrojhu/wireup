@@ -2,6 +2,7 @@ package com.example.wireup.ui.Screen
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +10,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,10 +26,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
@@ -64,7 +71,7 @@ import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.util.DateUtil
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = viewModel()) {
 
@@ -91,10 +98,10 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(0.5f)
+                        .fillMaxWidth(0.6f)
                         .padding(0.dp)
-                        .background(Color.White)
-                        .clickable {  }
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .clickable { }
 
 
 
@@ -110,55 +117,162 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                         Spacer(modifier = Modifier.height(15.dp))
 
                         Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/trending")}
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/trending") }
                             .fillMaxWidth()) {
+
                             Text(text = "Trending", style = MaterialTheme.typography.titleMedium  , modifier = Modifier.padding(start = 20.dp))
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
                         Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/world")}
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/world") }
                             .fillMaxWidth()) {
                             Text(text = "World", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
                         Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/politics")}
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/politics") }
                             .fillMaxWidth()) {
                             Text(text = "Politics", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
                         Column(modifier = Modifier
-                            .clickable {navController.navigate(NavigationItem.FlipFlop.route) }
+                            .clickable { navController.navigate(NavigationItem.FlipFlop.route) }
                             .fillMaxWidth()) {
                             Text(text = "FLIP-FLOP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight(800) , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
                         Column(modifier = Modifier
-                            .clickable {navController.navigate(NavigationItem.Tags.route + "/sports") }
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/sports") }
                             .fillMaxWidth()) {
                             Text(text = "Sports", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
                         Column(modifier = Modifier
-                            .clickable {navController.navigate(NavigationItem.Tags.route + "/business") }
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/business") }
                             .fillMaxWidth()) {
                             Text(text = "Business", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
+
                         Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/india")}
                             .fillMaxWidth()) {
-                            Text(text = "IN INDIA", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
-                            Spacer(modifier = Modifier.height(15.dp))
+
+                            var expanded by remember { mutableStateOf(false) }
+
+                            Row(horizontalArrangement = Arrangement.SpaceBetween , modifier = Modifier.fillMaxWidth(0.9f)) {
+                                Text(text = "IN INDIA",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier
+                                        .padding(start = 20.dp)
+                                        .clickable { navController.navigate(NavigationItem.Tags.route + "/india") })
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "arrow",
+                                        modifier = Modifier
+                                            .align(Alignment.CenterVertically)
+                                            .clickable(onClick = { expanded = !expanded })
+                                    )
+
+                            }
+
+                            if (expanded) {
+                                FlowRow(modifier = Modifier.fillMaxWidth(0.9f)
+                                        .padding(start = 15.dp , top = 5.dp )
+                                ){
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp , bottom = 7.dp)
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                        text = "New Delhi",
+                                        fontSize = 13.sp,
+                                        modifier = Modifier.padding(5.dp)
+                                            )
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp , bottom = 7.dp)
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Hyderabad",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                               )
+
+                                    }
+
+
+//                               end row options as these shouldnot have bottom padding
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp )
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Banglore",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                        )
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp )
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Mumbai",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                               )
+                                    }
+
+
+                                }
+                            }
+
+//                            DropdownMenu(
+//                                expanded = expanded,
+//                                onDismissRequest = { expanded = false },
+//                                offset = DpOffset(20.dp , 0.dp)
+//                            ) {
+//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
+//                                    Text(text = "option1")
+//                                }
+//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
+//                                    Text(text = "option1")
+//                                }
+//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
+//                                    Text(text = "option1")
+//                                }
+//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
+//                                    Text(text = "option1")
+//                                }
+//                            }
+
+                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
                         Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health&lifestyle")}
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health&lifestyle") }
                             .fillMaxWidth()) {
                             Text(text = "Health & Lifestyle", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
@@ -211,7 +325,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
 //                Text(text = "Saturday, March 24th" , fontWeight = FontWeight.W300 , fontSize = 12.sp)
                                     Text(
                                         DateUtil.getDate(System.currentTimeMillis()),
-                                        color = Color.Black,
+                                        color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 12.sp ,
                                         fontWeight = FontWeight.W300
                                     )

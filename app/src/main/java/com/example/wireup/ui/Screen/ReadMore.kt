@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -97,12 +98,14 @@ fun ReadMore(navController: NavHostController, newsId: String) {
                  text = newsData?.heading.toString(),
                  fontWeight = FontWeight.Bold,
                  fontSize = 30.sp ,
-                 fontFamily = FontFamily.SansSerif
+                 fontFamily = FontFamily.SansSerif,
+                 color = MaterialTheme.colorScheme.onBackground
              )
              Spacer(modifier = Modifier.height(10.dp))
              Text(
                  text = newsData?.description.toString(),
-                 fontSize = 18.sp
+                 fontSize = 18.sp,
+                 color = MaterialTheme.colorScheme.onBackground
              )
              Spacer(modifier = Modifier.height(10.dp))
 
@@ -110,7 +113,8 @@ fun ReadMore(navController: NavHostController, newsId: String) {
                  text = time.toString(),
                  textAlign = TextAlign.Start,
                  fontSize = 11.sp,
-                 fontWeight = FontWeight(300)
+                 fontWeight = FontWeight(300),
+                 color = MaterialTheme.colorScheme.onBackground
              )
 
              Spacer(modifier = Modifier.height(10.dp))
@@ -128,7 +132,8 @@ fun ReadMore(navController: NavHostController, newsId: String) {
              Spacer(modifier = Modifier.height(10.dp))
 
              Text(text= newsData?.report.toString(),
-                 fontSize = 15.sp)
+                 fontSize = 15.sp,
+                 color = MaterialTheme.colorScheme.onBackground)
 
          }
 

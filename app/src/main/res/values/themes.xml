@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.WireUp" parent="android:Theme.Material.Light.NoActionBar" />
+<!--    <style name="Theme.WireUp" parent="android:Theme.Material.Light.NoActionBar" />-->
 
-    <style name="Theme.YourApp.Splash" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Wireup.Splash" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item> <!-- Or use a specific color -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
