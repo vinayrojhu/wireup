@@ -8,6 +8,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -127,7 +128,10 @@ fun SplashScreen(// onNavigationAction: (SplashScreenNavigationAction) -> Unit,
                     .size(70.dp)
                     .rotate(rotation.value),
 //                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                contentDescription = null
+                contentDescription = null ,
+                colorFilter = ColorFilter.tint(
+                    color = if (isSystemInDarkTheme()) Color.White else Color.Black // Change color based on theme
+                )
             )
 
 //            Text(
@@ -162,7 +166,10 @@ fun WireLogo(modifier: Modifier = Modifier) {
                 .height(60.dp)
                 .padding(top = 10.dp, bottom = 1.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            alignment = Alignment.Center
+            alignment = Alignment.Center ,
+            colorFilter = ColorFilter.tint(
+                color = if (isSystemInDarkTheme()) Color.White else Color.Black // Change color based on theme
+            )
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
@@ -171,7 +178,7 @@ fun WireLogo(modifier: Modifier = Modifier) {
             modifier = modifier.padding(top = 16.dp, bottom = 1.dp),
             fontSize = 30.sp,
             fontWeight = FontWeight.W500,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onBackground
         )
 
     }

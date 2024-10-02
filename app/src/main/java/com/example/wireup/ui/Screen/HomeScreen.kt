@@ -100,7 +100,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                         .fillMaxHeight()
                         .fillMaxWidth(0.6f)
                         .padding(0.dp)
-                        .background(Color.White)
+                        .background(color = MaterialTheme.colorScheme.background)
                         .clickable { }
 
 
@@ -325,7 +325,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
 //                Text(text = "Saturday, March 24th" , fontWeight = FontWeight.W300 , fontSize = 12.sp)
                                     Text(
                                         DateUtil.getDate(System.currentTimeMillis()),
-                                        color = Color.Black,
+                                        color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 12.sp ,
                                         fontWeight = FontWeight.W300
                                     )

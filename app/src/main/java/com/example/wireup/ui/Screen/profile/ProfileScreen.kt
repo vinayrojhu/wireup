@@ -187,14 +187,14 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 onClick = { navController.navigate(NavigationItem.Friends.route)}
                             )
 
-                            NavigationRailItem(
-                                icon = { Icon(painter = painterResource(id = R.drawable.save_wire),
-                                    contentDescription = "Saved" )
-                                       },
-                                label = { Text("Saved") },
-                                selected = false,
-                                onClick = {navController.navigate(NavigationItem.Saved.route)}
-                            )
+//                            NavigationRailItem(
+//                                icon = { Icon(painter = painterResource(id = R.drawable.save_wire),
+//                                    contentDescription = "Saved" )
+//                                       },
+//                                label = { Text("Saved") },
+//                                selected = false,
+//                                onClick = {navController.navigate(NavigationItem.Saved.route)}
+//                            )
 
 
                             NavigationRailItem(

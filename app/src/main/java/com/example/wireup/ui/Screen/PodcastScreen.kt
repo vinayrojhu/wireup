@@ -268,9 +268,9 @@ fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
             .padding(vertical = 8.dp)
             .clickable(
                 onClick = {
-                    isPlaying = !isPlaying
+//                    isPlaying = !isPlaying
 //                    AudioPodcastPlayer(url = url)
-//                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
+                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
                 }
             ), 
         shape = RoundedCornerShape(8.dp),

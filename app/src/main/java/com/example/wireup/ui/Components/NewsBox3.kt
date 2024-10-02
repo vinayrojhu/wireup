@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -64,7 +65,8 @@ fun NewsBox3(data: NewsData1, navController: NavHostController) {
             Text(
                 text = data.heading,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
 
@@ -79,7 +81,7 @@ fun NewsBox3(data: NewsData1, navController: NavHostController) {
                     // Time ago
                     Text(
                         DateUtil.getDate2(data.time),
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 12.sp ,
                         fontWeight = FontWeight.W300
                     )

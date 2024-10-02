@@ -27,7 +27,7 @@ import com.example.wireup.model.FlipNews
 
 data class newsx(
     val heading: String,
-    val description: String,
+//    val description: String,
     val report: String,
     val imageUrl: String,
     val time: String
@@ -42,7 +42,7 @@ fun FlipCard(flipNews: FlipNews) {
 
     val news1 = newsx(
         heading = flipNews.heading1.toString(),
-        description = flipNews.description1,
+//        description = flipNews.description1,
         report = flipNews.report1,
         imageUrl = flipNews.imageUrl1,
         time = flipNews.time.toString()
@@ -50,7 +50,7 @@ fun FlipCard(flipNews: FlipNews) {
 
     val news2 = newsx(
         heading = flipNews.heading2.toString(),
-        description = flipNews.description2,
+//        description = flipNews.description2,
         report = flipNews.report2,
         imageUrl = flipNews.imageUrl2,
         time = flipNews.time.toString()
@@ -127,25 +127,25 @@ fun FrontCardContent(news: newsx) {
             ) {
                 Text(
                     text = news.heading,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     maxLines = 2,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = news.description,
-                    color = Color.Black,
-                    fontSize = 14.sp,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+//                Text(
+//                    text = news.description,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    fontSize = 14.sp,
+//                    maxLines = 4,
+//                    overflow = TextOverflow.Ellipsis
+//                )
+//                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = news.report,
-                    color = Color.Black,
-                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 14.sp,
                     maxLines = 12,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -191,24 +191,24 @@ fun BackCardContent(news: newsx) {
                 ) {
                     Text(
                         text = news.heading,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         maxLines = 2,
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = news.description,
-                        color = Color.Black,
-                        fontSize = 14.sp,
-                        maxLines = 4,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
+//                    Text(
+//                        text = news.description,
+//                        color = MaterialTheme.colorScheme.onBackground,
+//                        fontSize = 14.sp,
+//                        maxLines = 4,
+//                        overflow = TextOverflow.Ellipsis
+//                    )
+//                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = news.report,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         maxLines = 12,
                         overflow = TextOverflow.Ellipsis

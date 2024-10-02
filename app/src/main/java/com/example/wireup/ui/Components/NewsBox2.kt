@@ -1,5 +1,6 @@
 package com.example.wireup.ui.Components
 
+import androidx.compose.animation.VectorConverter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -59,7 +61,8 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
                     text = data.heading,
                     fontWeight = FontWeight.Bold ,
                     fontSize = 16.sp,
-                    maxLines = 2
+                    maxLines = 2,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Spacer(modifier = Modifier.height(1.dp))
@@ -68,11 +71,12 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
                 Text(
                     text = data.description,
                     fontSize = 14.sp,
-                            maxLines = 3
+                    maxLines = 3,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                   Text(
                       DateUtil.getDate2(data.time),
-                      color = Color.Black,
+                      color = MaterialTheme.colorScheme.onBackground ,
                       fontSize = 11.sp ,
                       fontWeight = FontWeight.W300
 
