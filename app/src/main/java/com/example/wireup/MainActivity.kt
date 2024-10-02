@@ -162,47 +162,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == 123) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            try {
-//                val account = task.getResult(ApiException::class.java)
-//                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-//                FirebaseAuth.getInstance().signInWithCredential(credential)
-//                    .addOnCompleteListener { task ->
-//                        if (task.isSuccessful) {
-//                            val userId = FirebaseAuth.getInstance().currentUser?.uid
-//                            val name = account.displayName
-//                            val email = account.email
-//                            val profileImage = account.photoUrl.toString()
-//
-//                            val user = hashMapOf(
-//                                "name" to name,
-//                                "email" to email,
-//                                "userID" to userId,
-//                                "profile_image" to profileImage
-//                            )
-//
-//                            FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
-//                                .addOnCompleteListener { task ->
-//                                    if (task.isSuccessful) {
-//                                        // User data stored successfully, navigate to Home screen
-//                                        navController.navigate(NavigationItem.Home.route)
-//                                    } else {
-//                                        // Handle error
-//                                    }
-//                                }
-//                        } else {
-//                            // Handle sign-in error
-//                        }
-//                    }
-//            } catch (e: ApiException) {
-//                // Handle error
-//            }
-//        }
-//    }
 }
 
 

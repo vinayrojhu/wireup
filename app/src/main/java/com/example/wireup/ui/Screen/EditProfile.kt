@@ -363,18 +363,6 @@ fun UploadImage(viewModel: UserViewModel,navController: NavHostController) {
     }
 }
 
-
-
-//class UserViewModelFactory(private val firestoreRepository: FirestoreRepository) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
-//            @Suppress("UNCHECKED_CAST")
-//            return UserViewModel(firestoreRepository) as T
-//        }
-//        throw IllegalArgumentException("Unknown ViewModel class")
-//    }
-//}
-
 class UserViewModelFactory(private val firestoreRepository: FirestoreRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(UserViewModel::class.java)) {

@@ -47,31 +47,31 @@ import com.example.wireup.util.DateUtil.getDateTime
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
-@Composable
-fun TweetItem(
-    tweet: Tweet,
-    onCommentClick: () -> Unit,
-    navController: NavHostController,
-    onItemClick: () -> Unit,
-) {
-    var isLiked by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isRetweeted by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isBookmarked by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var likes by rememberSaveable {
-        mutableIntStateOf(tweet.likeCount)
-    }
-    var retweets by rememberSaveable {
-        mutableIntStateOf(tweet.retweetCount)
-    }
-    var bookmarks by rememberSaveable {
-        mutableIntStateOf(tweet.bookmarkCount)
-    }
+//@Composable
+//fun TweetItem(
+//    tweet: Tweet,
+//    onCommentClick: () -> Unit,
+//    navController: NavHostController,
+//    onItemClick: () -> Unit,
+//) {
+//    var isLiked by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//    var isRetweeted by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//    var isBookmarked by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//    var likes by rememberSaveable {
+//        mutableIntStateOf(tweet.likeCount)
+//    }
+//    var retweets by rememberSaveable {
+//        mutableIntStateOf(tweet.retweetCount)
+//    }
+//    var bookmarks by rememberSaveable {
+//        mutableIntStateOf(tweet.bookmarkCount)
+//    }
     // yo demouser woh h jo comment krega
 //    val demoUser = WUser(
 //        id = FirebaseAuth.getInstance().currentUser?.email.toString(),
@@ -90,41 +90,41 @@ fun TweetItem(
 //        ),
 //        storyIds = listOf("1234561", "1234562", "1234563", "1234564", "1234565"),
 //    )
-    val user = MUser(id = "23323", name = "vinay", email = "sdfsd@fss.in", profileImage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg")
-    val userimage = remember { mutableStateOf<Uri?>(null) }
-
-    LaunchedEffect(Unit) {
-        FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
-            userimage.value = uri
-        }
-    }
-    Row(
-        Modifier
-            .fillMaxWidth(1f)
-            .padding(start = 35.dp , end = 8.dp)
-            .clickable {
-                onItemClick()
-            }
-    ) {
-        CircularImage(imageUri =  userimage, imageSize = 30.dp,
-            navController = navController ,
-            userUuid = FirebaseAuth.getInstance().currentUser?.uid.toString())
-        Spacer(Modifier.width(8.dp))
-        Column(Modifier.fillMaxWidth(1f)) {
-            Row(Modifier.fillMaxWidth(1f), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(user.name, fontWeight = FontWeight.W600, fontSize = 13.sp )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = getDateTime(tweet.timeStamp),
-                    textAlign = TextAlign.End,
-                    color = Color.Gray,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.W400
-                )
-            }
-            Spacer(Modifier.height(8.dp))
-            Text(tweet.description, fontSize = 13.sp, fontWeight = FontWeight.W400)
-            Spacer(Modifier.height(8.dp))
+//    val user = MUser(id = "23323", name = "vinay", email = "sdfsd@fss.in", profileImage = "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg")
+//    val userimage = remember { mutableStateOf<Uri?>(null) }
+//
+//    LaunchedEffect(Unit) {
+//        FirebaseStorage.getInstance().reference.child("users/${FirebaseAuth.getInstance().currentUser?.uid}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+//            userimage.value = uri
+//        }
+//    }
+//    Row(
+//        Modifier
+//            .fillMaxWidth(1f)
+//            .padding(start = 35.dp , end = 8.dp)
+//            .clickable {
+//                onItemClick()
+//            }
+//    ) {
+//        CircularImage(imageUri =  userimage, imageSize = 30.dp,
+//            navController = navController ,
+//            userUuid = FirebaseAuth.getInstance().currentUser?.uid.toString())
+//        Spacer(Modifier.width(8.dp))
+//        Column(Modifier.fillMaxWidth(1f)) {
+//            Row(Modifier.fillMaxWidth(1f), horizontalArrangement = Arrangement.SpaceBetween) {
+//                Text(user.name, fontWeight = FontWeight.W600, fontSize = 13.sp )
+//                Spacer(modifier = Modifier.width(8.dp))
+//                Text(
+//                    text = getDateTime(tweet.timeStamp),
+//                    textAlign = TextAlign.End,
+//                    color = Color.Gray,
+//                    fontSize = 10.sp,
+//                    fontWeight = FontWeight.W400
+//                )
+//            }
+//            Spacer(Modifier.height(8.dp))
+//            Text(tweet.description, fontSize = 13.sp, fontWeight = FontWeight.W400)
+//            Spacer(Modifier.height(8.dp))
 //            TweetActionRow(isLiked, isRetweeted, isBookmarked,
 //                likes,
 //                retweets,
@@ -150,97 +150,97 @@ fun TweetItem(
 //                }) {
 //                onCommentClick()
 //            }
-        }
-    }
-}
+//        }
+//    }
+//}
+//
+//@Composable
+//fun NumberIcon(
+//    count: Int,
+//    initialState: Boolean,
+//    enableIcon: Painter,
+//    enableTint: Color = MaterialTheme.colorScheme.onBackground,
+//    disableIcon: Painter,
+//    disableTint: Color = MaterialTheme.colorScheme.onBackground,
+//    onClick: (Boolean) -> Unit,
+//) {
+//    Row(verticalAlignment = Alignment.CenterVertically) {
+//        ToggleIconButton(
+//            enableIcon = enableIcon,
+//            disableIcon = disableIcon,
+//            enableTint = enableTint,
+//            initialState = initialState,
+//            disableTint = disableTint
+//        ) {
+//            onClick(it)
+//        }
+//        Spacer(modifier = Modifier.width(2.dp))
+//        Text(count.toString(), fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+//    }
+//}
 
-@Composable
-fun NumberIcon(
-    count: Int,
-    initialState: Boolean,
-    enableIcon: Painter,
-    enableTint: Color = MaterialTheme.colorScheme.onBackground,
-    disableIcon: Painter,
-    disableTint: Color = MaterialTheme.colorScheme.onBackground,
-    onClick: (Boolean) -> Unit,
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        ToggleIconButton(
-            enableIcon = enableIcon,
-            disableIcon = disableIcon,
-            enableTint = enableTint,
-            initialState = initialState,
-            disableTint = disableTint
-        ) {
-            onClick(it)
-        }
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(count.toString(), fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-    }
-}
-
-@Composable
-fun TweetActionRow(
-    isLiked: Boolean,
-    isRetweeted: Boolean,
-    isBookmarked: Boolean,
-    likeCount: Int,
-    retweetCount: Int,
-    bookmarkCount: Int,
-    onLikeClicked: (Boolean) -> Unit,
-    onRetweetClicked: (Boolean) -> Unit,
-    onBookmarkClicked: (Boolean) -> Unit,
-    onCommentClick: () -> Unit,
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth(1f)
-    ) {
-        IconButton(onClick = {
-            onCommentClick()
-        }) {
-            Icon(
-                painterResource(id = R.drawable.global_network),
-                contentDescription = "Comment"
-            )
-        }
-        NumberIcon(
-            count = retweetCount,
-            initialState = isRetweeted,
-            painterResource(id = R.drawable.node_icon6),
-            Color.Blue,
-            painterResource(R.drawable.node_icon6)
-        ) {
-            onRetweetClicked(it)
-        }
-        NumberIcon(
-            count = likeCount,
-            initialState = isLiked,
-            rememberVectorPainter(image = Icons.Default.Favorite),
-            Color.Red,
-            rememberVectorPainter(image = Icons.Default.FavoriteBorder),
-        ) {
-            onLikeClicked(it)
-        }
-        NumberIcon(
-            count = bookmarkCount,
-            initialState = isBookmarked,
-            enableIcon = painterResource(id = R.drawable.save_wire),
-            disableIcon = painterResource(id = R.drawable.save_wire)
-        ) {
-            onBookmarkClicked(it)
-        }
-        IconButton(onClick = {
-            //share tweet link
-        }) {
-            Icon(
-                Icons.Default.Share,
-                modifier = Modifier.size(18.dp) ,
-                contentDescription = "Share"
-            )
-        }
-    }
-}
+//@Composable
+//fun TweetActionRow(
+//    isLiked: Boolean,
+//    isRetweeted: Boolean,
+//    isBookmarked: Boolean,
+//    likeCount: Int,
+//    retweetCount: Int,
+//    bookmarkCount: Int,
+//    onLikeClicked: (Boolean) -> Unit,
+//    onRetweetClicked: (Boolean) -> Unit,
+//    onBookmarkClicked: (Boolean) -> Unit,
+//    onCommentClick: () -> Unit,
+//) {
+//    Row(
+//        horizontalArrangement = Arrangement.SpaceAround,
+//        modifier = Modifier.fillMaxWidth(1f)
+//    ) {
+//        IconButton(onClick = {
+//            onCommentClick()
+//        }) {
+//            Icon(
+//                painterResource(id = R.drawable.global_network),
+//                contentDescription = "Comment"
+//            )
+//        }
+//        NumberIcon(
+//            count = retweetCount,
+//            initialState = isRetweeted,
+//            painterResource(id = R.drawable.node_icon6),
+//            Color.Blue,
+//            painterResource(R.drawable.node_icon6)
+//        ) {
+//            onRetweetClicked(it)
+//        }
+//        NumberIcon(
+//            count = likeCount,
+//            initialState = isLiked,
+//            rememberVectorPainter(image = Icons.Default.Favorite),
+//            Color.Red,
+//            rememberVectorPainter(image = Icons.Default.FavoriteBorder),
+//        ) {
+//            onLikeClicked(it)
+//        }
+//        NumberIcon(
+//            count = bookmarkCount,
+//            initialState = isBookmarked,
+//            enableIcon = painterResource(id = R.drawable.save_wire),
+//            disableIcon = painterResource(id = R.drawable.save_wire)
+//        ) {
+//            onBookmarkClicked(it)
+//        }
+//        IconButton(onClick = {
+//            //share tweet link
+//        }) {
+//            Icon(
+//                Icons.Default.Share,
+//                modifier = Modifier.size(18.dp) ,
+//                contentDescription = "Share"
+//            )
+//        }
+//    }
+//}
 
 //@Preview(showBackground = true)
 //@Composable

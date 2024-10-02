@@ -2,6 +2,7 @@ package com.example.wireup.ui.Screen.login
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -96,46 +97,60 @@ fun AuthenticationScreen(
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val userId = FirebaseAuth.getInstance().currentUser?.uid
-                            val name = account.displayName
-                            val email = account.email
-                            val profileImage = account.photoUrl.toString()
-                            val uniqueId = "Create UID"
-                            val followers = mutableListOf<String>()
-                            val following = mutableListOf<String>()
-
-                            val user = hashMapOf(
-                                "name" to name,
-                                "email" to email,
-                                "userID" to userId,
-                                "profile_image" to profileImage,
-                                "uniqueId" to uniqueId,
-                                "followers" to followers,
-                                "following" to following
-                            )
-
-                            FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        // User data stored successfully, navigate to Home screen
-                                        navController.navigate(NavigationItem.Home.route)
-                                    } else {
-                                        // Handle error
-                                    }
-                                }
-                        } else {
-                            // Handle sign-in error
-                        }
-                    }
+                viewModel.signInWithGoogle(account.idToken.toString(), account.displayName, account.email, account.photoUrl.toString()) {
+                    navController.navigate(NavigationItem.Home.route)
+                }
             } catch (e: ApiException) {
-                // Handle error
+                Log.e("Google Sign In", "Error signing in with Google", e)
             }
         }
     }
+
+//    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+//            try {
+//                val account = task.getResult(ApiException::class.java)
+//                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+//                FirebaseAuth.getInstance().signInWithCredential(credential)
+//                    .addOnCompleteListener { task ->
+//                        if (task.isSuccessful) {
+//                            val userId = FirebaseAuth.getInstance().currentUser?.uid
+//                            val name = account.displayName
+//                            val email = account.email
+//                            val profileImage = account.photoUrl.toString()
+//                            val uniqueId = "Create UID"
+//                            val followers = mutableListOf<String>()
+//                            val following = mutableListOf<String>()
+//
+//                            val user = hashMapOf(
+//                                "name" to name,
+//                                "email" to email,
+//                                "userID" to userId,
+//                                "profile_image" to profileImage,
+//                                "uniqueId" to uniqueId,
+//                                "followers" to followers,
+//                                "following" to following
+//                            )
+//
+//                            FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
+//                                .addOnCompleteListener { task ->
+//                                    if (task.isSuccessful) {
+//                                        // User data stored successfully, navigate to Home screen
+//                                        navController.navigate(NavigationItem.Home.route)
+//                                    } else {
+//                                        // Handle error
+//                                    }
+//                                }
+//                        } else {
+//                            // Handle sign-in error
+//                        }
+//                    }
+//            } catch (e: ApiException) {
+//                // Handle error
+//            }
+//        }
+//    }
 
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -160,16 +175,23 @@ fun AuthenticationScreen(
                     }
                 }
             }
-
             GoogleButton(
                 textId ="Login via Google",
                 loading = false,
                 validInputs = true
             ){
-//            viewModel.signInWithGoogle()
-                val intent = viewModel.signInWithGoogle()
+                val intent = viewModel.getGoogleSignInIntent()
                 launcher.launch(intent)
             }
+
+//            GoogleButton(
+//                textId ="Login via Google",
+//                loading = false,
+//                validInputs = true
+//            ){
+//                val intent = viewModel.signInWithGoogle()
+//                launcher.launch(intent)
+//            }
 
         }
 

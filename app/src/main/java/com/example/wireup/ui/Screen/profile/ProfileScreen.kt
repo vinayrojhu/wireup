@@ -66,7 +66,6 @@ import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
-import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.MainNode
 import com.example.wireup.ui.Screen.PodcastItem
 import com.example.wireup.ui.Screen.Tweet
@@ -147,7 +146,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                         Spacer(modifier = Modifier.width(15.dp))
 
                             Image(
-                                painter = rememberImagePainter(userImage.value), // Replace with actual resource ID
+                                painter = rememberImagePainter(if (userImage.value == null) "https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg" else userImage.value),
                                 contentDescription = "Profile Picture",
                                 modifier = Modifier
                                     .height(100.dp)

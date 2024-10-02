@@ -77,8 +77,6 @@ import com.example.wireup.R
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Components.CircularImage
-import com.example.wireup.ui.Components.TweetActionRow
-import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.example.wireup.util.DateUtil

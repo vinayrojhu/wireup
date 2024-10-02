@@ -28,7 +28,6 @@ import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.repository.FirestoreRepository
-import com.example.wireup.ui.Components.TweetItem
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth

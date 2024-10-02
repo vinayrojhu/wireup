@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,6 +67,8 @@ class LoginScreenViewModel(private val activity: Activity): ViewModel() {
         }
     }
 
+
+
     private val googleSignInClient: GoogleSignInClient by lazy {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(activity.getString(R.string.default_web_client_id))
@@ -74,15 +77,76 @@ class LoginScreenViewModel(private val activity: Activity): ViewModel() {
         GoogleSignIn.getClient(activity, gso)
     }
 
-//    fun signInWithGoogle() {
-//        googleSignInClient.signInIntent.also { intent ->
-//            startActivityForResult(activity, intent,123, Bundle())
-//        }
+//    fun signInWithGoogle(): Intent {
+//        val intent = googleSignInClient.signInIntent
+//        return intent
 //    }
 
-    fun signInWithGoogle(): Intent {
-        val intent = googleSignInClient.signInIntent
-        return intent
+    fun getGoogleSignInIntent(): Intent {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(activity.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        return GoogleSignIn.getClient(activity, gso).signInIntent
+    }
+
+    fun signInWithGoogle(idToken: String, displayName: String?, email: String?, photoUrl: String?, home: () -> Unit) = viewModelScope.launch {
+        try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = auth.signInWithCredential(credential).await()
+            val user = authResult.user
+            if (user != null) {
+                val userId = user.uid
+                val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+                userRef.get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val document = task.result
+                        if (document.exists()) {
+                            // User already exists, navigate to Home screen
+                            home()
+                        } else {
+                            // Create new user
+                            val followers = mutableListOf<String>()
+                            val following = mutableListOf<String>()
+                            val newUser = hashMapOf(
+                                "name" to displayName,
+                                "email" to email,
+                                "userID" to userId,
+                                "profile_image" to photoUrl,
+                                "uniqueId" to "Create UID",
+                                "followers" to followers,
+                                "following" to following
+                            )
+                            userRef.set(newUser).addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    // User data stored successfully, navigate to Home screen
+                                    home()
+                                } else {
+                                    Log.e("User  Data Storage", "Error storing user data", task.exception)
+                                }
+                            }
+                        }
+                    } else {
+                        Log.e("User  Data Retrieval", "Error retrieving user data", task.exception)
+                    }
+                }
+            } else {
+                Log.e("Google Sign In", "Error signing in with Google")
+            }
+        } catch (e: Exception) {
+            Log.e("Google Sign In", "Error signing in with Google", e)
+        }
+    }
+
+
+    fun signOut(home: () -> Unit) = viewModelScope.launch {
+        try {
+            googleSignInClient.signOut().await()
+            auth.signOut()
+            home()
+        } catch (e: Exception) {
+            Log.e("Sign Out", "Error signing out", e)
+        }
     }
 
 
