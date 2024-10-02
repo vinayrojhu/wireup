@@ -95,11 +95,11 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.51.1")
     kapt ("com.google.dagger:hilt-android-compiler:2.49")
 
-    implementation ("androidx.compose.animation:animation:1.6.8")
+    implementation (libs.androidx.animation)
 
-//    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha08")
+    implementation (libs.androidx.navigation.compose.v240alpha08)
 
-    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation (libs.google.exoplayer)
 
 
     implementation("androidx.compose.ui:ui-tooling:1.6.8")
