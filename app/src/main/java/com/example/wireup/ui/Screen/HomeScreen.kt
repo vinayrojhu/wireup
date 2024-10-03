@@ -102,9 +102,6 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                         .padding(0.dp)
                         .background(color = MaterialTheme.colorScheme.background)
                         .clickable { }
-
-
-
                 ) {
                     Text(text = "WIREup", style = MaterialTheme.typography.displaySmall ,
                         modifier = Modifier.padding(start = 10.dp , top = 10.dp))
@@ -144,12 +141,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                             Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/sports") }
-                            .fillMaxWidth()) {
-                            Text(text = "Sports", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
-                            Spacer(modifier = Modifier.height(15.dp))
-                        }
+
 
                         Column(modifier = Modifier
                             .clickable { navController.navigate(NavigationItem.Tags.route + "/business") }
@@ -157,6 +149,108 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                             Text(text = "Business", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
+
+                        Column(modifier = Modifier
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health&lifestyle") }
+                            .fillMaxWidth()) {
+                            Text(text = "Health & Lifestyle", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
+                            Spacer(modifier = Modifier.height(15.dp))
+                        }
+
+                        Column(modifier = Modifier
+                            .fillMaxWidth()) {
+
+                            var expanded by remember { mutableStateOf(false) }
+
+                            Row(horizontalArrangement = Arrangement.SpaceBetween , modifier = Modifier.fillMaxWidth(0.9f)) {
+                                Text(text = "Sports",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier
+                                        .padding(start = 20.dp)
+                                        .clickable { navController.navigate(NavigationItem.Tags.route + "/sports")})
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = "arrow",
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .clickable(onClick = { expanded = !expanded })
+                                )
+
+                            }
+
+                            if (expanded) {
+                                FlowRow(modifier = Modifier.fillMaxWidth(0.9f)
+                                    .padding(start = 15.dp , top = 5.dp )
+                                ){
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp , bottom = 7.dp)
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Featured Sports",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                        )
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp , bottom = 7.dp)
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Cricket",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                        )
+
+                                    }
+
+
+//                               end row options as these shouldnot have bottom padding
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp )
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Football",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                        )
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(end =7.dp )
+                                            .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
+                                            .padding(horizontal = 3.dp , vertical = 0.3.dp)
+                                            .clickable {  }
+                                    ) {
+                                        Text(
+                                            text = "Awards",
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(5.dp)
+                                        )
+                                    }
+
+
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(15.dp))
+                        }
+
+
 
 
                         Column(modifier = Modifier
@@ -249,34 +343,10 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                 }
                             }
 
-//                            DropdownMenu(
-//                                expanded = expanded,
-//                                onDismissRequest = { expanded = false },
-//                                offset = DpOffset(20.dp , 0.dp)
-//                            ) {
-//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
-//                                    Text(text = "option1")
-//                                }
-//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
-//                                    Text(text = "option1")
-//                                }
-//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
-//                                    Text(text = "option1")
-//                                }
-//                                androidx.compose.material.DropdownMenuItem(onClick = { /*TODO*/ }) {
-//                                    Text(text = "option1")
-//                                }
-//                            }
-
                              Spacer(modifier = Modifier.height(15.dp))
                         }
 
-                        Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health&lifestyle") }
-                            .fillMaxWidth()) {
-                            Text(text = "Health & Lifestyle", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
-                            Spacer(modifier = Modifier.height(15.dp))
-                        }
+
 
                     }
 
