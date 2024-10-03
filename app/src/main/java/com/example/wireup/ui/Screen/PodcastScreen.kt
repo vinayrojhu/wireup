@@ -81,8 +81,7 @@ data class AudioPodcast(
     val title: String,
     val speaker: String,
     val imageUrl: String,
-    val duration: Int,
-    val url: String
+    val duration: Int
 )
 
 data class VideoPodcast(
@@ -260,162 +259,133 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
 @Composable
 fun PodcastItem(Apodcast: AudioPodcast , navController: NavHostController ) {
 
-    var isPlaying by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable(
-                onClick = {
-//                    isPlaying = !isPlaying
-//                    AudioPodcastPlayer(url = url)
-                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
-                }
-            ), 
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Image(
-                    painter = rememberAsyncImagePainter(Apodcast.imageUrl),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(90.dp)
-                        .height(90.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
-
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(modifier = Modifier
-                .align(Alignment.Top)
-                .padding(top = 5.dp)
-            ) {
-                Text(
-                    text = Apodcast.title,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
-                    Column {
-                        Text(
-                            text = "by ${Apodcast.speaker}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = "${Apodcast.duration} min",
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    Column {
-                        val isLiked = remember { mutableStateOf(false) }
-                        IconButton(onClick = { isLiked.value = !isLiked.value  }) {
-                            Icon(
-                                if (isLiked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder ,
-                                contentDescription = "Like"
-                            )
-                        }
-                    }
-
-                }
-
-            }
-        }
+    Column(horizontalAlignment = Alignment.CenterHorizontally , verticalArrangement = Arrangement.Center) {
+        Text(text = "This feature will be available soon ...")
     }
 
-    // Conditionally show the audio player when the podcast box is clicked
-    if (isPlaying) {
-        // AudioPodcastPlayer is invoked here in the same @Composable context
-        AudioPodcastPlayer("https://www.iheart.com/podcast/1119-stuff-you-should-know-26940277/")
-    }
+//
+//
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp)
+//            .clickable(
+//                onClick = {
+////                    isPlaying = !isPlaying
+////                    AudioPodcastPlayer(url = url)
+//                    navController.navigate(NavigationItem.AudioPodcastOpened.route)
+//                }
+//            ),
+//        shape = RoundedCornerShape(8.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.surface
+//        )
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Column {
+//                Image(
+//                    painter = rememberAsyncImagePainter(Apodcast.imageUrl),
+//                    contentDescription = null,
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier
+//                        .width(90.dp)
+//                        .height(90.dp)
+//                        .clip(RoundedCornerShape(8.dp)),
+//                )
+//
+//            }
+//
+//            Spacer(modifier = Modifier.width(8.dp))
+//            Column(modifier = Modifier
+//                .align(Alignment.Top)
+//                .padding(top = 5.dp)
+//            ) {
+//                Text(
+//                    text = Apodcast.title,
+//                    style = MaterialTheme.typography.labelLarge,
+//                    fontWeight = FontWeight.Bold,
+//                    maxLines = 3,
+//                    overflow = TextOverflow.Ellipsis
+//                )
+//
+//                Spacer(modifier = Modifier.height(10.dp))
+//
+//                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
+//                    Column {
+//                        Text(
+//                            text = "by ${Apodcast.speaker}",
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            maxLines = 1,
+//                            overflow = TextOverflow.Ellipsis
+//                        )
+//                        Text(
+//                            text = "${Apodcast.duration} min",
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            maxLines = 1,
+//                            overflow = TextOverflow.Ellipsis
+//                        )
+//                    }
+//                    Column {
+//                        val isLiked = remember { mutableStateOf(false) }
+//                        IconButton(onClick = { isLiked.value = !isLiked.value  }) {
+//                            Icon(
+//                                if (isLiked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder ,
+//                                contentDescription = "Like"
+//                            )
+//                        }
+//                    }
+//
+//                }
+//
+//            }
+//        }
+//    }
+
 }
 
-@Composable
-fun AudioPodcastPlayer(url: String) {
-    val context = LocalContext.current
-    val exoPlayer = remember {
-        SimpleExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(url))
-            prepare()
-            playWhenReady = true
-        }
-    }
-
-    DisposableEffect(
-        AndroidView(factory = {
-            PlayerView(context).apply {
-                player = exoPlayer
-            }
-        })
-    ) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-}
 
 val audiopodcasts = listOf(
     AudioPodcast(
         title = "All About Android 522: Guacamole Comes To Android",
         speaker = "Vinay Rojh",
         imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url="https://www.iheart.com/podcast/1119-stuff-you-should-know-26940277/"
-    ),
-    AudioPodcast(
-        title = "All About Android 513: Unlocking Android 12 Secrets",
-        speaker = "Vinay Rojh",
-        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
-    ),
-    AudioPodcast(
-        title = "All About Android 506: Android Adjacent",
-        speaker = "Vinay Rojh",
-        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
-    ),
-    AudioPodcast(
-        title = "Best External Android Microphones",
-        speaker = "Vinay Rojh",
-        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
-    ),
-    AudioPodcast(
-        title = "MacBreak Weekly",
-        speaker = "Vinay Rojh",
-        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
-    ),
-    AudioPodcast(
-        title = "Keep Productive: Latest Software Updates",
-        speaker = "Vinay Rojh",
-        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
-        duration = 10 ,
-        url = ""
+        duration = 10
     )
+    //    ,
+//    AudioPodcast(
+//        title = "All About Android 513: Unlocking Android 12 Secrets",
+//        speaker = "Vinay Rojh",
+//        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
+//        duration = 10
+//    ),
+//    AudioPodcast(
+//        title = "All About Android 506: Android Adjacent",
+//        speaker = "Vinay Rojh",
+//        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
+//        duration = 10
+//    ),
+//    AudioPodcast(
+//        title = "Best External Android Microphones",
+//        speaker = "Vinay Rojh",
+//        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
+//        duration = 10
+//    ),
+//    AudioPodcast(
+//        title = "MacBreak Weekly",
+//        speaker = "Vinay Rojh",
+//        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
+//        duration = 10
+//    ),
+//    AudioPodcast(
+//        title = "Keep Productive: Latest Software Updates",
+//        speaker = "Vinay Rojh",
+//        imageUrl = "https://media.wired.com/photos/613bb0daa755c6a4b550bac8/16:9/w_2226,h_1252,c_limit/Gear-Podcast-Hearing-Loss-1279654034.jpg",
+//        duration = 10
+//    )
 )
 
 //@Composable
