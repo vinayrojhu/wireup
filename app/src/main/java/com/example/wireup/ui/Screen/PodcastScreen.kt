@@ -179,15 +179,6 @@ fun VideoPostBox(Vpodcast: VideoPodcast, navController: NavHostController) {
     ) {
 
         Box(){
-//            Image(
-//                painter = rememberAsyncImagePainter(Vpodcast.videoLink),
-//                contentDescription = null,
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier
-//                    .fillMaxWidth(1f)
-//                    .height(200.dp)
-//                    .clip(RoundedCornerShape(16.dp))
-//            )
             YouTubeVideoThumbnail(Vpodcast.videoLink)
             Icon(Icons.Filled.PlayArrow, contentDescription = "Play"
                 , modifier = Modifier
