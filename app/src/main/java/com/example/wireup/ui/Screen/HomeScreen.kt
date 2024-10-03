@@ -81,8 +81,6 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
     val username = userData?.name.toString()
     val scrollState = rememberScrollState()
 
-
-
     Column(modifier = Modifier) {
 
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -188,7 +186,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp , bottom = 7.dp)
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/featured") }
                                     ) {
                                         Text(
                                             text = "Featured Sports",
@@ -202,7 +200,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp , bottom = 7.dp)
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/cricket") }
                                     ) {
                                         Text(
                                             text = "Cricket",
@@ -220,7 +218,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp )
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Football") }
                                     ) {
                                         Text(
                                             text = "Football",
@@ -234,7 +232,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp )
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Awards") }
                                     ) {
                                         Text(
                                             text = "Awards",
@@ -284,7 +282,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp , bottom = 7.dp)
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Delhi") }
                                     ) {
                                         Text(
                                         text = "New Delhi",
@@ -298,7 +296,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp , bottom = 7.dp)
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Hyderabad") }
                                     ) {
                                         Text(
                                             text = "Hyderabad",
@@ -316,7 +314,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp )
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Banglore") }
                                     ) {
                                         Text(
                                             text = "Banglore",
@@ -330,7 +328,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp )
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable {  }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Hyderabad") }
                                     ) {
                                         Text(
                                             text = "Mumbai",

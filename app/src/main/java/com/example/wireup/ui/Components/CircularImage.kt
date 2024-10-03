@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -34,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 
 @Composable
@@ -47,7 +45,6 @@ fun CircularImage(
     isNameVisible: Boolean = false,
     name: String? = null,
     isAnimated: Boolean = false,
-    contentScale: ContentScale = ContentScale.Crop,
     width: Dp = 3.dp,
     navController: NavHostController
 ) {

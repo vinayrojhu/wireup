@@ -237,7 +237,6 @@ fun ToggleContentButton(
     showContent: Boolean,
     onToggle: () -> Unit
 ){
-    // Animate the height of the toggle button
     val height by animateDpAsState(
         if (showContent) 40.dp else 40.dp,
         animationSpec = tween(durationMillis = 3000)
@@ -260,24 +259,3 @@ fun ToggleContentButton(
         )
     }
 }
-
-
-// how to call
-//@Composable
-//fun HomeScreen( navController: NavHostController) {
-//    val FlipPostdata = FFData(
-//        item1 = NewsItem(
-//            heading = "Heading 1",
-//            description = "Description 1",
-//            image = painterResource(id = R.drawable.study_in_australia)
-//        ),
-//        item2 = NewsItem(
-//            heading = "Heading 2",
-//            description = "Description 2",
-//            image = painterResource(id = R.drawable.criminal_laws)
-//        )
-//    )
-//    Text(text = "yes you can!")
-//    Spacer(modifier = Modifier.height(10.dp))
-//    FFnewsBox(FlipPostdata)
-//}

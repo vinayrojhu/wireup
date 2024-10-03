@@ -6,9 +6,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,23 +25,17 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,35 +43,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.MUser
-import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Components.CircularImage
 import com.example.wireup.ui.Screen.profile.UserViewModel
-import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.example.wireup.util.DateUtil
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
@@ -302,8 +282,6 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
 
 @Composable
 fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
-    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
-    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val userimage = remember { mutableStateOf<Uri?>(null) }
 
     LaunchedEffect(Unit) {
@@ -314,9 +292,6 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val nodeimage = tweet.imageUrl
     val username = user?.name ?: ""
     val userUuid = user?.id
-    var isFollowed by rememberSaveable {
-        mutableStateOf(false)
-    }
     Row(modifier= Modifier
         .fillMaxWidth()
         .padding(start = 4.dp, top = 2.dp),
@@ -333,30 +308,6 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
         }
         Spacer(modifier = Modifier.width(8.dp))
-//        Button(
-//            onClick = {
-//                isFollowed = !isFollowed
-//                viewModel.addFollowingToUser(userId = currentUserId, followingId = userUuid.toString())
-//
-//            },
-//            colors = ButtonColors(
-//                containerColor =
-//                if (isFollowed) {
-//                    MaterialTheme.colorScheme.background
-//                } else {
-//                    MaterialTheme.colorScheme.background
-//                },
-//                contentColor = if (isFollowed) {
-//                    MaterialTheme.colorScheme.onBackground
-//                } else {
-//                    MaterialTheme.colorScheme.onBackground
-//                },
-//                disabledContentColor = Color.Gray,
-//                disabledContainerColor = Color.LightGray
-//            )
-//        ) {
-//            Text(if (isFollowed) "Following" else "Follow")
-//        }
     }
     Column(
         Modifier
