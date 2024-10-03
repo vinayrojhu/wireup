@@ -2,9 +2,7 @@ package com.example.wireup.ui.Screen.login
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -76,11 +74,6 @@ class LoginScreenViewModel(private val activity: Activity): ViewModel() {
             .build()
         GoogleSignIn.getClient(activity, gso)
     }
-
-//    fun signInWithGoogle(): Intent {
-//        val intent = googleSignInClient.signInIntent
-//        return intent
-//    }
 
     fun getGoogleSignInIntent(): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

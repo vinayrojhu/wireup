@@ -1,6 +1,5 @@
 package com.example.wireup.ui.Screen.profile
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -11,31 +10,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -50,16 +40,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
@@ -68,11 +53,9 @@ import com.example.wireup.R
 import com.example.wireup.ui.Components.TabView
 import com.example.wireup.ui.Screen.MainNode
 import com.example.wireup.ui.Screen.PodcastItem
-import com.example.wireup.ui.Screen.Tweet
 import com.example.wireup.ui.Screen.audiopodcasts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-import dagger.multibindings.LazyClassKey
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -186,16 +169,6 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                                 onClick = { navController.navigate(NavigationItem.Friends.route)}
                             )
 
-//                            NavigationRailItem(
-//                                icon = { Icon(painter = painterResource(id = R.drawable.save_wire),
-//                                    contentDescription = "Saved" )
-//                                       },
-//                                label = { Text("Saved") },
-//                                selected = false,
-//                                onClick = {navController.navigate(NavigationItem.Saved.route)}
-//                            )
-
-
                             NavigationRailItem(
                                 icon = { Icon(Icons.Outlined.Share, contentDescription = "share") },
                                 label = { Text("Share") },
@@ -219,14 +192,18 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                 selectedTabIndex = it
             }
             when (selectedTabIndex) {
-                0 -> Column {
+                0 -> Column(modifier= Modifier.verticalScroll(rememberScrollState())) {
 
                         val filteredTweets = tweets.filter { it.userId == currentUserId }
 
+                    if (filteredTweets.isEmpty()) {
+                        Text("You have not shared any NODE")
+                    } else {
                         filteredTweets.forEach { tweet ->
                             val user = users.find { it.id == tweet.userId }
                             MainNode(tweet, user, navController)
                         }
+                    }
 
                 }
                 1 -> LazyColumn(

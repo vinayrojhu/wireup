@@ -7,11 +7,9 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
@@ -35,7 +32,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -60,7 +56,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -90,7 +85,6 @@ fun EditProfileScreen(navController: NavHostController) {
     val isUniqueIdAvailable by viewModel.isUniqueIdAvailable.observeAsState(true)
     val errorMessage = remember { mutableStateOf("") }
 
-    val scope = rememberCoroutineScope()
     Column(modifier = Modifier.fillMaxSize(1f)) {
         TopAppBar(title = {
             Text(
@@ -110,20 +104,6 @@ fun EditProfileScreen(navController: NavHostController) {
         )
 
         Divider()
-
-//        Surface(modifier = Modifier
-//            .padding(start = 10.dp, top = 16.dp, end = 10.dp)
-//            .fillMaxWidth(),
-//            elevation = 3.dp,
-//            shape = RoundedCornerShape(5.dp)
-//        ) {
-//            Column(modifier = Modifier.padding(top = 10.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.Center){
-//                UploadImage(viewModel)
-//            }
-//        }
-
 
 
 
@@ -168,13 +148,6 @@ fun EditProfileScreen(navController: NavHostController) {
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-//                OutlinedTextField(
-//                    value = uniqueIdState,
-//                    onValueChange = { uniqueIdState = it },
-//                    label = { Text("Unique ID") },
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-//                )
-//                UniqueIdField(viewModel)
                 TextField(
                     value = uniqueIdState,
                     onValueChange = { uniqueIdState = it },
@@ -205,7 +178,6 @@ fun EditProfileScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.Top){
                     UploadImage(viewModel,navController)
                 }
-//                Spacer(modifier = Modifier.height(16.dp))
 
                 Column(modifier = Modifier.padding(end=25.dp , bottom = 25.dp).fillMaxSize(), verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.End) {
@@ -254,29 +226,9 @@ fun EditProfileScreen(navController: NavHostController) {
                             errorMessage.value = "id already in use"
                         }
                     }
-
-//                    Button(onClick = {
-//                        val userData = MUser(name = name, email = email, userId = uniqueIdState)
-//                        viewModel.updateUserData(userData).observe(lifecycleOwner, Observer { isSuccess ->
-//                            if (isSuccess) {
-//                                Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
-//                            } else {
-//                                Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
-//                            }
-//                        })
-//                    }) {
-//                        Text("Update Details")
-//                    }
-
                 }
-
             }
-
-
         }
-
-
-
     }
 }
 

@@ -44,8 +44,6 @@ fun NewsBox3(data: NewsData1, navController: NavHostController) {
             contentColor = Color.Unspecified,
             disabledContainerColor = Color.Transparent,
             disabledContentColor = Color.Transparent),
-//        border = BorderStroke(width = 1.dp,
-//            brush = Brush.linearGradient(colors = listOf(Color.LightGray, Color.LightGray)))
     ) {
         // Image
         Image(

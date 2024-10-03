@@ -40,28 +40,16 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
-//sealed class SplashScreenNavigationAction {
-//    object NavigateToAuthentication : SplashScreenNavigationAction()
-//    object NavigateToHome : SplashScreenNavigationAction()
-//}
-
 @Composable
-fun SplashScreen(// onNavigationAction: (SplashScreenNavigationAction) -> Unit,
-                 onTimeout: () -> Unit
+fun SplashScreen(
+    onTimeout: () -> Unit
 ) {
 
     val currentOnTimeout by rememberUpdatedState(onTimeout)
@@ -98,15 +86,7 @@ fun SplashScreen(// onNavigationAction: (SplashScreenNavigationAction) -> Unit,
             currentRotation = value
         }
         delay(0L)
-
-//        if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
-//            onNavigationAction(SplashScreenNavigationAction.NavigateToHome)
-//        }else {
-//            onNavigationAction(SplashScreenNavigationAction.NavigateToHome)
-//        }
           currentOnTimeout()
-
-
 
     }
 
@@ -127,23 +107,11 @@ fun SplashScreen(// onNavigationAction: (SplashScreenNavigationAction) -> Unit,
                 modifier = Modifier
                     .size(70.dp)
                     .rotate(rotation.value),
-//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                 contentDescription = null ,
                 colorFilter = ColorFilter.tint(
                     color = if (isSystemInDarkTheme()) Color.White else Color.Black // Change color based on theme
                 )
             )
-
-//            Text(
-//                text = stringResource(id = R.string.app_name),
-//                style = TextStyle(
-//                    fontFamily = FontFamily.Monospace,
-//                    fontWeight = FontWeight.W500
-////                    brush = brush
-//                ),
-//                fontSize = fontSize,
-//                textAlign = TextAlign.Center
-//            )
             Spacer(modifier = Modifier.height(400.dp))
             WireLogo()
         }

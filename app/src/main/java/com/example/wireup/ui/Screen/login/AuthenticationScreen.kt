@@ -25,22 +25,17 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -68,23 +63,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
-import com.example.wireup.ui.Components.EmailInput
-import com.example.wireup.ui.Components.PasswordInput
 import com.example.wireup.ui.Screen.viewmodel.LoginScreenViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.FirebaseFirestore
 
 @ExperimentalComposeUiApi
 @Composable
@@ -107,53 +94,6 @@ fun AuthenticationScreen(
             }
         }
     }
-
-//    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//        if (result.resultCode == Activity.RESULT_OK) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//            try {
-//                val account = task.getResult(ApiException::class.java)
-//                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-//                FirebaseAuth.getInstance().signInWithCredential(credential)
-//                    .addOnCompleteListener { task ->
-//                        if (task.isSuccessful) {
-//                            val userId = FirebaseAuth.getInstance().currentUser?.uid
-//                            val name = account.displayName
-//                            val email = account.email
-//                            val profileImage = account.photoUrl.toString()
-//                            val uniqueId = "Create UID"
-//                            val followers = mutableListOf<String>()
-//                            val following = mutableListOf<String>()
-//
-//                            val user = hashMapOf(
-//                                "name" to name,
-//                                "email" to email,
-//                                "userID" to userId,
-//                                "profile_image" to profileImage,
-//                                "uniqueId" to uniqueId,
-//                                "followers" to followers,
-//                                "following" to following
-//                            )
-//
-//                            FirebaseFirestore.getInstance().collection("users").document(userId!!).set(user)
-//                                .addOnCompleteListener { task ->
-//                                    if (task.isSuccessful) {
-//                                        // User data stored successfully, navigate to Home screen
-//                                        navController.navigate(NavigationItem.Home.route)
-//                                    } else {
-//                                        // Handle error
-//                                    }
-//                                }
-//                        } else {
-//                            // Handle sign-in error
-//                        }
-//                    }
-//            } catch (e: ApiException) {
-//                // Handle error
-//            }
-//        }
-//    }
-
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -185,26 +125,13 @@ fun AuthenticationScreen(
                 val intent = viewModel.getGoogleSignInIntent()
                 launcher.launch(intent)
             }
-
-//            GoogleButton(
-//                textId ="Login via Google",
-//                loading = false,
-//                validInputs = true
-//            ){
-//                val intent = viewModel.signInWithGoogle()
-//                launcher.launch(intent)
-//            }
-
         }
 
-//        Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier.padding(bottom = 25.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Bottom
         ) {
-//            val text = if (showLoginForm.value) "New User ? Sign up" else "Existing User ? Login"
-//            Text(text = "New User?")
             val text = if (showLoginForm.value) {
                 buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.W400)) {
@@ -254,9 +181,7 @@ fun UserForm(
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
     val name = rememberSaveable { mutableStateOf("") }
-    val uniqueId = rememberSaveable { mutableStateOf("") }
     val passwordVisibility = rememberSaveable { mutableStateOf(false) }
-//    val passwordFocusRequest = FocusRequester.Default
     val passwordFocusRequest = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val valid = remember(email.value, password.value, name.value) {
@@ -288,33 +213,14 @@ fun UserForm(
             )
 
         }
-//        EmailInput(context = LocalContext.current , emailState = email , passwordFocusRequest = passwordFocusRequest )
-        com.example.wireup.ui.Screen.login.EmailInput(
+
+        EmailInput(
             emailState = email,
             passwordFocusRequest =passwordFocusRequest ,
             context = LocalContext.current
         )
 
-
-//        old password box
-
-//        PasswordInput(
-//            modifier = Modifier.focusRequester(passwordFocusRequest),
-//            passwordState = password,
-//            labelId = "Password",
-//            enabled = !loading,
-//            passwordVisibility = passwordVisibility,
-//            onAction = KeyboardActions {
-//                if (!valid) return@KeyboardActions
-//                onDone(email.value.trim(), password.value.trim(), name.value.trim())
-//            },
-//            focusRequester = passwordFocusRequest
-//        )
-
-
-        //new box password
-
-        com.example.wireup.ui.Screen.login.PasswordInput(
+        PasswordInput(
             passwordState = password,
             passwordVisibility =passwordVisibility ,
             focusRequester = passwordFocusRequest
@@ -322,7 +228,6 @@ fun UserForm(
 
         if (isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
             modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp ) , fontSize = 13.sp) else Text("")
-//        Spacer(modifier = Modifier.height(25.dp))
 
         SubmitButton(
             textId = if (isCreateAccount) "Create Account" else "Login",
@@ -407,7 +312,6 @@ fun WireLogo(modifier: Modifier = Modifier) {
             modifier = modifier.padding(top = 23.dp, bottom = 1.dp),
             fontSize = 35.sp,
             fontWeight = FontWeight.W700,
-//            color = Color.Black.copy(alpha = 0.7f))
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f))
     }
 
@@ -459,15 +363,9 @@ fun PasswordInput(
     focusRequester: FocusRequester
 ) {
     val visibilityIcon = if (passwordVisibility.value) {
-//        Icons.Default.Lock
-//        Icon(painter =
         painterResource(id = R.drawable.hide)
-//            , contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
     } else {
-//        Icons.Default.Build
-//        Icon(painter =
         painterResource(id = R.drawable.show)
-//            , contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
     }
 
     OutlinedTextField(
@@ -475,10 +373,6 @@ fun PasswordInput(
         onValueChange = { passwordState.value = it },
         label = { Text(text = labelId) },
         leadingIcon = {
-//            Icon(
-//                imageVector = Icons.Default.Lock,
-//                contentDescription = "Password Icon"
-//            )
             Icon(painter = painterResource(id = R.drawable.hide), contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
 
         },

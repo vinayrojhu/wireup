@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -40,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.wireup.R
-import com.example.wireup.ui.Components.FFnewsBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,9 +85,6 @@ fun AboutScreen(navController: NavHostController) {
 
             Text(text="For more info , visit : ", fontWeight = FontWeight.W600 , fontSize = 16.sp)
             Spacer(modifier = Modifier.height(10.dp))
-//            LinkText(text = "Youtube " , link = "https://www.youtube.com/@IndicWire")
-//            LinkText(text = "Facebook " , link = "https://www.facebook.com/people/Indic-Wire/100086048454457/")
-//            LinkText(text = "Instagram " , link = "https://www.instagram.com/indicwire/")
 
             SocialMediaLinks(instagramLink ="https://www.instagram.com/indicwire/" , facebookLink ="https://www.facebook.com/people/Indic-Wire/100086048454457/" , youtubeLink ="https://www.youtube.com/@IndicWire" )
 

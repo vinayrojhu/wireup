@@ -106,19 +106,6 @@ fun FriendsScreen(navController: NavHostController) {
                                 }
                             }
 
-//                            LaunchedEffect(Unit) {
-//                                if (u.profileImage.startsWith("https://firebasestorage.googleapis.com/")) {
-//                                    val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(u.profileImage)
-//                                    storageRef.downloadUrl.addOnSuccessListener { uri ->
-//                                        imageUri = uri
-//                                    }.addOnFailureListener { e ->
-//                                        Log.e("FriendsScreen", "Failed to download image", e)
-//                                    }
-//                                } else {
-//                                    imageUri = Uri.parse(u.profileImage)
-//                                }
-//                            }
-
                             FollowerItem(
                                 follower = Follower(
                                     followerId = u.uniqueId,

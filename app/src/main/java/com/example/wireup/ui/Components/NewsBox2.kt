@@ -1,6 +1,5 @@
 package com.example.wireup.ui.Components
 
-import androidx.compose.animation.VectorConverter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,8 +46,6 @@ fun NewsBox2(data: NewsData1, navController: NavHostController) {
             contentColor = Color.Unspecified,
             disabledContainerColor = Color.Transparent,
             disabledContentColor = Color.Transparent)
-//        border = BorderStroke(width = 1.dp,
-//            brush = Brush.linearGradient(colors = listOf(Color.LightGray, Color.LightGray)))
     ) {
         Row(horizontalArrangement = Arrangement.SpaceBetween ,modifier = Modifier.fillMaxWidth(1f).padding(end = 10.dp)){
 

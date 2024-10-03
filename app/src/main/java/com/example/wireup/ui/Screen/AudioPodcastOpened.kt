@@ -54,9 +54,6 @@ fun OpenAudioPodcast( navController : NavHostController) {
 
     Column{
         TopAppBar(title = {
-//            Text(
-//                "Back", fontSize = 18.sp
-//            )
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -69,12 +66,6 @@ fun OpenAudioPodcast( navController : NavHostController) {
             }
         }
         )
-
-
-//        Divider()
-
-
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()

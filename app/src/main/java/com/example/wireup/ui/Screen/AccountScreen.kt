@@ -1,8 +1,6 @@
 package com.example.wireup.ui.Screen
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -37,13 +34,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.wireup.Navigation.NavigationItem
+import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen(navController: NavHostController, viewModel: UserViewModel = viewModel()) {
+fun AccountScreen(navController: NavHostController) {
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
 
     val user = FirebaseAuth.getInstance().currentUser
     val userData by viewModel.getUserData().observeAsState()
@@ -149,25 +149,3 @@ fun AccountScreen(navController: NavHostController, viewModel: UserViewModel = v
 
     }
 }
-
-
-
-
-//@Composable
-//fun deleteAccount() {
-//    val user = FirebaseAuth.getInstance().currentUser
-//    val context = LocalContext.current
-//    user?.delete()?.addOnCompleteListener { task ->
-//        if (task.isSuccessful) {
-//            // Delete user data from Firestore
-//            val userId = user.uid
-//            FirebaseFirestore.getInstance().collection("users").document(userId).delete()
-//
-//            // Return to login screen
-//            navController.popBackStack()
-//            navController.navigate("login")
-//        } else {
-//            Toast.makeText(context, "Error deleting account", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-//}
