@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -329,7 +331,9 @@ fun SubmitButton(textId: String,
             .padding(start = 15.dp, end = 20.dp)
             .fillMaxWidth(),
         enabled = !loading && validInputs,
-        shape = CircleShape
+        shape = CircleShape ,
+        colors = ButtonColors(containerColor = MaterialTheme.colorScheme.onBackground , contentColor = MaterialTheme.colorScheme.background , disabledContainerColor = MaterialTheme.colorScheme.onBackground , disabledContentColor = MaterialTheme.colorScheme.background)
+
     ) {
         if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp))
         else Text(text = textId, modifier = Modifier.padding(5.dp))
@@ -350,7 +354,7 @@ fun GoogleButton(textId: String,
             .fillMaxWidth(),
         enabled = true,
         shape = CircleShape ,
-        colors = ButtonDefaults.buttonColors(Color.Black)
+        colors = ButtonColors(containerColor = MaterialTheme.colorScheme.onBackground , contentColor = MaterialTheme.colorScheme.background , disabledContainerColor = MaterialTheme.colorScheme.onBackground , disabledContentColor = MaterialTheme.colorScheme.background)
     ) {
         if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp))
         else Text(text = textId, modifier = Modifier.padding(5.dp))
@@ -370,7 +374,10 @@ fun WireLogo(modifier: Modifier = Modifier) {
                 .height(60.dp)
                 .padding(top = 30.dp, bottom = 1.dp)
                 .clip(RoundedCornerShape(8.dp)) ,
-            alignment = Alignment.Center
+            alignment = Alignment.Center ,
+            colorFilter = ColorFilter.tint(
+                color = if (isSystemInDarkTheme()) Color.White else Color.Black // Change color based on theme
+            )
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(text = "WIREup",
@@ -378,8 +385,8 @@ fun WireLogo(modifier: Modifier = Modifier) {
             modifier = modifier.padding(top = 23.dp, bottom = 1.dp),
             fontSize = 35.sp,
             fontWeight = FontWeight.W700,
-            color = Color.Black.copy(alpha = 0.7f))
-
+//            color = Color.Black.copy(alpha = 0.7f))
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f))
     }
 
 }
@@ -430,9 +437,15 @@ fun PasswordInput(
     focusRequester: FocusRequester
 ) {
     val visibilityIcon = if (passwordVisibility.value) {
-        Icons.Default.Lock
+//        Icons.Default.Lock
+//        Icon(painter =
+        painterResource(id = R.drawable.hide)
+//            , contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
     } else {
-        Icons.Default.Build
+//        Icons.Default.Build
+//        Icon(painter =
+        painterResource(id = R.drawable.show)
+//            , contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
     }
 
     OutlinedTextField(
@@ -440,17 +453,19 @@ fun PasswordInput(
         onValueChange = { passwordState.value = it },
         label = { Text(text = labelId) },
         leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Lock,
-                contentDescription = "Password Icon"
-            )
+//            Icon(
+//                imageVector = Icons.Default.Lock,
+//                contentDescription = "Password Icon"
+//            )
+            Icon(painter = painterResource(id = R.drawable.hide), contentDescription = "Account", modifier = Modifier.size(20.dp).padding(end = 2.dp))
+
         },
         trailingIcon = {
             IconButton(onClick = {
                 passwordVisibility.value = !passwordVisibility.value
             }) {
                 Icon(
-                    imageVector = visibilityIcon,
+                    painter = visibilityIcon,
                     contentDescription = if (passwordVisibility.value) "Hide Password" else "Show Password"
                 )
             }
