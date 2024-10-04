@@ -434,4 +434,39 @@ class FirestoreRepository {
             }
         return liveData
     }
+
+    fun deleteTweet(tweetId: String, imageUrl: String): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        val tweetRef = firestore.collection("tweets").document(tweetId)
+        val uri = Uri.parse(imageUrl)
+        val imageName = uri.pathSegments.last()
+
+        if (imageUrl != "") {
+            val storageRef = FirebaseStorage.getInstance().reference.child(imageName)
+            storageRef.delete().addOnSuccessListener {
+                tweetRef.delete()
+                    .addOnSuccessListener {
+                        liveData.value = true
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d("FirestoreRepository", "Error deleting tweet", exception)
+                        liveData.value = false
+                    }
+            }.addOnFailureListener { exception ->
+                Log.d("FirestoreRepository", "Error deleting image", exception)
+                liveData.value = false
+            }
+        } else {
+            tweetRef.delete()
+                .addOnSuccessListener {
+                    liveData.value = true
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("FirestoreRepository", "Error deleting tweet", exception)
+                    liveData.value = false
+                }
+        }
+
+        return liveData
+    }
 }

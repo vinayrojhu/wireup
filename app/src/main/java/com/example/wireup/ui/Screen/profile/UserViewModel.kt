@@ -30,6 +30,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     private val _tweets = MutableLiveData<List<Tweet>>()
     val tweets: LiveData<List<Tweet>> = _tweets
 
+    private val _deleteTweetStatus = MutableLiveData<Boolean>()
+    val deleteTweetStatus: LiveData<Boolean> = _deleteTweetStatus
+
     private val _news1 = MutableLiveData<List<NewsData1>>()
     val news1: LiveData<List<NewsData1>> = _news1
 
@@ -92,6 +95,12 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
             }
         }
         return liveData
+    }
+
+    fun deleteTweet(tweetId: String, imageUri: String) {
+        firestoreRepository.deleteTweet(tweetId, imageUri).observeForever { isSuccess ->
+            _deleteTweetStatus.value = isSuccess
+        }
     }
 
     init {

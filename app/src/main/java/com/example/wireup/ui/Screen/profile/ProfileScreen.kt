@@ -192,7 +192,7 @@ fun ProfileScreen(navController: NavHostController, viewModel: UserViewModel = v
                 selectedTabIndex = it
             }
             when (selectedTabIndex) {
-                0 -> Column(modifier= Modifier.verticalScroll(rememberScrollState())) {
+                0 -> Column(modifier= Modifier.verticalScroll(rememberScrollState()).padding(4.dp)) {
 
                         val filteredTweets = tweets.filter { it.userId == currentUserId }
 

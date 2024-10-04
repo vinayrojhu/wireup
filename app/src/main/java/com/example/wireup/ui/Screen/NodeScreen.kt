@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +28,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,10 +62,13 @@ import coil.compose.rememberImagePainter
 import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.MUser
+import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Components.CircularImage
 import com.example.wireup.ui.Screen.profile.UserViewModel
+import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.example.wireup.util.DateUtil
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
@@ -145,6 +152,8 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
             )
             Divider()
 
+            Spacer(modifier = Modifier.height(2.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -190,7 +199,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(end = 25.dp , bottom = 10.dp),
+                                    .padding(end = 25.dp, bottom = 10.dp),
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 Button(
@@ -282,8 +291,10 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
 
 @Composable
 fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
+    val context = LocalContext.current
     val userimage = remember { mutableStateOf<Uri?>(null) }
-
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
     LaunchedEffect(Unit) {
         FirebaseStorage.getInstance().reference.child("users/${user?.id}/profile_image").downloadUrl.addOnSuccessListener { uri ->
             userimage.value = uri
@@ -292,6 +303,7 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val nodeimage = tweet.imageUrl
     val username = user?.name ?: ""
     val userUuid = user?.id
+    val tweetId = tweet.id
     Row(modifier= Modifier
         .fillMaxWidth()
         .padding(start = 4.dp, top = 2.dp),
@@ -308,6 +320,32 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
         }
         Spacer(modifier = Modifier.width(8.dp))
+        if (currentUserId == tweet.userId) {
+            Column(modifier = Modifier
+                .clickable { viewModel.deleteTweet(tweetId,nodeimage.toString()) }) {
+
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Delete Icon",
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+
+                when (val status = viewModel.deleteTweetStatus.value) {
+                    true -> {
+                        Toast.makeText(context, "Tweet deleted successfully", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+                    false -> {
+                        Toast.makeText(context, "Error deleting tweet", Toast.LENGTH_SHORT).show()
+                    }
+
+                    null -> {
+                        // Waiting for result
+                    }
+                }
+            }
+        }
     }
     Column(
         Modifier
