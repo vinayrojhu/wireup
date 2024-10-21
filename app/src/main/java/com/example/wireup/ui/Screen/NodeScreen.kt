@@ -4,9 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,25 +35,33 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +75,9 @@ import com.example.wireup.Navigation.NavigationItem
 import com.example.wireup.R
 import com.example.wireup.model.MUser
 import com.example.wireup.repository.FirestoreRepository
+import com.example.wireup.ui.Components.BackCardContent
 import com.example.wireup.ui.Components.CircularImage
+import com.example.wireup.ui.Components.FrontCardContent
 import com.example.wireup.ui.Screen.profile.UserViewModel
 import com.example.wireup.ui.Screen.viewmodel.UserViewModelFactory
 import com.example.wireup.util.DateUtil
@@ -76,15 +90,27 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
+
 data class Tweet(
     val id: String = UUID.randomUUID().toString(),
-    val description: String,
-    val userId: String,
-    val comments: List<String> = emptyList(),
+    val description: String ="",
+    val userId: String ="",
+    val comments: MutableList<Comment> = mutableListOf(),
     val likeCount: Int = 0,
     val retweetCount: Int = 0,
     val bookmarkCount: Int = 0,
     val imageUrl: String? = null,
+    val timeStamp: Long = System.currentTimeMillis()
+)
+
+
+data class Comment(
+    val id: String = UUID.randomUUID().toString(),
+    val description: String="",
+    val userId: String="",
+    val imageUrl: String? = null,
+    val likeCount: Int = 0,
+    val likes: MutableList<String> = mutableListOf(),
     val timeStamp: Long = System.currentTimeMillis()
 )
 
@@ -103,6 +129,9 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
     val showDialog2 = remember { mutableStateOf(true) }
     val showVerificationDialog = remember { mutableStateOf(false) }
     val isUserInListState = remember { mutableStateOf(false) }
+
+
+
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
@@ -118,6 +147,8 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
             query.documents.isNotEmpty()
         }
     }
+
+
 
     LaunchedEffect(Unit) {
         isUserInListState.value = isUserInList(userId ?: "")
@@ -260,10 +291,12 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                             .align(Alignment.CenterHorizontally)
                     )
                 } else {
+
                     tweets.forEach { tweet ->
                         val user = users.find { it.id == tweet.userId }
                         MainNode(tweet, user, navController)
                     }
+
                 }
 
             }
@@ -304,78 +337,274 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val username = user?.name ?: ""
     val userUuid = user?.id
     val tweetId = tweet.id
-    Row(modifier= Modifier
-        .fillMaxWidth()
-        .padding(start = 4.dp, top = 2.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CircularImage(
-            imageUri = userimage, imageSize = 38.dp,
-            navController = navController,
-            userUuid = userUuid.toString()
-        )
-        Spacer(Modifier.width(8.dp))
-        Column(Modifier.weight(1f)) {
-            Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
+    val showMostLikedComment = remember { mutableStateOf(false) }
+
+    var isFlipped by remember { mutableStateOf(false) }
+    val rotationY by animateFloatAsState(
+        targetValue = if (isFlipped) 180f else 0f,
+        animationSpec = tween(durationMillis = 600)
+    )
+
+    @Composable
+    fun getMostLikedComment(tweetId: String): Comment? {
+        val comments by viewModel.getCommentsFlow(tweetId).collectAsState(initial = emptyList())
+
+        // Log fetching comments
+        LaunchedEffect(tweetId) {
+            viewModel.getComment(tweetId)
+            Log.d("CommentFetch", "Fetching comments for tweetId: $tweetId")
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        if (currentUserId == tweet.userId) {
-            Column(modifier = Modifier
-                .clickable { viewModel.deleteTweet(tweetId,nodeimage.toString()) }) {
 
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = "Delete Icon",
-                    modifier = Modifier.padding(start = 20.dp)
-                )
+        // Check if the comments list is empty
+        if (comments.isEmpty()) {
+            println("No comments available for tweetId: $tweetId")
+            return null // You could also return a default Comment instance if preferred
+        }
 
-                when (val status = viewModel.deleteTweetStatus.value) {
-                    true -> {
-                        Toast.makeText(context, "Tweet deleted successfully", Toast.LENGTH_SHORT)
-                            .show()
+        // Log the fetched comments
+        Log.d("TweetComments", "Tweet ID: ${tweetId}, Comments: ${comments}")
+
+        // Find the comment with the maximum like count
+        return comments.maxByOrNull { it.likeCount }
+    }
+    val mostLikedComment = getMostLikedComment(tweet.id)
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.50f)
+            .graphicsLayer {
+                this.rotationY = rotationY
+                cameraDistance = 12f * density
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        if (rotationY <= 90f) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate(NavigationItem.Comment.route + "/$tweetId") }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, top = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularImage(
+                        imageUri = userimage, imageSize = 38.dp,
+                        navController = navController,
+                        userUuid = userUuid.toString()
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (currentUserId == tweet.userId) {
+                        Column(modifier = Modifier
+                            .clickable { viewModel.deleteTweet(tweetId, nodeimage.toString()) }) {
 
-                    false -> {
-                        Toast.makeText(context, "Error deleting tweet", Toast.LENGTH_SHORT).show()
-                    }
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Delete Icon",
+                                modifier = Modifier.padding(start = 20.dp)
+                            )
 
-                    null -> {
-                        // Waiting for result
+                            when (val status = viewModel.deleteTweetStatus.value) {
+                                true -> {
+                                    Toast.makeText(
+                                        context,
+                                        "Tweet deleted successfully",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+
+                                false -> {
+                                    Toast.makeText(context, "Error deleting tweet", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+
+                                null -> {
+                                    // Waiting for result
+                                }
+                            }
+                        }
                     }
                 }
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 50.dp)
+                ) {
+                    Text(tweet.description, fontSize = 15.sp, fontWeight = FontWeight.W400)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (nodeimage == null) {
+
+                    } else {
+                        Image(
+                            painter = rememberImagePainter(nodeimage),
+                            contentDescription = "Tweet Image",
+                            modifier = Modifier.height(300.dp),
+                            alignment = Alignment.TopStart
+                        )
+                    }
+
+                    Row {
+                        Text(
+                            DateUtil.getDateTime(tweet.timeStamp),
+                            color = Color.Gray,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.W400
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        CommentBox(tweetId = tweet.id)
+
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+        } else {
+            if (showMostLikedComment.value) {
+                SideNode(tweetId = tweetId, navController = navController)
             }
         }
     }
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(start = 50.dp)) {
-        Text(tweet.description, fontSize = 15.sp, fontWeight = FontWeight.W400)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (nodeimage == null) {
-
-        } else {
-            Image(
-                painter = rememberImagePainter(nodeimage),
-                contentDescription = "Tweet Image",
-                modifier = Modifier.height(300.dp),
-                alignment = Alignment.TopStart
-            )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.White,
+                containerColor = if (isFlipped) Color(0xFFC7C5B8) else Color(0xFFC2C2C2)
+            ),
+            onClick = {
+                isFlipped = !isFlipped
+                showMostLikedComment.value = true
+            }
+        ) {
+            Text(text = if (isFlipped) "Flip Node" else "Flip Node")
         }
-
-        Text(
-            DateUtil.getDateTime(tweet.timeStamp),
-            color = Color.Gray,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.W400
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-    }
 
 }
 
 
+@Composable
+fun SideNode(tweetId: String, navController : NavHostController ){
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
+
+    val comments by viewModel.getCommentsFlow(tweetId).collectAsState(initial = emptyList())
+    LaunchedEffect(tweetId) {
+        viewModel.getComment(tweetId)
+        Log.d("CommentFetch", "Fetching comments for tweetId: $tweetId")
+    }
+
+    val data = comments.maxByOrNull { it.likeCount }
+    val userimage = remember { mutableStateOf<Uri?>(Uri.parse("https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg")) }
+    val userUuid = data?.userId
+    val userData by viewModel.getUserData2(uuid = userUuid.toString()).observeAsState()
+    val username = userData?.name ?: ""
+
+    Card(modifier = Modifier
+        .graphicsLayer { scaleX = -1f },
+        colors = CardColors(containerColor = Color.Transparent,
+            contentColor = Color.Unspecified,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Transparent),
+    ) {
+        Row(modifier= Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp, top = 2.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircularImage(
+                imageUri = userimage, imageSize = 38.dp,
+                navController = navController,
+                userUuid = userUuid.toString()
+            )
+            Spacer(Modifier.width(8.dp))
+            Column(Modifier.weight(1f)) {
+                Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+
+        }
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 50.dp)) {
+            Text(data?.description.toString(), fontSize = 15.sp, fontWeight = FontWeight.W400)
+            Spacer(modifier = Modifier.height(8.dp))
+
+        val time = data?.timeStamp?.toLong() ?: 0L
+        Text(
+            DateUtil.getDateTime(time),
+            color = Color.Gray,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.W400
+        )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
 
 
+}
+
+
+@Composable
+fun CommentBox(
+    tweetId: String
+) {
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
+    var showDialog by remember { mutableStateOf(false) }
+    val NodeText = remember { mutableStateOf("") }
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable(onClick = { showDialog = true })
+    ) {
+        Text(
+            text = "Add a Node...",
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Add Node") },
+            text = {
+                TextField(
+                    value = NodeText.value,
+                    onValueChange = { NodeText.value = it },
+                    label = { Text("Enter your Node...") }
+                )
+            },
+            buttons = {
+                Button(onClick = {
+                    val comment = Comment(description = NodeText.value, userId = currentUserId)
+                    viewModel.addComment(tweetId, comment).observeForever { isSuccess ->
+                        if (isSuccess) {
+                            // Comment added successfully
+                        } else {
+                            // Error adding comment
+                        }
+                    }
+                    showDialog = false
+                }) {
+                    Text("Add")
+                }
+                Button(onClick = { showDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}

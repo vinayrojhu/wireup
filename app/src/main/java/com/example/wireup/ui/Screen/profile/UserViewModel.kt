@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.example.wireup.model.FlipNews
 import com.example.wireup.model.MUser
 import com.example.wireup.model.NewsData1
 import com.example.wireup.model.SearchData
 import com.example.wireup.repository.FirestoreRepository
+import com.example.wireup.ui.Screen.Comment
 import com.example.wireup.ui.Screen.Tweet
 import com.example.wireup.ui.Screen.VideoPodcast
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +31,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
 
     private val _tweets = MutableLiveData<List<Tweet>>()
     val tweets: LiveData<List<Tweet>> = _tweets
+
+    private val _tweet = MutableLiveData<Tweet?>()
+    val tweet: LiveData<Tweet?> = _tweet
 
     private val _deleteTweetStatus = MutableLiveData<Boolean>()
     val deleteTweetStatus: LiveData<Boolean> = _deleteTweetStatus
@@ -60,7 +65,19 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
     private val _following = MutableStateFlow<List<String>>(emptyList())
     val following: StateFlow<List<String>> = _following
 
+    private val _comment = MutableStateFlow<List<Comment>>(emptyList())
+    val comment: StateFlow<List<Comment>> = _comment
 
+    private val _likeCommentResult = MutableLiveData<Boolean>()
+    val likeCommentResult: LiveData<Boolean> get() = _likeCommentResult
+
+    private val _commentsMap = mutableMapOf<String, MutableStateFlow<List<Comment>>>()
+
+    fun likeComment(tweetId: String, commentId: String, userId: String) {
+        firestoreRepository.likeComment(tweetId, commentId, userId).observeForever { result ->
+            _likeCommentResult.value = result
+        }
+    }
     fun getUserData(): LiveData<MUser> {
         val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         return firestoreRepository.getUserData(uuid)
@@ -103,6 +120,29 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         }
     }
 
+    fun getComments(tweetId: String){
+        firestoreRepository.getComments(tweetId).observeForever { comments ->
+            Log.d("CommentViewmodel", "Received comments: $comments")
+            _comment.value = comments // Update the liveData value
+        }
+    }
+    fun getComment(tweetId: String){
+        val commentsFlow = _commentsMap.getOrPut(tweetId) { MutableStateFlow(emptyList()) }
+        firestoreRepository.getComments(tweetId).observeForever { comments ->
+            Log.d("CommentV", "Received comments: $comments")
+            commentsFlow.value = comments
+        }
+    }
+    fun getCommentsFlow(tweetId: String): StateFlow<List<Comment>> {
+        return _commentsMap[tweetId] ?: MutableStateFlow(emptyList())
+    }
+
+
+    fun fetchTweet(tweetId: String) {
+        firestoreRepository.fetchTweetFromFirestore(tweetId).observeForever { tweet ->
+            _tweet.value = tweet
+        }
+    }
     init {
         fetchTweetsFromFirestore()
         fetchUsersFromFirestore()
@@ -257,6 +297,10 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
             firestoreRepository.VerifyUserID(uuid)
         }
         callback()
+    }
+
+    fun addComment(tweetId: String, comment: Comment): LiveData<Boolean> {
+        return firestoreRepository.addComment(tweetId, comment)
     }
 
 

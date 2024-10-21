@@ -15,7 +15,7 @@ enum class Screen {
     SAVED,
     SETTINGS,
     SEARCH,
-
+    COMMENT,
 
     HELP ,
 
@@ -59,4 +59,6 @@ sealed class NavigationItem(val route: String) {
     object Help : NavigationItem(Screen.HELP.name)
 
     object Tags : NavigationItem(Screen.TAGS.name)
+
+    object Comment : NavigationItem(Screen.COMMENT.name)
 }

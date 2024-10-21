@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.example.wireup.repository.FirestoreRepository
 import com.example.wireup.ui.Screen.AboutScreen
 import com.example.wireup.ui.Screen.AccountScreen
+import com.example.wireup.ui.Screen.CommentScreen
 import com.example.wireup.ui.Screen.EditProfileScreen
 import com.example.wireup.ui.Screen.FlipFlopScreen
 import com.example.wireup.ui.Screen.FollowNodes
@@ -417,6 +418,23 @@ fun AppNavHost(
             }
         ){
             HelpScreen(navController = navController)
+        }
+
+        composable(NavigationItem.Comment.route + "/{tweetId}", enterTransition = {
+            fadeIn(animationSpec = tween(durationMillis = 300)) // Quick fade in
+        },
+            exitTransition = {
+                fadeOut(animationSpec = tween(durationMillis = 300)) // Quick fade out
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(durationMillis = 300)) // Quick fade in
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(durationMillis = 300)) // Quick fade out
+            }
+        ){backStackEntry ->
+            val tweetId = backStackEntry.arguments?.getString("tweetId").toString()
+            CommentScreen(navController = navController, tweetId)
         }
 
 

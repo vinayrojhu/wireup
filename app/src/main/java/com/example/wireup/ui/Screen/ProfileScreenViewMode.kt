@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -53,6 +55,8 @@ import com.google.firebase.storage.FirebaseStorage
 fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
 
     val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
+    val tweets by viewModel.tweets.observeAsState(initial = emptyList())
+    val users by viewModel.users.observeAsState(initial = emptyList())
 
     val userData by viewModel.getUserData2(uuid = userId).observeAsState()
     val userImage = remember { mutableStateOf<Uri?>(null) }
@@ -64,6 +68,10 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
         FirebaseStorage.getInstance().reference.child("users/$userId/profile_image").downloadUrl.addOnSuccessListener { uri ->
             userImage.value = uri
         }
+    }
+
+    LaunchedEffect(userData) {
+        userData?.id?.let { viewModel.fetchTweetsofCurrentUser (it) }
     }
 
     LaunchedEffect(Unit) {
@@ -149,6 +157,21 @@ fun ProfileScreenViewMode(navController: NavHostController, userId: String) {
             Divider()
 
         // You can add other user details here
+            Column(modifier= Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(4.dp)) {
+                val filteredTweets = tweets.filter { it.userId == userId }
+
+                if (filteredTweets.isEmpty()) {
+                    Text("Not shared any NODE")
+                } else {
+                    filteredTweets.forEach { tweet ->
+                        val user = users.find { it.id == tweet.userId }
+                        MainNode(tweet, user, navController)
+                    }
+                }
+
+            }
 
         }
     }
