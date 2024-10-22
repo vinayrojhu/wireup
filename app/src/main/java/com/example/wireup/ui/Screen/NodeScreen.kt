@@ -47,6 +47,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +60,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.graphicsLayer
@@ -479,7 +481,7 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.White,
-                containerColor = if (isFlipped) Color(0xFFC7C5B8) else Color(0xFFC2C2C2)
+                containerColor =if (isFlipped) Color(0xFF4CAF50) else Color(0xFFEF4444)
             ),
             onClick = {
                 isFlipped = !isFlipped
@@ -488,6 +490,10 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
         ) {
             Text(text = if (isFlipped) "Flip Node" else "Flip Node")
         }
+    Divider(modifier = Modifier
+        .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .alpha(0.5f))
 
 }
 
@@ -528,7 +534,7 @@ fun SideNode(tweetId: String, navController : NavHostController ){
             )
             Spacer(Modifier.width(8.dp))
             Column(Modifier.weight(1f)) {
-                Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
+                Text(username,color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.W600, fontSize = 15.sp)
             }
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -537,7 +543,7 @@ fun SideNode(tweetId: String, navController : NavHostController ){
             Modifier
                 .fillMaxWidth()
                 .padding(start = 50.dp)) {
-            Text(data?.description.toString(), fontSize = 15.sp, fontWeight = FontWeight.W400)
+            Text(data?.description.toString(),color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.W400)
             Spacer(modifier = Modifier.height(8.dp))
 
         val time = data?.timeStamp?.toLong() ?: 0L
@@ -567,43 +573,64 @@ fun CommentBox(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(start = 96.dp, top = 4.dp)
             .clickable(onClick = { showDialog = true })
     ) {
         Text(
             text = "Add a Node...",
-            style = MaterialTheme.typography.labelSmall
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight(900)
         )
     }
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Add Node") },
+//            title = { Text("Add Node" )},
             text = {
-                TextField(
-                    value = NodeText.value,
-                    onValueChange = { NodeText.value = it },
-                    label = { Text("Enter your Node...") }
-                )
+                Column {
+                    Text(text = "Add Node" , textAlign = TextAlign.Center)
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    TextField(
+                       value = NodeText.value,
+                       onValueChange = { NodeText.value = it },
+                       label = { Text("Enter your Node...") }
+                    )
+                }
             },
             buttons = {
-                Button(onClick = {
-                    val comment = Comment(description = NodeText.value, userId = currentUserId)
-                    viewModel.addComment(tweetId, comment).observeForever { isSuccess ->
-                        if (isSuccess) {
-                            // Comment added successfully
-                        } else {
-                            // Error adding comment
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 25.dp, bottom = 10.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+
+                    Button(onClick = {
+                        val comment = Comment(description = NodeText.value, userId = currentUserId)
+                        viewModel.addComment(tweetId, comment).observeForever { isSuccess ->
+                            if (isSuccess) {
+                                // Comment added successfully
+                            } else {
+                                // Error adding comment
+                            }
                         }
+                        showDialog = false
+                    }) {
+                        Text("Add")
                     }
-                    showDialog = false
-                }) {
-                    Text("Add")
+
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(onClick = { showDialog = false }) {
+                        Text("Cancel")
+                    }
                 }
-                Button(onClick = { showDialog = false }) {
-                    Text("Cancel")
-                }
+
+
+
             }
         )
     }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,9 @@ import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,6 +36,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -44,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -114,7 +120,8 @@ fun CommentScreen(navController: NavHostController, tweetId: String) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.50f)
+                    .padding(top = 10.dp, bottom = 10.dp)
+//                    .fillMaxHeight(0.30f)
                     .graphicsLayer {
                         this.rotationY = rotationY
                         cameraDistance = 12f * density
@@ -134,7 +141,8 @@ fun CommentScreen(navController: NavHostController, tweetId: String) {
 
             Button(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth(0.9f)
+                    .align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
                     containerColor = if (isFlipped) Color(0xFF4CAF50) else Color(0xFFEF4444)
@@ -143,7 +151,7 @@ fun CommentScreen(navController: NavHostController, tweetId: String) {
             ) {
                 Text(text = if (isFlipped) "Flip Node" else "Flip Node")
             }
-            Divider()
+            Divider(Modifier.padding(top = 20.dp , bottom = 10.dp))
 
             if (comments != null && comments.isNotEmpty()) {
                 comments.forEach { comment ->
@@ -203,11 +211,29 @@ fun CommentNode(data: Comment, user: MUser?, navController : NavHostController, 
             Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
         }
         Spacer(modifier = Modifier.width(8.dp))
-        Button(onClick = {
-            viewModel.likeComment(tweetId, data.id, currentUserId)
-        }) {
-            Text(text = "Like")
-        }
+
+//        Button(onClick = {
+//            viewModel.likeComment(tweetId, data.id, currentUserId)
+//        }) {
+////            Text(text = "Like")
+//            Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription ="like" )
+//        }
+
+        var isSubnodeLiked by remember { mutableStateOf(false) }
+        Icon(imageVector = if (isSubnodeLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+            tint = if (isSubnodeLiked) Color.Red else Color.Gray,
+            contentDescription ="like" , modifier = Modifier
+                .clickable(onClick = {
+                    viewModel.likeComment(tweetId, data.id, currentUserId)
+                    isSubnodeLiked = true
+
+                })
+                .alpha(0.8f)
+                .size(22.dp) )
+
+        Spacer(modifier = Modifier.width(2.dp))
+        Text(text = data.likeCount.toString(), fontSize = 13.sp)
+        Spacer(modifier = Modifier.width(10.dp))
     }
     Column(
         Modifier
@@ -217,17 +243,22 @@ fun CommentNode(data: Comment, user: MUser?, navController : NavHostController, 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            DateUtil.getDateTime(data.timeStamp),
-            color = Color.Gray,
+            text = DateUtil.getDateTime(data.timeStamp),
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.alpha(0.5f),
             fontSize = 11.sp,
             fontWeight = FontWeight.W400
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = data.likeCount.toString())
+
+        Divider(modifier = Modifier
+            .padding(8.dp)
+            .alpha(0.5f))
     }
+
 
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun MainComment(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(FirestoreRepository()))
@@ -266,7 +297,7 @@ fun MainComment(tweet: Tweet, user: MUser?, navController : NavHostController ){
         // Find the comment with the maximum like count
         return comments.maxByOrNull { it.likeCount }
     }
-    val mostLikedComment = getMostLikedComment(tweet.id)
+    val mostLikedComment = getMostLikedComment(tweet.id) ;
 
 
             Column(
