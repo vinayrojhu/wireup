@@ -88,9 +88,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageMetadata
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 
 data class Tweet(
@@ -330,11 +335,71 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     val context = LocalContext.current
     val userimage = remember { mutableStateOf<Uri?>(null) }
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-    LaunchedEffect(Unit) {
-        FirebaseStorage.getInstance().reference.child("users/${user?.id}/profile_image").downloadUrl.addOnSuccessListener { uri ->
-            userimage.value = uri
+//    LaunchedEffect(Unit) {
+//        FirebaseStorage.getInstance().reference.child("users/${user?.id}/profile_image").downloadUrl.addOnSuccessListener { uri ->
+//            userimage.value = uri
+//        }
+//    }
+
+
+    // Helper function to await metadata fetch
+    suspend fun awaitMetadata(storageRef: StorageReference): StorageMetadata {
+        return suspendCancellableCoroutine { continuation ->
+            storageRef.metadata.addOnSuccessListener { metadata ->
+                continuation.resume(metadata) // Resume with metadata on success
+            }.addOnFailureListener { exception ->
+                continuation.resumeWithException(exception) // Resume with exception on failure
+            }
         }
     }
+
+    // Helper function to await download URL fetch
+    suspend fun awaitDownloadUrl(storageRef: StorageReference): Uri {
+        return suspendCancellableCoroutine { continuation ->
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                continuation.resume(uri) // Resume with URI on success
+            }.addOnFailureListener { exception ->
+                continuation.resumeWithException(exception) // Resume with exception on failure
+            }
+        }
+    }
+
+    suspend fun fetchImageWithRetry(userId: String?) {
+        val storageRef = FirebaseStorage.getInstance().reference.child("users/$userId/profile_image")
+
+        // Attempt to fetch metadata with a retry mechanism
+        val maxRetries = 3 // Set to 1 for one retry
+        var attempt = 0
+
+        while (attempt <= maxRetries) {
+            try {
+                // Fetch metadata
+                val metadata = awaitMetadata(storageRef)
+
+                // If metadata fetch is successful, proceed to download the URL
+                val uri = awaitDownloadUrl(storageRef)
+                userimage.value = uri
+                return // Exit the function after success
+            } catch (exception: Exception) {
+                Log.e("ImageFetchError", "Attempt ${attempt + 1} failed: ${exception.message}")
+
+                // If it's the last attempt, log the error and exit
+                if (attempt == maxRetries) {
+                    Log.e("ImageFetchError", "Image does not exist after retries: ${exception.message}")
+                    return
+                }
+                // Increment attempt counter
+                attempt++
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        fetchImageWithRetry(user?.id)
+    }
+
+
+
     val nodeimage = tweet.imageUrl
     val username = user?.name ?: ""
     val userUuid = user?.id

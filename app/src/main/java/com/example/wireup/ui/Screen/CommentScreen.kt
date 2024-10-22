@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -86,6 +88,7 @@ fun CommentScreen(navController: NavHostController, tweetId: String) {
         animationSpec = tween(durationMillis = 600)
     )
 
+    val scrollState = rememberScrollState()
 
 
     LaunchedEffect(tweetId) {
@@ -120,8 +123,8 @@ fun CommentScreen(navController: NavHostController, tweetId: String) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp)
-//                    .fillMaxHeight(0.30f)
+//                    .padding(top = 10.dp, bottom = 10.dp)
+                    .fillMaxHeight(0.50f)
                     .graphicsLayer {
                         this.rotationY = rotationY
                         cameraDistance = 12f * density
@@ -153,17 +156,20 @@ fun CommentScreen(navController: NavHostController, tweetId: String) {
             }
             Divider(Modifier.padding(top = 20.dp , bottom = 10.dp))
 
-            if (comments != null && comments.isNotEmpty()) {
-                comments.forEach { comment ->
-                    val user = users.find { it.id == comment.userId }
-                    CommentNode(data = comment, user = user, navController = navController, tweetId)
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
+                if (comments != null && comments.isNotEmpty()) {
+                    comments.forEach { comment ->
+                        val user = users.find { it.id == comment.userId }
+                        CommentNode(data = comment, user = user, navController = navController, tweetId)
+                    }
+                } else {
+                    // Show a loading indicator or an empty state message
+                    CircularProgressIndicator()
+                    // or
+                    Text("No comments found")
                 }
-            } else {
-                // Show a loading indicator or an empty state message
-                CircularProgressIndicator()
-                // or
-                Text("No comments found")
             }
+
         }
 
 
@@ -186,13 +192,14 @@ fun CommentNode(data: Comment, user: MUser?, navController : NavHostController, 
             userimage.value = uri
         }
     }
-    LaunchedEffect(likeResult) {
-        if (likeResult == true) {
-            Toast.makeText(context, "Comment liked successfully!", Toast.LENGTH_SHORT).show()
-        } else if (likeResult == false) {
-            Toast.makeText(context, "Liked", Toast.LENGTH_SHORT).show()
-        }
-    }
+//    LaunchedEffect(likeResult) {
+//        if (likeResult == true) {
+//            Toast.makeText(context, "Comment liked successfully!", Toast.LENGTH_SHORT).show()
+//        } else if (likeResult == false) {
+//            Toast.makeText(context, "Liked", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+    var likeCount by remember { mutableStateOf(data.likeCount) }
     val username = user?.name ?: ""
     val userUuid = user?.id
     Row(modifier= Modifier
@@ -226,13 +233,13 @@ fun CommentNode(data: Comment, user: MUser?, navController : NavHostController, 
                 .clickable(onClick = {
                     viewModel.likeComment(tweetId, data.id, currentUserId)
                     isSubnodeLiked = true
-
+                    likeCount += 1
                 })
                 .alpha(0.8f)
                 .size(22.dp) )
 
         Spacer(modifier = Modifier.width(2.dp))
-        Text(text = data.likeCount.toString(), fontSize = 13.sp)
+        Text(text = likeCount.toString(), fontSize = 13.sp)
         Spacer(modifier = Modifier.width(10.dp))
     }
     Column(
