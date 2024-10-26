@@ -436,6 +436,8 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
     }
     val mostLikedComment = getMostLikedComment(tweet.id)
 
+    val hasComments by viewModel.checkIfTweetHasComments(tweetId).observeAsState(initial = false)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -542,6 +544,8 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
             }
         }
     }
+
+    if (hasComments) {
         Button(
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -555,6 +559,8 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
         ) {
             Text(text = if (isFlipped) "Flip Node" else "Flip Node")
         }
+    }
+
     Divider(modifier = Modifier
         .padding(vertical = 10.dp)
         .fillMaxWidth()
@@ -609,7 +615,7 @@ fun SideNode(tweetId: String, navController : NavHostController ){
                 .fillMaxWidth()
                 .padding(start = 50.dp)) {
             Text(data?.description.toString(),color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.W400)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
         val time = data?.timeStamp?.toLong() ?: 0L
         Text(

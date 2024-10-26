@@ -303,6 +303,9 @@ class UserViewModel(private val firestoreRepository: FirestoreRepository) : View
         return firestoreRepository.addComment(tweetId, comment)
     }
 
+    fun checkIfTweetHasComments(tweetId: String): LiveData<Boolean> {
+        return firestoreRepository.hasComments(tweetId)
+    }
 
 
 }

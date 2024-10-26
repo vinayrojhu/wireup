@@ -599,4 +599,25 @@ class FirestoreRepository {
 
         return liveData
     }
+
+    fun hasComments(tweetId: String): LiveData<Boolean> {
+        val liveData = MutableLiveData<Boolean>()
+        val tweetRef = firestore.collection("tweets").document(tweetId)
+
+        tweetRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val document = task.result
+                if (document != null) {
+                    // Check if the comments field exists and is not empty
+                    val commentsData = document.get("comments") as? List<*>
+                    liveData.value = commentsData != null && commentsData.isNotEmpty()
+                } else {
+                    liveData.value = false
+                }
+            } else {
+                liveData.value = false
+            }
+        }
+        return liveData
+    }
 }
