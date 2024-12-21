@@ -315,7 +315,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             .padding(end =7.dp )
                                             .border(BorderStroke(2.dp, Color.LightGray) , shape = RoundedCornerShape(15.dp))
                                             .padding(horizontal = 3.dp , vertical = 0.3.dp)
-                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Hyderabad") }
+                                            .clickable { navController.navigate(NavigationItem.Tags.route + "/Mumbai") }
                                     ) {
                                         Text(
                                             text = "Mumbai",
@@ -404,12 +404,13 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                                             }
 
                                             news1.filter { it.tags?.contains("trending") == true }
-                                                .take(5)
+                                                .take(8)
                                                 .forEach { news1 ->
                                                     NewsBox2(news1, navController)
                                                 }
 
                                             news1.filter { it.tags?.contains("all") == true }
+                                                .take(40)
                                                 .forEach { news1 ->
                                                     NewsBox3(news1, navController)
                                                 }

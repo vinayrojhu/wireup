@@ -128,13 +128,14 @@ fun SearchScreen(navController: NavHostController,
         Box {
                Column(modifier = Modifier.verticalScroll(state = ScrollState(0))) {
                    Column {
-                       Text(text = "Trending",
+                       Text(text = "World",
                            Modifier.padding(start = 9.dp, top = 8.dp),
                            fontWeight = FontWeight.W400,
                            fontSize = 16.sp)
                        Spacer(modifier = Modifier.height(6.dp))
                        Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                           news1.filter { it.tags?.contains("all") == true }
+                           news1.filter { it.tags?.contains("world") == true }
+                               .take(8)
                                .forEach { news1 ->
                                    NewsCard(news1, navController)
                                }
@@ -147,7 +148,8 @@ fun SearchScreen(navController: NavHostController,
                            fontSize = 16.sp)
                        Spacer(modifier = Modifier.height(6.dp))
                        Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                           news1.filter { it.tags?.contains("all") == true }
+                           news1.filter { it.tags?.contains("politics") == true }
+                               .take(8)
                                .forEach { news1 ->
                                    NewsCard2(news1, navController)
                                }
