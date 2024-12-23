@@ -14,7 +14,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/wireup_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/wireup_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wireup.Splash"
         tools:targetApi="31">
