@@ -1,5 +1,7 @@
 package com.example.wireup.ui.Components
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +24,9 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,17 +37,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.wireup.model.FlipNews
+import com.example.wireup.ui.Screen.YouTubeVideoPlayer
+import com.example.wireup.ui.Screen.getYoutubeVideoId
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ui.PlayerView
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 data class newsx(
     val heading: String,
     val report: String,
     val imageUrl: String,
+    val videoUrl: String,
     val time: String
 )
 @Composable
@@ -56,6 +74,7 @@ fun FlipCard(flipNews: FlipNews) {
         heading = flipNews.heading1.toString(),
         report = flipNews.report1,
         imageUrl = flipNews.imageUrl1,
+        videoUrl = flipNews.description1,
         time = flipNews.time.toString()
     )
 
@@ -63,6 +82,7 @@ fun FlipCard(flipNews: FlipNews) {
         heading = flipNews.heading2.toString(),
         report = flipNews.report2,
         imageUrl = flipNews.imageUrl2,
+        videoUrl = flipNews.description2,
         time = flipNews.time.toString()
     )
 
@@ -119,16 +139,30 @@ fun FrontCardContent(news: newsx) {
             modifier = Modifier
         ) {
 
-            Image(
-                painter = rememberImagePainter(news.imageUrl),
-                contentDescription = "Image in the box",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(15.dp))
-            )
+            if (news.imageUrl.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 9f) // Maintain a 16:9 aspect ratio
+                        .clip(RoundedCornerShape(8.dp))
+                ) {
+                    Media3PlayerView(videoUrl = news.videoUrl)
+                }
+
+            } else {
+                Image(
+                    painter = rememberImagePainter(news.imageUrl),
+                    contentDescription = "Image in the box",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(5.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                )
+            }
+
+
 
             Column(
                 modifier = Modifier
@@ -174,6 +208,17 @@ fun BackCardContent(news: newsx) {
         Column(
             modifier = Modifier
         ) {
+            if (news.imageUrl.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 9f) // Maintain a 16:9 aspect ratio
+                        .clip(RoundedCornerShape(8.dp))
+                ) {
+                    Media3PlayerView(videoUrl = news.videoUrl)
+                }
+
+            } else {
                 Image(
                     painter = rememberImagePainter(news.imageUrl),
                     contentDescription = "Image in the box",
@@ -184,6 +229,7 @@ fun BackCardContent(news: newsx) {
                         .padding(5.dp)
                         .clip(RoundedCornerShape(15.dp))
                 )
+            }
 
 
                 Column(
@@ -211,3 +257,96 @@ fun BackCardContent(news: newsx) {
             }
         }
     }
+
+
+class PlayerViewModel : ViewModel() {
+    private val _playerState = MutableStateFlow<ExoPlayer?>(null)
+    val playerState: StateFlow<ExoPlayer?> = _playerState
+    private var currentPosition: Long = 0L
+
+    fun initializePlayer(context: Context, videoUrl: String) {
+        if (_playerState.value == null) {
+            val exoPlayer = ExoPlayer.Builder(context).build().apply {
+                val mediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
+                setMediaItem(mediaItem)
+                prepare()
+                playWhenReady = true
+                seekTo(currentPosition)
+            }
+            _playerState.value = exoPlayer
+        }
+    }
+
+    fun savePlayerState() {
+        _playerState.value?.let {
+            currentPosition = it.currentPosition
+        }
+    }
+
+    fun releasePlayer() {
+        _playerState.value?.release()
+        _playerState.value = null
+    }
+}
+
+
+@Composable
+fun Media3PlayerView(videoUrl: String, playerViewModel: PlayerViewModel = viewModel()) {
+    val context = LocalContext.current
+    val player by playerViewModel.playerState.collectAsState()
+
+    LaunchedEffect(videoUrl) {
+        playerViewModel.initializePlayer(context, videoUrl)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            playerViewModel.savePlayerState()
+            playerViewModel.releasePlayer()
+        }
+    }
+
+    Column {
+        Media3AndroidView(player)
+        PlayerControls(player)
+    }
+}
+
+@Composable
+fun Media3AndroidView(player: ExoPlayer?) {
+    AndroidView(
+        modifier = Modifier.fillMaxWidth(),
+        factory = { context ->
+            PlayerView(context).apply {
+                this.player = player
+            }
+        },
+        update = { playerView ->
+            playerView.player = player
+        }
+    )
+}
+
+@Composable
+fun PlayerControls(player: ExoPlayer?) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(onClick = { player?.playWhenReady = true }) {
+            Text("Play")
+        }
+        Button(onClick = { player?.playWhenReady = false }) {
+            Text("Pause")
+        }
+        Button(onClick = { player?.seekTo(player?.currentPosition?.minus(10_000) ?: 0) }) {
+            Text("Seek -10s")
+        }
+        Button(onClick = { player?.seekTo(player?.currentPosition?.plus(10_000) ?: 0) }) {
+            Text("Seek +10s")
+        }
+    }
+}
