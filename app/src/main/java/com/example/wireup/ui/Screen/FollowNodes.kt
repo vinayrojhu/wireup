@@ -76,7 +76,7 @@ fun FollowNodes(navController: NavHostController) {
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            tweets.forEach { tweet ->
+            tweets.take(60).forEach { tweet ->
                 val user = users.find { it.id == tweet.userId }
                 MainNode(tweet, navController = navController, user = user )
             }

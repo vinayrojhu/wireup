@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -457,13 +458,15 @@ class FirestoreRepository {
     fun deleteTweet(tweetId: String, imageUrl: String?): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
         val tweetRef = firestore.collection("tweets").document(tweetId)
-        val uri = Uri.parse(imageUrl)
-        val imageName = uri.pathSegments.last()
+
+        Log.d("FirestoreRepository", "Attempting to delete tweet: $tweetId with imageUrl: $imageUrl")
 
         if (imageUrl.isNullOrBlank()) {
+            Log.d("FirestoreRepository", "No image found, deleting tweet directly.")
+
             tweetRef.delete()
                 .addOnSuccessListener {
-
+                    Log.d("FirestoreRepository", "Tweet successfully deleted: $tweetId")
                     liveData.value = true
                 }
                 .addOnFailureListener { exception ->
@@ -471,24 +474,48 @@ class FirestoreRepository {
                     liveData.value = false
                 }
         } else {
-            val storageRef = FirebaseStorage.getInstance().reference.child(imageName)
-            storageRef.delete().addOnSuccessListener {
-                tweetRef.delete()
-                    .addOnSuccessListener {
-                        liveData.value = true
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d("FirestoreRepository", "Error deleting tweet", exception)
+            Log.d("FirestoreRepository", "Image found, deleting image first.")
+
+            val uri = Uri.parse(imageUrl)
+            val imageName = uri.lastPathSegment // Ensure this is the correct way to get the image name
+            val storageRef = imageName?.let { FirebaseStorage.getInstance().reference.child(it) }
+
+            if (storageRef != null) {
+                storageRef.delete().addOnSuccessListener {
+                    Log.d("FirestoreRepository", "Image successfully deleted: $imageName")
+                    tweetRef.delete()
+                        .addOnSuccessListener {
+                            Log.d("FirestoreRepository", "Tweet successfully deleted after image deletion: $tweetId")
+                            liveData.value = true
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.d("FirestoreRepository", "Error deleting tweet after image deletion", exception)
+                            liveData.value = false
+                        }
+                }.addOnFailureListener { exception ->
+                    if (exception is StorageException && exception.errorCode == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                        // If the image does not exist, log it and delete the tweet directly
+                        Log.d("FirestoreRepository", "Image not found, deleting tweet directly: $tweetId")
+                        tweetRef.delete()
+                            .addOnSuccessListener {
+                                Log.d("FirestoreRepository", "Tweet successfully deleted: $tweetId")
+                                liveData.value = true
+                            }
+                            .addOnFailureListener { deleteException ->
+                                Log.d("FirestoreRepository", "Error deleting tweet after image not found", deleteException)
+                                liveData.value = false
+                            }
+                    } else {
+                        Log.d("FirestoreRepository", "Error deleting image", exception)
                         liveData.value = false
                     }
-            }.addOnFailureListener { exception ->
-                Log.d("FirestoreRepository", "Error deleting image", exception)
-                liveData.value = false
+                }
             }
         }
 
         return liveData
     }
+
 
     fun addComment(tweetId: String, comment: Comment): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()

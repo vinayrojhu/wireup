@@ -299,7 +299,7 @@ fun NodeScreen(navController: NavHostController, viewModel: UserViewModel = view
                     )
                 } else {
 
-                    tweets.forEach { tweet ->
+                    tweets.take(100).forEach { tweet ->
                         val user = users.find { it.id == tweet.userId }
                         MainNode(tweet, user, navController)
                     }
