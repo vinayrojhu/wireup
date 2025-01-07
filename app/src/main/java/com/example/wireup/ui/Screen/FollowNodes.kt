@@ -46,7 +46,7 @@ fun FollowNodes(navController: NavHostController) {
     Column {
         TopAppBar(title = {
             Text(
-                "Followers Nodes", fontSize = 18.sp
+                "People You Follow", fontSize = 18.sp
             )
         }, navigationIcon = {
             IconButton(onClick = {

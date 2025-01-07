@@ -51,7 +51,6 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     onTimeout: () -> Unit
 ) {
-
     val currentOnTimeout by rememberUpdatedState(onTimeout)
 
     val fontSize = 38.sp
@@ -141,7 +140,7 @@ fun WireLogo(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = "WIREup",
+            text = "INDICwire",
             textAlign = TextAlign.Center,
             modifier = modifier.padding(top = 16.dp, bottom = 1.dp),
             fontSize = 30.sp,

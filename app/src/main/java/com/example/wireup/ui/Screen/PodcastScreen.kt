@@ -112,13 +112,13 @@ fun PodcastScreen(navController: NavHostController) {
                     selectedTabIndex = it
                 }
                 when (selectedTabIndex) {
-                    0 -> Column(
+                    0 -> LazyColumn(
                         modifier = Modifier
                             .padding(16.dp)
                     ) {
-                        video1.forEach { data ->
-                                VideoPostBox(Vpodcast = data, navController)
-                            }
+                        items(video1.take(50)) { data ->
+                            VideoPostBox(Vpodcast = data, navController)
+                        }
                     }
                     1 -> LazyColumn(
                         modifier = Modifier

@@ -136,7 +136,7 @@ fun HomeScreen( navController: NavHostController, viewModel: UserViewModel = vie
                         }
 
                         Column(modifier = Modifier
-                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health&lifestyle") }
+                            .clickable { navController.navigate(NavigationItem.Tags.route + "/health") }
                             .fillMaxWidth()) {
                             Text(text = "Health & Lifestyle", style = MaterialTheme.typography.titleMedium , modifier = Modifier.padding(start = 20.dp) )
                             Spacer(modifier = Modifier.height(15.dp))

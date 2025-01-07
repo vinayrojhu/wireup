@@ -208,7 +208,7 @@ fun BackCardContent(news: newsx) {
         Column(
             modifier = Modifier
         ) {
-            if (news.imageUrl.isEmpty()) {
+            if (news.videoUrl.isNotEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

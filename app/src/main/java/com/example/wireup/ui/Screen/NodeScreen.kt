@@ -471,35 +471,61 @@ fun MainNode(tweet: Tweet, user: MUser?, navController : NavHostController ){
                         Text(username, fontWeight = FontWeight.W600, fontSize = 15.sp)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    if (currentUserId == tweet.userId) {
-                        Column(modifier = Modifier
-                            .clickable { viewModel.deleteTweet(tweetId, nodeimage.toString()) }) {
+                    var showDialog by remember { mutableStateOf(false) }
+                    Column {
+                        if (currentUserId == tweet.userId) {
+                            Column(modifier = Modifier
+                                .clickable { showDialog = true }) {
 
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete Icon",
-                                modifier = Modifier.padding(start = 20.dp)
-                            )
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Delete Icon",
+                                    modifier = Modifier.padding(start = 20.dp)
+                                )
 
-                            when (val status = viewModel.deleteTweetStatus.value) {
-                                true -> {
-                                    Toast.makeText(
-                                        context,
-                                        "Tweet deleted successfully",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
+                                when (val status = viewModel.deleteTweetStatus.value) {
+                                    true -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Tweet deleted successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
 
-                                false -> {
-                                    Toast.makeText(context, "Error deleting tweet", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
+                                    false -> {
+                                        Toast.makeText(context, "Error deleting tweet", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
 
-                                null -> {
-                                    // Waiting for result
+                                    null -> {
+                                        // Waiting for result
+                                    }
                                 }
                             }
+                        }
+
+                        // Confirmation dialog
+                        if (showDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showDialog = false },
+                                title = { Text("Confirm Delete") },
+                                text = { Text("Are you sure you want to delete this tweet?") },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            viewModel.deleteTweet(tweetId, nodeimage.toString())
+                                            showDialog = false // Close the dialog after confirming
+                                        }
+                                    ) {
+                                        Text("Yes")
+                                    }
+                                },
+                                dismissButton = {
+                                    Button(onClick = { showDialog = false }) {
+                                        Text("No")
+                                    }
+                                }
+                            )
                         }
                     }
                 }
