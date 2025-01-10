@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,9 +52,15 @@ import com.example.wireup.ui.Screen.YouTubeVideoPlayer
 import com.example.wireup.ui.Screen.getYoutubeVideoId
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 data class newsx(
     val heading: String,
@@ -61,7 +68,16 @@ data class newsx(
     val imageUrl: String,
     val videoUrl: String,
     val time: String
-)
+){
+    fun getConvertedVideoUrl(): String {
+        return if (videoUrl.contains("/d/") && videoUrl.contains("/view")) {
+            val fileId = videoUrl.substringAfter("/d/").substringBefore("/view")
+            "https://drive.google.com/uc?export=download&id=$fileId"
+        } else {
+            videoUrl // Return the original URL if it's not a Google Drive link
+        }
+    }
+}
 @Composable
 fun FlipCard(flipNews: FlipNews) {
     var isFlipped by remember { mutableStateOf(false) }
@@ -139,14 +155,14 @@ fun FrontCardContent(news: newsx) {
             modifier = Modifier
         ) {
 
-            if (news.imageUrl.isEmpty()) {
+            if (news.videoUrl.isNotEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16 / 9f) // Maintain a 16:9 aspect ratio
                         .clip(RoundedCornerShape(8.dp))
                 ) {
-                    Media3PlayerView(videoUrl = news.videoUrl)
+                    Media3PlayerView(videoUrl = news.getConvertedVideoUrl())
                 }
 
             } else {
@@ -215,7 +231,7 @@ fun BackCardContent(news: newsx) {
                         .aspectRatio(16 / 9f) // Maintain a 16:9 aspect ratio
                         .clip(RoundedCornerShape(8.dp))
                 ) {
-                    Media3PlayerView(videoUrl = news.videoUrl)
+                    Media3PlayerView(videoUrl = news.getConvertedVideoUrl())
                 }
 
             } else {
@@ -262,6 +278,10 @@ fun BackCardContent(news: newsx) {
 class PlayerViewModel : ViewModel() {
     private val _playerState = MutableStateFlow<ExoPlayer?>(null)
     val playerState: StateFlow<ExoPlayer?> = _playerState
+
+    private val _isLoading = MutableStateFlow(true) // Track loading state
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     private var currentPosition: Long = 0L
 
     fun initializePlayer(context: Context, videoUrl: String) {
@@ -272,6 +292,13 @@ class PlayerViewModel : ViewModel() {
                 prepare()
                 playWhenReady = true
                 seekTo(currentPosition)
+
+                // Listen for loading state changes
+                addListener(object : Player.Listener {
+                    override fun onIsLoadingChanged(isLoading: Boolean) {
+                        _isLoading.value = isLoading
+                    }
+                })
             }
             _playerState.value = exoPlayer
         }
@@ -288,12 +315,11 @@ class PlayerViewModel : ViewModel() {
         _playerState.value = null
     }
 }
-
-
 @Composable
 fun Media3PlayerView(videoUrl: String, playerViewModel: PlayerViewModel = viewModel()) {
     val context = LocalContext.current
     val player by playerViewModel.playerState.collectAsState()
+    val isLoading by playerViewModel.isLoading.collectAsState() // Collect loading state
 
     LaunchedEffect(videoUrl) {
         playerViewModel.initializePlayer(context, videoUrl)
@@ -307,8 +333,21 @@ fun Media3PlayerView(videoUrl: String, playerViewModel: PlayerViewModel = viewMo
     }
 
     Column {
-        Media3AndroidView(player)
-        PlayerControls(player)
+        if (isLoading) {
+            // Show loading indicator while the video is loading
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16 / 9f), // Maintain aspect ratio
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator() // Loading indicator
+            }
+        } else {
+            // Show the video player when not loading
+            Media3AndroidView(player)
+            PlayerControls(player)
+        }
     }
 }
 
